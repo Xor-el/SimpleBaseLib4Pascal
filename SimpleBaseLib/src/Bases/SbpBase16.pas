@@ -112,7 +112,7 @@ begin
 
   pResult := resultPtr;
   pInput := textPtr;
-  pEnd := TPointeruTILS.Offset(pInput, textLen);
+  pEnd := TPointerUtils.Offset(pInput, textLen);
   while (pInput <> pEnd) do
   begin
     c1 := pInput^;
@@ -150,7 +150,7 @@ begin
   pResult := resultPtr;
   pAlphabet := alphabetPtr;
   pInput := bytesPtr;
-  pEnd := TPointeruTILS.Offset(pInput, bytesLen);
+  pEnd := TPointerUtils.Offset(pInput, bytesLen);
   while (pInput <> pEnd) do
   begin
     b := pInput^;

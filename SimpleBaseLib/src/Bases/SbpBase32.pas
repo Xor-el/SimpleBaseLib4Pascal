@@ -175,7 +175,7 @@ function TBase32.Encode(bytes: TSimpleBaseLibByteArray;
   padding: Boolean): String;
 var
   bytesLen, outputLen, bitsLeft, currentByte, outputPad, nextBits: Int32;
-  outputBuffer: TSimpleBaseLibCharArray;
+  outputBuffer, EncodingTable: TSimpleBaseLibCharArray;
   inputPtr, pInput, pEnd: PByte;
   encodingTablePtr, outputPtr, pEncodingTable, pOutput, pOutputEnd: PChar;
 begin
@@ -193,7 +193,9 @@ begin
   System.SetLength(outputBuffer, outputLen);
 
   inputPtr := PByte(bytes);
-  encodingTablePtr := PChar(Falphabet.EncodingTable);
+  // encodingTablePtr := PChar(Falphabet.EncodingTable);
+  EncodingTable := Falphabet.EncodingTable;
+  encodingTablePtr := PChar(EncodingTable);
   outputPtr := PChar(outputBuffer);
 
   pEncodingTable := encodingTablePtr;

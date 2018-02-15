@@ -169,6 +169,7 @@ var
   alphabetPtr, resultPtr, pResult: PChar;
   firstChar: Char;
   output: TSimpleBaseLibByteArray;
+  Value: String;
 begin
   result := '';
   bytesLen := System.Length(bytes);
@@ -178,7 +179,9 @@ begin
     Exit;
   end;
   inputPtr := PByte(bytes);
-  alphabetPtr := PChar(Falphabet.Value);
+  // alphabetPtr := PChar(Falphabet.Value);
+  Value := Falphabet.Value;
+  alphabetPtr := PChar(Value);
 
   pInput := inputPtr;
   pEnd := TPointerUtils.Offset(inputPtr, bytesLen);

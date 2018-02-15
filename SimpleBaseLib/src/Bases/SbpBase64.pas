@@ -122,7 +122,7 @@ var
   Idx, textLen, LowPoint, HighPoint, blocks, bytes, padding, i: Int32;
   temp1, temp2: Byte;
   tempArray: TSimpleBaseLibCharArray;
-  _data: TSimpleBaseLibByteArray;
+  _data, DecodingTable: TSimpleBaseLibByteArray;
   _p, p2, pEnd: PChar;
   dp, _d, p_decode: PByte;
 begin
@@ -149,7 +149,9 @@ begin
   end;
 
   _p := PChar(tempArray);
-  p_decode := PByte(Falphabet.DecodingTable);
+  // p_decode := PByte(Falphabet.DecodingTable);
+  DecodingTable := Falphabet.DecodingTable;
+  p_decode := PByte(DecodingTable);
   pEnd := TPointerUtils.Offset(_p, System.Length(tempArray));
 
   p2 := _p;
@@ -236,7 +238,7 @@ var
   b1, b2, b3: Byte;
   _d, d: PByte;
   _cs, _sp, sp: PChar;
-  _s: TSimpleBaseLibCharArray;
+  _s, EncodingTable: TSimpleBaseLibCharArray;
   pad2, pad1: Boolean;
 begin
   Result := '';
@@ -248,7 +250,9 @@ begin
   end;
 
   _d := PByte(bytes);
-  _cs := PChar(Falphabet.EncodingTable);
+  // _cs := PChar(Falphabet.EncodingTable);
+  EncodingTable := Falphabet.EncodingTable;
+  _cs := PChar(EncodingTable);
 
   d := _d;
 
