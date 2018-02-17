@@ -101,12 +101,12 @@ begin
     result := Nil;
     Exit;
   end;
-  if (textLen mod 2 <> 0) then
+  if (textLen and 1 <> 0) then
   begin
     raise EArgumentSimpleBaseLibException.CreateResFmt
       (@SInvalidTextLength, [text]);
   end;
-  System.SetLength(result, textLen div 2);
+  System.SetLength(result, textLen shr 1);
   resultPtr := PByte(result);
   textPtr := PChar(text);
 

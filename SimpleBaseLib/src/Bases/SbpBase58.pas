@@ -132,7 +132,8 @@ begin
     begin
       carry := carry + (58 * pDigit^);
       pDigit^ := Byte(carry);
-      carry := carry div 256;
+      // carry := carry div 256;
+      carry := carry shr 8;
       System.Dec(pDigit);
     end;
 
