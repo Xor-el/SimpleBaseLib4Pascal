@@ -78,12 +78,12 @@ class function TBase64.Process(var pInput: PChar; pEnd: PChar;
 var
   c: Char;
 begin
-  // if pInput >= pEnd then
-  // begin
-  // Result := Byte(0);
-  // System.Inc(pInput);
-  // Exit;
-  // end;
+  if pInput >= pEnd then
+  begin
+    Result := Byte(0);
+    System.Inc(pInput);
+    Exit;
+  end;
 
   c := pInput^;
   System.Inc(pInput);
