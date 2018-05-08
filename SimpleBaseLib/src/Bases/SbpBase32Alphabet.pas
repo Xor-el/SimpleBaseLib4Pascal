@@ -69,12 +69,19 @@ end;
 procedure TBase32Alphabet.CreateDecodingTable(const chars: String);
 var
   bytes: TSimpleBaseLibByteArray;
-  idx: Int32;
+  idx, LowPoint, HighPoint: Int32;
   c: Char;
   b: Byte;
 begin
   System.SetLength(bytes, Ord(HighestAsciiCharSupported) + 1);
-  for idx := System.Low(chars) to System.High(chars) do
+{$IFDEF DELPHIXE3_UP}
+  LowPoint := System.Low(chars);
+  HighPoint := System.High(chars);
+{$ELSE}
+  LowPoint := 1;
+  HighPoint := System.length(chars);
+{$ENDIF DELPHIXE3_UP}
+  for idx := LowPoint to HighPoint do
   begin
     c := chars[idx];
     b := Byte(idx);
@@ -98,13 +105,13 @@ var
 begin
   Inherited Create();
 
-  System.SetLength(FEncodingTable, System.Length(chars));
+  System.SetLength(FEncodingTable, System.length(chars));
 {$IFDEF DELPHIXE3_UP}
   LowPoint := System.Low(chars);
   HighPoint := System.High(chars);
 {$ELSE}
   LowPoint := 1;
-  HighPoint := System.Length(chars);
+  HighPoint := System.length(chars);
 {$ENDIF DELPHIXE3_UP}
   for idx := LowPoint to HighPoint do
   begin
