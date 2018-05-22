@@ -56,7 +56,7 @@
         <UnitName Value="SbpCrockfordBase32Alphabet"/>
       </Item8>
       <Item9>
-        <Filename Value="..\..\Include\Helper.inc"/>
+        <Filename Value="..\..\Include\SimpleBaseLibHelper.inc"/>
         <Type Value="Include"/>
       </Item9>
       <Item10>
