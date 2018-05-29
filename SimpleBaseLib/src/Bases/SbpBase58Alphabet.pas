@@ -117,9 +117,19 @@ begin
 end;
 
 function TBase58Alphabet.GetSelf(c: Char): Int32;
+var
+  DataGotten: Boolean;
 begin
-  if (not FreverseLookupTable.{$IFDEF FPC}TryGetData {$ELSE}TryGetValue
-{$ENDIF FPC}(c, result)) then
+{$IFDEF FPC}
+{$IFDEF FPC_LESS_THAN_3.0.2}
+  DataGotten := FreverseLookupTable.Find(c, result);
+{$ELSE}
+  DataGotten := FreverseLookupTable.TryGetData(c, result);
+{$ENDIF FPC_LESS_THAN_3.0.2}
+{$ELSE}
+  DataGotten := FreverseLookupTable.TryGetValue(c, result);
+{$ENDIF FPC}
+  if (not DataGotten) then
   begin
     raise EInvalidOperationSimpleBaseLibException.CreateResFmt
       (@SInvalidCharacter, [c]);
