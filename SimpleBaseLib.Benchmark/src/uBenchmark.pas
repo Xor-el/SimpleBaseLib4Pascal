@@ -27,7 +27,7 @@ type
 
   public
 
-    class function GenerateString(array_length: Int32): String;
+    class procedure GenerateString(array_length: Int32);
     class procedure Benchmark();
 
   end;
@@ -100,7 +100,7 @@ begin
 
 end;
 
-class function TBenchmark.GenerateString(array_length: Int32): String;
+class procedure TBenchmark.GenerateString(array_length: Int32);
 var
   i: Int32;
 begin

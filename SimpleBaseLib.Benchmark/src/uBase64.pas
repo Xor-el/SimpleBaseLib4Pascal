@@ -116,16 +116,14 @@ type
 
   public
     class function Encode(Input: TBytes): String; static;
-    class function Decode(const Input:
-{$IFDEF FPC}UnicodeString{$ELSE}String{$ENDIF FPC}): TBytes; static;
+    class function Decode(const Input: String): TBytes; static;
   end;
 
 implementation
 
 { TRTLBase64 }
 
-class function TRTLBase64.Decode(const Input:
-{$IFDEF FPC}UnicodeString{$ELSE}String{$ENDIF FPC}): TBytes;
+class function TRTLBase64.Decode(const Input: String): TBytes;
 begin
 {$IFDEF DELPHIXE7_UP}
   Result := TNetEncoding.base64.DecodeStringToBytes(Input);
@@ -136,7 +134,7 @@ begin
 {$ENDIF DELPHIXE7_UP}
 {$IFDEF FPC}
   Result := TEncoding.Default.GetBytes
-    (UnicodeString(DecodeStringBase64(String(Input))));
+    (UnicodeString(DecodeStringBase64(Input)));
 {$ENDIF FPC}
 end;
 

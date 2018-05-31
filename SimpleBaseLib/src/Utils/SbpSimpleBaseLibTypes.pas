@@ -25,8 +25,7 @@ type
   TDictionary<TKey, TValue> = class
     (Generics.Collections.TDictionary<TKey, TValue>);
 {$ENDIF FPC}
-
-/// <summary>
+  /// <summary>
   /// Represents a dynamic array of Byte.
   /// </summary>
   TSimpleBaseLibByteArray = TBytes;
@@ -61,9 +60,10 @@ type
 
 implementation
 
+{$IFDEF FPC}
+
 initialization
 
-{$IFDEF FPC}
 // Set UTF-8 in AnsiStrings, just like Lazarus
 SetMultiByteConversionCodePage(CP_UTF8);
 // SetMultiByteFileSystemCodePage(CP_UTF8); not needed, this is the default under Windows
