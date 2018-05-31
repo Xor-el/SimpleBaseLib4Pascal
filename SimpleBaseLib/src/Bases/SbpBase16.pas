@@ -24,8 +24,8 @@ type
     upperNumberDiff = Byte(7);
     lowerUpperDiff = Byte(32);
 
-    lowerAlphabet = '0123456789abcdef';
-    upperAlphabet = '0123456789ABCDEF';
+    lowerAlphabet: String = '0123456789abcdef';
+    upperAlphabet: String = '0123456789ABCDEF';
 
     class procedure ValidateHex(c: Char); static; inline;
     class function GetHexByte(character: Int32): Int32; static; inline;

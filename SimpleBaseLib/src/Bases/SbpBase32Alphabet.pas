@@ -60,7 +60,7 @@ class function TBase32Alphabet.LowCase(ch: Char): Char;
 begin
   case ch of
     'A' .. 'Z':
-      Result := Char(Ord(ch) + Ord('a') - Ord('A'));
+      Result := Char((Int32(Ord(ch)) + Int32(Ord('a'))) - Int32(Ord('A')));
   else
     Result := ch;
   end;

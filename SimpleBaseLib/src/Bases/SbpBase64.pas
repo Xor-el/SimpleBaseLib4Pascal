@@ -185,7 +185,7 @@ begin
 
     temp2 := Process(p2, pEnd, p_decode);
 
-    dp^ := Byte((temp1 shl 2) or (TBits.Asr32(temp2 and $30, 4)));
+    dp^ := Byte(Int32(temp1 shl 2) or (TBits.Asr32(temp2 and $30, 4)));
     System.Inc(dp);
 
     temp1 := Process(p2, pEnd, p_decode);
@@ -205,7 +205,7 @@ begin
 
   temp2 := Process(p2, pEnd, p_decode);
 
-  dp^ := Byte((temp1 shl 2) or (TBits.Asr32(temp2 and $30, 4)));
+  dp^ := Byte(Int32(temp1 shl 2) or (TBits.Asr32(temp2 and $30, 4)));
   System.Inc(dp);
 
   temp1 := Process(p2, pEnd, p_decode);

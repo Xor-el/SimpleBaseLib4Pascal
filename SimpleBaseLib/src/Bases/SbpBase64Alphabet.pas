@@ -14,7 +14,8 @@ type
 
   strict private
   const
-    B64CharacterSet =
+    B64CharacterSet
+      : String =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
     class var
