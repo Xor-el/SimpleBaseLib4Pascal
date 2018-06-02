@@ -55,7 +55,7 @@ script:
   - lazbuild --add-package-link ./SimpleBaseLib/src/Packages/FPC/SimpleBaseLib4PascalPackage.lpk  # Add SimpleBaseLib4Pascal Package
   - lazbuild $LAZ_OPT ./SimpleBaseLib/src/Packages/FPC/SimpleBaseLib4PascalPackage.lpk  # Build SimpleBaseLib4Pascal Package
   - lazbuild $LAZ_OPT ./SimpleBaseLib.Tests/FreePascal.Tests/SimpleBaseLibConsole.Tests.lpi  # Build SimpleBaseLib4Pascal Test Project
-  - travis_wait 120 $LAZ_ENV ./SimpleBaseLib.Tests/FreePascal.Tests/bin/SimpleBaseLib --all --format=plain # Run SimpleBaseLib4Pascal TestSuite with timeout of 120 mins
+  - travis_wait 120 $LAZ_ENV ./SimpleBaseLib.Tests/FreePascal.Tests/bin/SimpleBaseLib --all --format=plain --progress # Run SimpleBaseLib4Pascal TestSuite with timeout of 120 mins
 
 notifications:
   email:
