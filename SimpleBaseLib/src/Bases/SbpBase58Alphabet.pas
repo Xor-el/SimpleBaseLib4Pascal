@@ -81,6 +81,11 @@ begin
   end;
   FValue := text;
   FreverseLookupTable := TDictionary<Char, Integer>.Create();
+{$IFDEF FPC}
+{$IFDEF FPC_LESS_THAN_3.0.2}
+  FreverseLookupTable.Sorted := True;
+{$ENDIF FPC_LESS_THAN_3.0.2}
+{$ENDIF FPC}
 {$IFDEF DELPHIXE3_UP}
   LowPoint := System.Low(text);
   HighPoint := System.High(text);
