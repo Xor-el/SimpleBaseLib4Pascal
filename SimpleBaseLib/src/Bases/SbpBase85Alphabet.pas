@@ -85,11 +85,6 @@ begin
   inherited Destroy;
 end;
 
-function TBase85Alphabet.GetHasShortcut: Boolean;
-begin
-  Result := (AllSpaceShortcut <> NoShortcut) or (AllZeroShortcut <> NoShortcut);
-end;
-
 function TBase85Alphabet.GetAllSpaceShortcut: Char;
 begin
   Result := FAllSpaceShortcut;
@@ -103,6 +98,11 @@ end;
 class function TBase85Alphabet.GetNoShortcut: Char;
 begin
   Result := No_Shortcut;
+end;
+
+function TBase85Alphabet.GetHasShortcut: Boolean;
+begin
+  Result := (AllSpaceShortcut <> NoShortcut) or (AllZeroShortcut <> NoShortcut);
 end;
 
 class function TBase85Alphabet.GetZ85: IBase85Alphabet;
