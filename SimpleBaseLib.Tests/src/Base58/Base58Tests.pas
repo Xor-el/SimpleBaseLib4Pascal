@@ -3,7 +3,6 @@ unit Base58Tests;
 interface
 
 uses
-  Classes,
   SysUtils,
 {$IFDEF FPC}
   fpcunit,
@@ -132,10 +131,10 @@ begin
   try
 
     TBase58.Bitcoin.Decode('?');
-    Fail('expected EInvalidOperationSimpleBaseLibException');
+    Fail('expected EArgumentSimpleBaseLibException');
 
   except
-    on e: EInvalidOperationSimpleBaseLibException do
+    on e: EArgumentSimpleBaseLibException do
     begin
       // pass
     end;

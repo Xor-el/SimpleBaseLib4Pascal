@@ -8,7 +8,6 @@ unit Base16Tests;
 interface
 
 uses
-  Classes,
   SysUtils,
 {$IFDEF FPC}
   fpcunit,
@@ -31,7 +30,7 @@ type
   TTestBase16 = class(TCryptoLibTestCase)
   private
   var
-    FtestDataBytes: TSimpleBaseLibGenericArray<TSimpleBaseLibByteArray>;
+    FtestDataBytes: TSimpleBaseLibMatrixByteArray;
     FtestDataString: TSimpleBaseLibStringArray;
   protected
     procedure SetUp; override;
@@ -50,10 +49,9 @@ implementation
 procedure TTestBase16.SetUp;
 begin
   inherited;
-  FtestDataBytes := TSimpleBaseLibGenericArray<TSimpleBaseLibByteArray>.Create
-    (Nil, TSimpleBaseLibByteArray.Create($AB),
-    TSimpleBaseLibByteArray.Create($00, $01, $02, $03),
-    TSimpleBaseLibByteArray.Create($10, $11, $12, $13),
+  FtestDataBytes := TSimpleBaseLibMatrixByteArray.Create(Nil,
+    TSimpleBaseLibByteArray.Create($AB), TSimpleBaseLibByteArray.Create($00,
+    $01, $02, $03), TSimpleBaseLibByteArray.Create($10, $11, $12, $13),
     TSimpleBaseLibByteArray.Create($AB, $CD, $EF, $BA)
 
     );
@@ -75,10 +73,10 @@ begin
   try
 
     TBase16.Decode('AZ12');
-    Fail('expected EInvalidOperationSimpleBaseLibException');
+    Fail('expected EArgumentSimpleBaseLibException');
 
   except
-    on e: EInvalidOperationSimpleBaseLibException do
+    on e: EArgumentSimpleBaseLibException do
     begin
       // pass
     end;
@@ -88,10 +86,10 @@ begin
   try
 
     TBase16.Decode('ZAAA');
-    Fail('expected EInvalidOperationSimpleBaseLibException');
+    Fail('expected EArgumentSimpleBaseLibException');
 
   except
-    on e: EInvalidOperationSimpleBaseLibException do
+    on e: EArgumentSimpleBaseLibException do
     begin
       // pass
     end;

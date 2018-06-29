@@ -6,7 +6,6 @@ interface
 
 uses
   SbpSimpleBaseLibTypes,
-  SbpPointerUtils,
   SbpBase58Alphabet,
   SbpIBase58Alphabet,
   SbpIBase58;
@@ -18,6 +17,8 @@ type
   TBase58 = class sealed(TInterfacedObject, IBase58)
 
   strict private
+  const
+    baseLength = Int32(58);
     class var
 
       FBitCoin, FRipple, FFlickr: IBase58;
@@ -85,28 +86,29 @@ var
   textLen, numZeroes, outputLen, carry, resultLen, LowPoint: Int32;
   inputPtr, pEnd, pInput: PChar;
   outputPtr, pOutputEnd, pDigit, pOutput: PByte;
-  firstChar: Char;
-  output: TSimpleBaseLibByteArray;
+  ZeroChar, c: Char;
+  Value: string;
+  output, table: TSimpleBaseLibByteArray;
 begin
   result := Nil;
   textLen := System.Length(text);
   if (textLen = 0) then
   begin
-    result := Nil;
     Exit;
   end;
 
   inputPtr := PChar(text);
 
-  pEnd := TPointerUtils.Offset(inputPtr, textLen);
+  pEnd := inputPtr + textLen;
   pInput := inputPtr;
 {$IFDEF DELPHIXE3_UP}
-  LowPoint := System.Low(String);
+  LowPoint := System.Low(text);
 {$ELSE}
   LowPoint := 1;
 {$ENDIF DELPHIXE3_UP}
-  firstChar := Falphabet.Value[LowPoint];
-  while ((pInput^ = firstChar) and (pInput <> pEnd)) do
+  Value := Falphabet.Value;
+  ZeroChar := Value[LowPoint];
+  while ((pInput^ = ZeroChar) and (pInput <> pEnd)) do
   begin
     System.Inc(pInput);
   end;
@@ -119,18 +121,24 @@ begin
   end;
 
   outputLen := textLen * reductionFactor div 1000 + 1;
+  table := Falphabet.ReverseLookupTable;
   System.SetLength(output, outputLen);
   outputPtr := PByte(output);
 
   pOutputEnd := outputPtr + outputLen - 1;
   while (pInput <> pEnd) do
   begin
-    carry := Falphabet[pInput^];
+    c := pInput^;
     System.Inc(pInput);
+    carry := table[Ord(c)] - 1;
+    if (carry < 0) then
+    begin
+      Falphabet.InvalidCharacter(c);
+    end;
     pDigit := pOutputEnd;
     while pDigit >= outputPtr do
     begin
-      carry := carry + (58 * pDigit^);
+      carry := carry + (baseLength * pDigit^);
       pDigit^ := Byte(carry);
       // carry := carry div 256;
       carry := carry shr 8;
@@ -168,7 +176,7 @@ var
   bytesLen, numZeroes, outputLen, Length, carry, i, resultLen: Int32;
   inputPtr, pInput, pEnd, outputPtr, pOutputEnd, pDigit, pOutput: PByte;
   alphabetPtr, resultPtr, pResult: PChar;
-  firstChar: Char;
+  ZeroChar: Char;
   output: TSimpleBaseLibByteArray;
   Value: String;
 begin
@@ -176,27 +184,25 @@ begin
   bytesLen := System.Length(bytes);
   if (bytesLen = 0) then
   begin
-    result := '';
     Exit;
   end;
   inputPtr := PByte(bytes);
-  // alphabetPtr := PChar(Falphabet.Value);
   Value := Falphabet.Value;
   alphabetPtr := PChar(Value);
 
   pInput := inputPtr;
-  pEnd := TPointerUtils.Offset(inputPtr, bytesLen);
+  pEnd := inputPtr + bytesLen;
   while ((pInput <> pEnd) and (pInput^ = 0)) do
   begin
     System.Inc(pInput);
   end;
   numZeroes := Int32(pInput - inputPtr);
 
-  firstChar := alphabetPtr^;
+  ZeroChar := alphabetPtr^;
 
   if (pInput = pEnd) then
   begin
-    result := StringOfChar(firstChar, numZeroes);
+    result := StringOfChar(ZeroChar, numZeroes);
     Exit;
   end;
 
@@ -214,8 +220,8 @@ begin
     while (((carry <> 0) or (i < Length)) and (pDigit >= outputPtr)) do
     begin
       carry := carry + (256 * pDigit^);
-      pDigit^ := Byte(carry mod 58);
-      carry := carry div 58;
+      pDigit^ := Byte(carry mod baseLength);
+      carry := carry div baseLength;
       System.Dec(pDigit);
       System.Inc(i);
     end;
@@ -232,7 +238,7 @@ begin
   end;
 
   resultLen := numZeroes + Int32(pOutputEnd - pOutput);
-  result := StringOfChar(firstChar, resultLen);
+  result := StringOfChar(ZeroChar, resultLen);
   resultPtr := PChar(result);
 
   pResult := resultPtr + numZeroes;

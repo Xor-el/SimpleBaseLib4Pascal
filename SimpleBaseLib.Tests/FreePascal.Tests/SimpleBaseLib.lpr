@@ -12,7 +12,9 @@ uses
   Rfc4648Tests,
   Base58AlphabetTests,
   Base58Tests,
-  Base64Tests;
+  Base64Tests,
+  Ascii85Tests,
+  BaseZ85Tests;
 
 {$R *.res}
 

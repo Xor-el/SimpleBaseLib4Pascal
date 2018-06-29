@@ -5,17 +5,12 @@ unit SbpIBase32Alphabet;
 interface
 
 uses
-  SbpSimpleBaseLibTypes;
+  SbpIEncodingAlphabet;
 
 type
-  IBase32Alphabet = interface(IInterface)
+  IBase32Alphabet = interface(IEncodingAlphabet)
     ['{A4CDFD70-541D-4CD3-8C9C-B25277186A66}']
 
-    function GetEncodingTable: TSimpleBaseLibCharArray;
-    function GetDecodingTable: TSimpleBaseLibByteArray;
-
-    property EncodingTable: TSimpleBaseLibCharArray read GetEncodingTable;
-    property DecodingTable: TSimpleBaseLibByteArray read GetDecodingTable;
   end;
 
 implementation

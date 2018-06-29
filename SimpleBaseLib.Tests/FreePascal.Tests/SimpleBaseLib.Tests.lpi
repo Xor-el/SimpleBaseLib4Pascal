@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <SessionStorage Value="InProjectDir"/>
@@ -21,7 +21,7 @@
           <PathDelim Value="\"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64"/>
+            <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64;..\src\Base85"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -50,9 +50,10 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="4">
       <Item1>
@@ -68,7 +69,7 @@
         <PackageName Value="FCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="10">
       <Unit0>
         <Filename Value="SimpleBaseLib.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -102,6 +103,14 @@
         <Filename Value="..\src\Base64\Base64Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="..\src\Base85\Ascii85Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\src\Base85\BaseZ85Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -112,7 +121,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64"/>
+      <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64;..\src\Base85"/>
     </SearchPaths>
   </CompilerOptions>
   <Debugging>

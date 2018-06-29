@@ -5,11 +5,6 @@ unit SbpSimpleBaseLibTypes;
 interface
 
 uses
-{$IFDEF FPC}
-  fgl,
-{$ELSE}
-  Generics.Collections,
-{$ENDIF FPC}
   SysUtils;
 
 type
@@ -19,20 +14,10 @@ type
   EArgumentNilSimpleBaseLibException = class(ESimpleBaseLibException);
   EInvalidOperationSimpleBaseLibException = class(ESimpleBaseLibException);
 
-{$IFDEF FPC}
-  TDictionary<TKey, TValue> = class(TFPGMap<TKey, TValue>);
-{$ELSE}
-  TDictionary<TKey, TValue> = class
-    (Generics.Collections.TDictionary<TKey, TValue>);
-{$ENDIF FPC}
   /// <summary>
   /// Represents a dynamic array of Byte.
   /// </summary>
   TSimpleBaseLibByteArray = TBytes;
-  /// <summary>
-  /// Represents a dynamic generic array of Type T.
-  /// </summary>
-  TSimpleBaseLibGenericArray<T> = array of T;
 
 {$IFDEF DELPHIXE_UP}
   /// <summary>
@@ -45,6 +30,11 @@ type
   /// </summary>
   TSimpleBaseLibStringArray = TArray<String>;
 
+  /// <summary>
+  /// Represents a dynamic array of array of byte.
+  /// </summary>
+  TSimpleBaseLibMatrixByteArray = TArray<TSimpleBaseLibByteArray>;
+
 {$ELSE}
   /// <summary>
   /// Represents a dynamic array of Char.
@@ -55,6 +45,11 @@ type
   /// Represents a dynamic array of String.
   /// </summary>
   TSimpleBaseLibStringArray = array of String;
+
+  /// <summary>
+  /// Represents a dynamic array of array of byte.
+  /// </summary>
+  TSimpleBaseLibMatrixByteArray = array of TSimpleBaseLibByteArray;
 
 {$ENDIF DELPHIXE_UP}
 

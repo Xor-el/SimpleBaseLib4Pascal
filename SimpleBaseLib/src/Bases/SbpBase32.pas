@@ -8,14 +8,12 @@ uses
   SbpSimpleBaseLibTypes,
   SbpUtilities,
   SbpBits,
-  SbpPointerUtils,
   SbpBase32Alphabet,
   SbpIBase32Alphabet,
   SbpIBase32;
 
 resourcestring
   SAlphabetNil = 'Alphabet Instance cannot be Nil "%s"';
-  SInvalidCharacter = 'Invalid character value in input: $%x "c"';
 
 type
   TBase32 = class sealed(TInterfacedObject, IBase32)
@@ -30,7 +28,6 @@ type
 
       FCrockford, FRfc4648, FExtendedHex: IBase32;
 
-    class procedure InvalidInput(c: Char); static; inline;
     class function GetCrockford: IBase32; static; inline;
     class function GetRfc4648: IBase32; static; inline;
     class function GetExtendedHex: IBase32; static; inline;
@@ -78,12 +75,6 @@ implementation
 
 { TBase32 }
 
-class procedure TBase32.InvalidInput(c: Char);
-begin
-  raise EArgumentSimpleBaseLibException.CreateResFmt(@SInvalidCharacter,
-    [Ord(c)]);
-end;
-
 class constructor TBase32.Base32;
 begin
   FCrockford := TBase32.Create(TBase32Alphabet.Crockford as IBase32Alphabet);
@@ -105,10 +96,9 @@ end;
 
 function TBase32.Decode(const text: String): TSimpleBaseLibByteArray;
 var
-  textLen, decodingTableLen, bitsLeft, outputLen, outputPad, b,
-    shiftBits: Int32;
-  decodingTable: TSimpleBaseLibByteArray;
-  resultPtr, decodingPtr, pResult, pDecodingTable: PByte;
+  textLen, bitsLeft, outputLen, outputPad, b, shiftBits: Int32;
+  table: TSimpleBaseLibByteArray;
+  resultPtr, pResult: PByte;
   inputPtr, pInput, pEnd: PChar;
   c: Char;
   trimmed: String;
@@ -119,36 +109,29 @@ begin
   textLen := System.Length(trimmed);
   if (textLen = 0) then
   begin
-    Result := Nil;
     Exit;
   end;
-  decodingTable := Falphabet.decodingTable;
-  decodingTableLen := System.Length(decodingTable);
+
   bitsLeft := bitsPerByte;
   outputLen := textLen * bitsPerChar div bitsPerByte;
   System.SetLength(Result, outputLen);
   outputPad := 0;
+  table := Falphabet.ReverseLookupTable;
 
   resultPtr := PByte(Result);
   inputPtr := PChar(trimmed);
-  decodingPtr := PByte(decodingTable);
 
   pResult := resultPtr;
-  pDecodingTable := decodingPtr;
   pInput := inputPtr;
-  pEnd := TPointerUtils.Offset(inputPtr, textLen);
+  pEnd := inputPtr + textLen;
   while (pInput <> pEnd) do
   begin
     c := pInput^;
+    b := table[Ord(c)] - 1;
     System.Inc(pInput);
-    if (Ord(c) >= decodingTableLen) then
-    begin
-      InvalidInput(c);
-    end;
-    b := pDecodingTable[Ord(c)] - 1;
     if (b < 0) then
     begin
-      InvalidInput(c);
+      Falphabet.InvalidCharacter(c);
     end;
     if (bitsLeft > bitsPerChar) then
     begin
@@ -175,15 +158,15 @@ function TBase32.Encode(bytes: TSimpleBaseLibByteArray;
   padding: Boolean): String;
 var
   bytesLen, outputLen, bitsLeft, currentByte, outputPad, nextBits: Int32;
-  outputBuffer, EncodingTable: TSimpleBaseLibCharArray;
+  outputBuffer: TSimpleBaseLibCharArray;
+  table: string;
   inputPtr, pInput, pEnd: PByte;
-  encodingTablePtr, outputPtr, pEncodingTable, pOutput, pOutputEnd: PChar;
+  outputPtr, pOutput, pOutputEnd: PChar;
 begin
   Result := '';
   bytesLen := System.Length(bytes);
   if (bytesLen = 0) then
   begin
-    Result := '';
     Exit;
   end;
 
@@ -191,21 +174,18 @@ begin
   // have the exact length of the output produced.
   outputLen := (((bytesLen - 1) div bitsPerChar) + 1) * bitsPerByte;
   System.SetLength(outputBuffer, outputLen);
+  table := Falphabet.Value;
 
   inputPtr := PByte(bytes);
-  // encodingTablePtr := PChar(Falphabet.EncodingTable);
-  EncodingTable := Falphabet.EncodingTable;
-  encodingTablePtr := PChar(EncodingTable);
   outputPtr := PChar(outputBuffer);
 
-  pEncodingTable := encodingTablePtr;
   pOutput := outputPtr;
   pOutputEnd := outputPtr + outputLen;
   pInput := inputPtr;
 
   bitsLeft := bitsPerByte;
   currentByte := Int32(Byte(pInput^));
-  pEnd := TPointerUtils.Offset(pInput, bytesLen);
+  pEnd := pInput + bytesLen;
   while (pInput <> pEnd) do
   begin
 
@@ -213,7 +193,7 @@ begin
     begin
       bitsLeft := bitsLeft - bitsPerChar;
       outputPad := TBits.Asr32(currentByte, bitsLeft);
-      pOutput^ := pEncodingTable[outputPad];
+      pOutput^ := table[outputPad + 1];
       System.Inc(pOutput);
       currentByte := currentByte and ((1 shl bitsLeft) - 1);
     end;
@@ -227,7 +207,7 @@ begin
       outputPad := outputPad or TBits.Asr32(currentByte, bitsLeft);
       currentByte := currentByte and ((1 shl bitsLeft) - 1);
     end;
-    pOutput^ := pEncodingTable[outputPad];
+    pOutput^ := table[outputPad + 1];
     System.Inc(pOutput);
   end;
   if (padding) then

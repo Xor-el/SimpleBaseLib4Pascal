@@ -6,11 +6,12 @@ interface
 
 uses
   SysUtils,
+  SbpEncodingAlphabet,
   SbpSimpleBaseLibTypes,
   SbpIBase64Alphabet;
 
 type
-  TBase64Alphabet = class sealed(TInterfacedObject, IBase64Alphabet)
+  TBase64Alphabet = class sealed(TEncodingAlphabet, IBase64Alphabet)
 
   strict private
   const
@@ -25,14 +26,9 @@ type
 
   var
     FPaddingEnabled: Boolean;
-    FEncodingTable: TSimpleBaseLibCharArray;
-    FDecodingTable: TSimpleBaseLibByteArray;
 
     function GetPaddingEnabled: Boolean; inline;
-    function GetEncodingTable: TSimpleBaseLibCharArray; inline;
-    function GetDecodingTable: TSimpleBaseLibByteArray; inline;
 
-    procedure CreateDecodingTable(const chars: TSimpleBaseLibCharArray); inline;
     class function GetDefault: IBase64Alphabet; static; inline;
     class function GetDefaultNoPadding: IBase64Alphabet; static; inline;
     class function GetFileEncoding: IBase64Alphabet; static; inline;
@@ -43,8 +39,7 @@ type
     class constructor Base64Alphabet();
 
   public
-    property EncodingTable: TSimpleBaseLibCharArray read GetEncodingTable;
-    property DecodingTable: TSimpleBaseLibByteArray read GetDecodingTable;
+
     property PaddingEnabled: Boolean read GetPaddingEnabled;
     class property Default: IBase64Alphabet read GetDefault;
     class property DefaultNoPadding: IBase64Alphabet read GetDefaultNoPadding;
@@ -52,7 +47,7 @@ type
     class property XmlEncoding: IBase64Alphabet read GetXmlEncoding;
     class property RegExEncoding: IBase64Alphabet read GetRegExEncoding;
     class property FileEncoding: IBase64Alphabet read GetFileEncoding;
-    constructor Create(const chars: String; plusChar, slashChar: Char;
+    constructor Create(const alphabet: String; plusChar, slashChar: Char;
       PaddingEnabled: Boolean);
     destructor Destroy; override;
   end;
@@ -60,21 +55,6 @@ type
 implementation
 
 { TBase64Alphabet }
-
-procedure TBase64Alphabet.CreateDecodingTable(const chars
-  : TSimpleBaseLibCharArray);
-var
-  bytes: TSimpleBaseLibByteArray;
-  idx: Int32;
-begin
-  System.SetLength(bytes, 123);
-  for idx := System.Low(chars) to System.High(chars) do
-  begin
-    bytes[Byte(chars[idx])] := idx;
-  end;
-
-  FDecodingTable := bytes;
-end;
 
 class constructor TBase64Alphabet.Base64Alphabet;
 begin
@@ -86,40 +66,20 @@ begin
   FFileEncoding := TBase64Alphabet.Create(B64CharacterSet, '+', '-', false);
 end;
 
-constructor TBase64Alphabet.Create(const chars: String;
+constructor TBase64Alphabet.Create(const alphabet: String;
   plusChar, slashChar: Char; PaddingEnabled: Boolean);
 var
-  idx, LowPoint, HighPoint: Int32;
   newChars: String;
 begin
-  Inherited Create();
-  newChars := chars + plusChar + slashChar;
-  System.SetLength(FEncodingTable, System.Length(newChars));
-{$IFDEF DELPHIXE3_UP}
-  LowPoint := System.Low(newChars);
-  HighPoint := System.High(newChars);
-{$ELSE}
-  LowPoint := 1;
-  HighPoint := System.Length(newChars);
-{$ENDIF DELPHIXE3_UP}
-  for idx := LowPoint to HighPoint do
-  begin
-    FEncodingTable[idx - 1] := newChars[idx];
-  end;
+  newChars := alphabet + plusChar + slashChar;
+  Inherited Create(64, newChars);
 
   FPaddingEnabled := PaddingEnabled;
-  CreateDecodingTable(FEncodingTable);
-
 end;
 
 destructor TBase64Alphabet.Destroy;
 begin
   inherited Destroy;
-end;
-
-function TBase64Alphabet.GetDecodingTable: TSimpleBaseLibByteArray;
-begin
-  Result := FDecodingTable;
 end;
 
 class function TBase64Alphabet.GetDefault: IBase64Alphabet;
@@ -130,11 +90,6 @@ end;
 class function TBase64Alphabet.GetDefaultNoPadding: IBase64Alphabet;
 begin
   Result := FDefaultNoPadding;
-end;
-
-function TBase64Alphabet.GetEncodingTable: TSimpleBaseLibCharArray;
-begin
-  Result := FEncodingTable;
 end;
 
 class function TBase64Alphabet.GetFileEncoding: IBase64Alphabet;

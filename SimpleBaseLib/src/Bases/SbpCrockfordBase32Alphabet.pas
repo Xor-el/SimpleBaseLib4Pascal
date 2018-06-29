@@ -5,7 +5,7 @@ unit SbpCrockfordBase32Alphabet;
 interface
 
 uses
-  SbpSimpleBaseLibTypes,
+  SbpUtilities,
   SbpBase32Alphabet,
   SbpICrockfordBase32Alphabet;
 
@@ -14,8 +14,7 @@ type
     ICrockfordBase32Alphabet)
 
   strict private
-    class procedure map(buffer: TSimpleBaseLibByteArray;
-      source, destination: Char); static; inline;
+    procedure MapAlternate(source, destination: Char); inline;
 
   public
     constructor Create();
@@ -27,25 +26,21 @@ implementation
 
 { TCrockfordBase32Alphabet }
 
-class procedure TCrockfordBase32Alphabet.map(buffer: TSimpleBaseLibByteArray;
-  source, destination: Char);
+procedure TCrockfordBase32Alphabet.MapAlternate(source, destination: Char);
 var
   result: Byte;
 begin
-  result := buffer[Ord(destination)];
-  buffer[Ord(source)] := result;
-  buffer[Ord(LowCase(source))] := result;
+  result := ReverseLookupTable[Ord(destination)] - 1;
+  Map(source, result);
+  Map(TUtilities.LowCase(source), result);
 end;
 
 constructor TCrockfordBase32Alphabet.Create;
-var
-  buf: TSimpleBaseLibByteArray;
 begin
   Inherited Create('0123456789ABCDEFGHJKMNPQRSTVWXYZ');
-  buf := DecodingTable;
-  map(buf, 'O', '0');
-  map(buf, 'I', '1');
-  map(buf, 'L', '1');
+  MapAlternate('O', '0');
+  MapAlternate('I', '1');
+  MapAlternate('L', '1');
 end;
 
 destructor TCrockfordBase32Alphabet.Destroy;

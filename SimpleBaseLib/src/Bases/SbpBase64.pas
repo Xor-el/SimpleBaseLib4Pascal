@@ -5,9 +5,8 @@ unit SbpBase64;
 interface
 
 uses
-  SbpSimpleBaseLibTypes,
   SbpBits,
-  SbpPointerUtils,
+  SbpSimpleBaseLibTypes,
   SbpBase64Alphabet,
   SbpIBase64Alphabet,
   SbpIBase64;
@@ -30,8 +29,8 @@ type
   var
     Falphabet: IBase64Alphabet;
 
-    class function Process(var pInput: PChar; pEnd: PChar; decode_table: PByte)
-      : Byte; static; inline;
+    function ProcessDecode(var pInput: PChar; pEnd: PChar; pDecodeTable: PByte;
+      PaddingCount: Int32): Byte; inline;
 
     class function GetDefault: IBase64; static; inline;
     class function GetDefaultNoPadding: IBase64; static; inline;
@@ -73,22 +72,34 @@ implementation
 
 { TBase64 }
 
-class function TBase64.Process(var pInput: PChar; pEnd: PChar;
-  decode_table: PByte): Byte;
+function TBase64.ProcessDecode(var pInput: PChar; pEnd: PChar;
+  pDecodeTable: PByte; PaddingCount: Int32): Byte;
 var
   c: Char;
+  b: Int32;
 begin
+  Result := 0;
   if pInput >= pEnd then
   begin
-    Result := Byte(0);
-    System.Inc(pInput);
     Exit;
   end;
 
   c := pInput^;
-  System.Inc(pInput);
 
-  Result := decode_table[Ord(c)];
+  b := pDecodeTable[Ord(c)] - 1;
+  if (b < 0) then
+  begin
+    if ((pInput + PaddingCount) <> pEnd) then
+    begin
+      Falphabet.InvalidCharacter(c);
+    end;
+  end
+  else
+  begin
+    Result := Byte(b);
+    System.Inc(pInput);
+  end;
+
 end;
 
 class constructor TBase64.Base64;
@@ -119,111 +130,91 @@ end;
 
 function TBase64.Decode(const text: String): TSimpleBaseLibByteArray;
 var
-  Idx, textLen, LowPoint, HighPoint, blocks, bytes, padding, i: Int32;
+  textLen, blocks, padding, i, bytes: Int32;
   temp1, temp2: Byte;
-  tempArray: TSimpleBaseLibCharArray;
-  _data, DecodingTable: TSimpleBaseLibByteArray;
-  _p, p2, pEnd: PChar;
-  dp, _d, p_decode: PByte;
+  table: TSimpleBaseLibByteArray;
+  InputPtr, pEnd: PChar;
+  resultPtr, tablePtr: PByte;
 begin
   Result := Nil;
   textLen := System.Length(text);
   if (textLen = 0) then
   begin
-    Result := Nil;
     Exit;
   end;
 
-  System.SetLength(tempArray, textLen);
+  InputPtr := PChar(text);
+  pEnd := InputPtr + textLen;
 
-{$IFDEF DELPHIXE3_UP}
-  LowPoint := System.Low(text);
-  HighPoint := System.High(text);
-{$ELSE}
-  LowPoint := 1;
-  HighPoint := System.Length(text);
-{$ENDIF DELPHIXE3_UP}
-  for Idx := LowPoint to HighPoint do
-  begin
-    tempArray[Idx - 1] := text[Idx];
-  end;
-
-  _p := PChar(tempArray);
-  // p_decode := PByte(Falphabet.DecodingTable);
-  DecodingTable := Falphabet.DecodingTable;
-  p_decode := PByte(DecodingTable);
-  pEnd := TPointerUtils.Offset(_p, System.Length(tempArray));
-
-  p2 := _p;
-
-  blocks := (textLen - 1) div 4 + 1;
+  blocks := ((textLen - 1) div 4) + 1;
   bytes := blocks * 3;
 
-  padding := blocks * 4 - textLen;
+  padding := (blocks * 4) - textLen;
 
-  if ((textLen > 2) and (p2[textLen - 2] = paddingChar)) then
+  if ((textLen > 2) and (InputPtr[textLen - 2] = paddingChar)) then
   begin
     padding := 2;
   end
-  else if ((textLen > 1) and (p2[textLen - 1] = paddingChar)) then
+  else if ((textLen > 1) and (InputPtr[textLen - 1] = paddingChar)) then
   begin
     padding := 1;
   end;
 
-  System.SetLength(_data, bytes - padding);
+  System.SetLength(Result, bytes - padding);
 
-  _d := PByte(_data);
+  table := Falphabet.ReverseLookupTable;
+  tablePtr := PByte(table);
 
-  dp := _d;
+  resultPtr := PByte(Result);
 
   i := 1;
 
   while i < blocks do
   begin
 
-    temp1 := Process(p2, pEnd, p_decode);
+    temp1 := ProcessDecode(InputPtr, pEnd, tablePtr, padding);
 
-    temp2 := Process(p2, pEnd, p_decode);
+    temp2 := ProcessDecode(InputPtr, pEnd, tablePtr, padding);
 
-    dp^ := Byte(Int32(temp1 shl 2) or (TBits.Asr32(temp2 and $30, 4)));
-    System.Inc(dp);
+    resultPtr^ := Byte(Int32(temp1 shl 2) or (TBits.Asr32(temp2 and $30, 4)));
+    System.Inc(resultPtr);
 
-    temp1 := Process(p2, pEnd, p_decode);
+    temp1 := ProcessDecode(InputPtr, pEnd, tablePtr, padding);
 
-    dp^ := Byte((TBits.Asr32(temp1 and $3C, 2)) or ((temp2 and $0F) shl 4));
-    System.Inc(dp);
+    resultPtr^ := Byte((TBits.Asr32(temp1 and $3C, 2)) or
+      ((temp2 and $0F) shl 4));
+    System.Inc(resultPtr);
 
-    temp2 := Process(p2, pEnd, p_decode);
+    temp2 := ProcessDecode(InputPtr, pEnd, tablePtr, padding);
 
-    dp^ := Byte(((temp1 and $03) shl 6) or temp2);
-    System.Inc(dp);
+    resultPtr^ := Byte(((temp1 and $03) shl 6) or temp2);
+    System.Inc(resultPtr);
 
     System.Inc(i);
   end;
 
-  temp1 := Process(p2, pEnd, p_decode);
+  temp1 := ProcessDecode(InputPtr, pEnd, tablePtr, padding);
 
-  temp2 := Process(p2, pEnd, p_decode);
+  temp2 := ProcessDecode(InputPtr, pEnd, tablePtr, padding);
 
-  dp^ := Byte(Int32(temp1 shl 2) or (TBits.Asr32(temp2 and $30, 4)));
-  System.Inc(dp);
+  resultPtr^ := Byte(Int32(temp1 shl 2) or (TBits.Asr32(temp2 and $30, 4)));
+  System.Inc(resultPtr);
 
-  temp1 := Process(p2, pEnd, p_decode);
+  temp1 := ProcessDecode(InputPtr, pEnd, tablePtr, padding);
 
   if (padding <> 2) then
   begin
-    dp^ := Byte((TBits.Asr32(temp1 and $3C, 2) or ((temp2 and $0F) shl 4)));
-    System.Inc(dp);
+    resultPtr^ := Byte((TBits.Asr32(temp1 and $3C, 2) or
+      ((temp2 and $0F) shl 4)));
+    System.Inc(resultPtr);
   end;
 
-  temp2 := Process(p2, pEnd, p_decode);
+  temp2 := ProcessDecode(InputPtr, pEnd, tablePtr, padding);
   if (padding = 0) then
   begin
-    dp^ := Byte(((temp1 and $03) shl 6) or temp2);
-    System.Inc(dp);
+    resultPtr^ := Byte(((temp1 and $03) shl 6) or temp2);
+    System.Inc(resultPtr);
   end;
-
-  Result := _data;
 
 end;
 
@@ -234,27 +225,23 @@ end;
 
 function TBase64.Encode(bytes: TSimpleBaseLibByteArray): String;
 var
-  bytesLen, padding, blocks, l, i: Int32;
+  bytesLen, padding, blocks, BufferLen, i: Int32;
   b1, b2, b3: Byte;
-  _d, d: PByte;
-  _cs, _sp, sp: PChar;
-  _s, EncodingTable: TSimpleBaseLibCharArray;
+  InputPtr: PByte;
+  OutputPtr: PChar;
+  Buffer: TSimpleBaseLibCharArray;
   pad2, pad1: Boolean;
+  table: string;
 begin
   Result := '';
   bytesLen := System.Length(bytes);
   if (bytesLen = 0) then
   begin
-    Result := '';
     Exit;
   end;
 
-  _d := PByte(bytes);
-  // _cs := PChar(Falphabet.EncodingTable);
-  EncodingTable := Falphabet.EncodingTable;
-  _cs := PChar(EncodingTable);
-
-  d := _d;
+  InputPtr := PByte(bytes);
+  table := Falphabet.Value;
 
   padding := bytesLen mod 3;
   if (padding > 0) then
@@ -263,32 +250,33 @@ begin
   end;
   blocks := (bytesLen - 1) div 3 + 1;
 
-  l := blocks * 4;
+  BufferLen := blocks * 4;
 
-  System.SetLength(_s, l);
+  System.SetLength(Buffer, BufferLen);
 
-  _sp := PChar(_s);
-  sp := _sp;
+  OutputPtr := PChar(Buffer);
 
   i := 1;
 
   while i < blocks do
   begin
-    b1 := d^;
-    System.Inc(d);
-    b2 := d^;
-    System.Inc(d);
-    b3 := d^;
-    System.Inc(d);
+    b1 := InputPtr^;
+    System.Inc(InputPtr);
+    b2 := InputPtr^;
+    System.Inc(InputPtr);
+    b3 := InputPtr^;
+    System.Inc(InputPtr);
 
-    sp^ := _cs[TBits.Asr32((b1 and $FC), 2)];
-    System.Inc(sp);
-    sp^ := _cs[TBits.Asr32((b2 and $F0), 4) or (b1 and $03) shl 4];
-    System.Inc(sp);
-    sp^ := _cs[TBits.Asr32((b3 and $C0), 6) or (b2 and $0F) shl 2];
-    System.Inc(sp);
-    sp^ := _cs[b3 and $3F];
-    System.Inc(sp);
+    OutputPtr^ := table[(TBits.Asr32((b1 and $FC), 2)) + 1];
+    System.Inc(OutputPtr);
+    OutputPtr^ := table[(TBits.Asr32((b2 and $F0), 4) or (b1 and $03)
+      shl 4) + 1];
+    System.Inc(OutputPtr);
+    OutputPtr^ := table[(TBits.Asr32((b3 and $C0), 6) or (b2 and $0F)
+      shl 2) + 1];
+    System.Inc(OutputPtr);
+    OutputPtr^ := table[(b3 and $3F) + 1];
+    System.Inc(OutputPtr);
 
     System.Inc(i);
   end;
@@ -296,16 +284,16 @@ begin
   pad2 := padding = 2;
   pad1 := padding > 0;
 
-  b1 := d^;
-  System.Inc(d);
+  b1 := InputPtr^;
+  System.Inc(InputPtr);
   if pad2 then
   begin
     b2 := Byte(0)
   end
   else
   begin
-    b2 := d^;
-    System.Inc(d);
+    b2 := InputPtr^;
+    System.Inc(InputPtr);
   end;
 
   if pad1 then
@@ -314,50 +302,51 @@ begin
   end
   else
   begin
-    b3 := d^;
-    System.Inc(d);
+    b3 := InputPtr^;
+    System.Inc(InputPtr);
   end;
 
-  sp^ := _cs[TBits.Asr32((b1 and $FC), 2)];
-  System.Inc(sp);
-  sp^ := _cs[TBits.Asr32((b2 and $F0), 4) or (b1 and $03) shl 4];
-  System.Inc(sp);
+  OutputPtr^ := table[(TBits.Asr32((b1 and $FC), 2)) + 1];
+  System.Inc(OutputPtr);
+  OutputPtr^ := table[(TBits.Asr32((b2 and $F0), 4) or (b1 and $03) shl 4) + 1];
+  System.Inc(OutputPtr);
   if pad2 then
   begin
-    sp^ := '='
+    OutputPtr^ := '='
   end
   else
   begin
-    sp^ := _cs[TBits.Asr32((b3 and $C0), 6) or (b2 and $0F) shl 2]
+    OutputPtr^ := table[(TBits.Asr32((b3 and $C0), 6) or (b2 and $0F)
+      shl 2) + 1]
   end;
 
-  System.Inc(sp);
+  System.Inc(OutputPtr);
 
   if pad1 then
   begin
-    sp^ := '='
+    OutputPtr^ := '='
   end
   else
   begin
-    sp^ := _cs[b3 and $3F]
+    OutputPtr^ := table[(b3 and $3F) + 1]
   end;
 
-  System.Inc(sp);
+  System.Inc(OutputPtr);
 
   if (not Falphabet.PaddingEnabled) then
   begin
     if (pad2) then
     begin
-      System.Dec(l);
+      System.Dec(BufferLen);
     end;
     if (pad1) then
     begin
-      System.Dec(l);
+      System.Dec(BufferLen);
     end;
 
   end;
 
-  System.SetString(Result, PChar(@_s[0]), l);
+  System.SetString(Result, PChar(@Buffer[0]), BufferLen);
 
 end;
 

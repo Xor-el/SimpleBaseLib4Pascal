@@ -20,6 +20,14 @@ type
     class function TrimRight(const S: String;
       const trimchars: TSimpleBaseLibCharArray): String; static; inline;
 
+    class function LowCase(ch: Char): Char; static; inline;
+
+    class function IsUpper(ch: Char): Boolean; static; inline;
+
+    class function IsDigit(ch: Char): Boolean; static; inline;
+
+    class function IsWhiteSpace(ch: Char): Boolean; static; inline;
+
   end;
 
 implementation
@@ -38,6 +46,32 @@ begin
   end;
 end;
 
+class function TUtilities.IsDigit(ch: Char): Boolean;
+begin
+  Result := (Ord(ch) >= Ord('0')) and (Ord(ch) <= Ord('9'));
+end;
+
+class function TUtilities.IsUpper(ch: Char): Boolean;
+begin
+  Result := (Ord(ch) >= Ord('A')) and (Ord(ch) <= Ord('Z'));
+end;
+
+class function TUtilities.IsWhiteSpace(ch: Char): Boolean;
+begin
+  Result := (ch = ' ') or (Ord(ch) = $85) or (Ord(ch) = $A0) or
+    ((Ord(ch) >= $09) and (Ord(ch) <= $0D));
+end;
+
+class function TUtilities.LowCase(ch: Char): Char;
+begin
+  case ch of
+    'A' .. 'Z':
+      Result := Char((Int32(Ord(ch)) + Int32(Ord('a'))) - Int32(Ord('A')));
+  else
+    Result := ch;
+  end;
+end;
+
 class function TUtilities.TrimRight(const S: String;
   const trimchars: TSimpleBaseLibCharArray): String;
 var
@@ -50,7 +84,7 @@ begin
     System.Dec(I);
   end;
 {$IFDEF DELPHIXE3_UP}
-  LowPoint := System.Low(String);
+  LowPoint := System.Low(S);
 {$ELSE}
   LowPoint := 1;
 {$ENDIF DELPHIXE3_UP}

@@ -1,5 +1,5 @@
 # SimpleBaseLib4Pascal
-SimpleBaseLib4Pascal as the name implies is a simple to use Base Encoding Package for Delphi/FreePascal Compilers that provides at the moment support for encoding and decoding various bases such as Base16, Base32 (various variants), Base58 (various variants) and Base64 (various variants).
+SimpleBaseLib4Pascal as the name implies is a simple to use Base Encoding Package for Delphi/FreePascal Compilers that provides at the moment support for encoding and decoding various bases such as Base16, Base32 (various variants), Base58 (various variants) and Base64 (various variants) and Base85 (various variants).
 
 **Build Status**
 [![Build Status](https://travis-ci.com/Xor-el/SimpleBaseLib4Pascal.svg?branch=master)](https://travis-ci.com/Xor-el/SimpleBaseLib4Pascal)
@@ -7,12 +7,14 @@ SimpleBaseLib4Pascal as the name implies is a simple to use Base Encoding Packag
 **Supported Encodings:**
 
     Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford character substitution 
-    (or any other custom alphabets you might want to use)
+    and custom flavors.
     
-    Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
+    Base58: Bitcoin, Ripple and Flickr alphabets and custom flavors.
     
     Base64: Default, DefaultNoPadding, UrlEncoding, XmlEncoding, RegExEncoding and FileEncoding alphabets 
     (and any custom alphabet you might have)
+    
+    Base85: Ascii85 (Original), Z85 and custom flavors.
     
     Base16: An experimental hexadecimal encoder/decoder.
 

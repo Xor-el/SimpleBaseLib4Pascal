@@ -11,7 +11,7 @@
       <SearchPaths>
         <IncludeFiles Value="..\..\Include"/>
         <OtherUnitFiles Value="..\..\Bases;..\..\Interfaces;..\..\Utils"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <CodeGeneration>
         <Optimizations>
@@ -19,10 +19,10 @@
         </Optimizations>
       </CodeGeneration>
     </CompilerOptions>
-    <Description Value="SimpleBaseLib4Pascal as the name implies is a simple to use Base Encoding Package for Delphi/FreePascal Compilers that provides at the moment support for encoding and decoding various bases such as Base16, Base32 (various variants), Base58 (various variants) and Base64 (various variants)."/>
+    <Description Value="SimpleBaseLib4Pascal as the name implies is a simple to use Base Encoding Package for Delphi/FreePascal Compilers that provides at the moment support for encoding and decoding various bases such as Base16, Base32 (various variants), Base58 (various variants), Base64 (various variants) and Base85 (various variants)."/>
     <License Value="MIT License"/>
-    <Version Major="1" Minor="3"/>
-    <Files Count="21">
+    <Version Major="1" Minor="4"/>
+    <Files Count="26">
       <Item1>
         <Filename Value="..\..\Bases\SbpBase16.pas"/>
         <UnitName Value="SbpBase16"/>
@@ -96,17 +96,37 @@
         <UnitName Value="SbpBits"/>
       </Item18>
       <Item19>
-        <Filename Value="..\..\Utils\SbpPointerUtils.pas"/>
-        <UnitName Value="SbpPointerUtils"/>
-      </Item19>
-      <Item20>
         <Filename Value="..\..\Utils\SbpSimpleBaseLibTypes.pas"/>
         <UnitName Value="SbpSimpleBaseLibTypes"/>
-      </Item20>
-      <Item21>
+      </Item19>
+      <Item20>
         <Filename Value="..\..\Utils\SbpUtilities.pas"/>
         <UnitName Value="SbpUtilities"/>
+      </Item20>
+      <Item21>
+        <Filename Value="..\..\Bases\SbpBase85Alphabet.pas"/>
+        <UnitName Value="SbpBase85Alphabet"/>
       </Item21>
+      <Item22>
+        <Filename Value="..\..\Interfaces\SbpIBase85Alphabet.pas"/>
+        <UnitName Value="SbpIBase85Alphabet"/>
+      </Item22>
+      <Item23>
+        <Filename Value="..\..\Bases\SbpEncodingAlphabet.pas"/>
+        <UnitName Value="SbpEncodingAlphabet"/>
+      </Item23>
+      <Item24>
+        <Filename Value="..\..\Interfaces\SbpIEncodingAlphabet.pas"/>
+        <UnitName Value="SbpIEncodingAlphabet"/>
+      </Item24>
+      <Item25>
+        <Filename Value="..\..\Bases\SbpBase85.pas"/>
+        <UnitName Value="SbpBase85"/>
+      </Item25>
+      <Item26>
+        <Filename Value="..\..\Interfaces\SbpIBase85.pas"/>
+        <UnitName Value="SbpIBase85"/>
+      </Item26>
     </Files>
     <RequiredPkgs Count="1">
       <Item1>

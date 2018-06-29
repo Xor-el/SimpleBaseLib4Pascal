@@ -35,6 +35,7 @@ type
     procedure Test_Decode_Default_ReturnsExpectedValues;
     procedure Test_Encode_DefaultNoPadding_ReturnsExpectedValues;
     procedure Test_Decode_DefaultNoPadding_ReturnsExpectedValues;
+    procedure Test_Decode__Default_InvalidInput_ThrowsArgumentException;
     procedure Test_Dog_Food_Default;
     procedure Test_Dog_Food_DefaultNoPadding;
     procedure Test_Dog_Food_UrlEncoding;
@@ -98,6 +99,48 @@ begin
     result := TEncoding.ASCII.GetString(bytes);
     CheckEquals(FRawData[Idx], result,
       Format('Decoding Failed at Index %d', [Idx]));
+  end;
+end;
+
+procedure TTestBase64.Test_Decode__Default_InvalidInput_ThrowsArgumentException;
+begin
+  try
+
+    TBase64.Default.Decode('Zm8=Zm8=');
+    Fail('expected EArgumentSimpleBaseLibException');
+
+  except
+    on e: EArgumentSimpleBaseLibException do
+    begin
+      // pass
+    end;
+
+  end;
+
+  try
+
+    TBase64.Default.Decode('Z=m=');
+    Fail('expected EArgumentSimpleBaseLibException');
+
+  except
+    on e: EArgumentSimpleBaseLibException do
+    begin
+      // pass
+    end;
+
+  end;
+
+  try
+
+    TBase64.Default.Decode('@@@@');
+    Fail('expected EArgumentSimpleBaseLibException');
+
+  except
+    on e: EArgumentSimpleBaseLibException do
+    begin
+      // pass
+    end;
+
   end;
 end;
 

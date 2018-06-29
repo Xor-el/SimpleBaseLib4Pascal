@@ -20,7 +20,7 @@
           <PathDelim Value="\"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64"/>
+            <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64;..\src\Base85"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -62,7 +62,7 @@
         <PackageName Value="FCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="10">
       <Unit0>
         <Filename Value="SimpleBaseLibConsole.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -96,6 +96,14 @@
         <Filename Value="..\src\Base64\Base64Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="..\src\Base85\Ascii85Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\src\Base85\BaseZ85Tests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -106,7 +114,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64"/>
+      <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64;..\src\Base85"/>
     </SearchPaths>
   </CompilerOptions>
   <Debugging>

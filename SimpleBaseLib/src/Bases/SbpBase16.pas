@@ -6,8 +6,7 @@ interface
 
 uses
   SbpSimpleBaseLibTypes,
-  SbpBits,
-  SbpPointerUtils;
+  SbpBits;
 
 resourcestring
   SInvalidHexCharacter = 'Invalid hex character: %s';
@@ -20,15 +19,11 @@ type
   TBase16 = class sealed(TObject)
   strict private
   const
-    numberOffset = Byte(48);
-    upperNumberDiff = Byte(7);
-    lowerUpperDiff = Byte(32);
 
     lowerAlphabet: String = '0123456789abcdef';
     upperAlphabet: String = '0123456789ABCDEF';
 
-    class procedure ValidateHex(c: Char); static; inline;
-    class function GetHexByte(character: Int32): Int32; static; inline;
+    class function GetHexByte(c: Int32): Int32; static; inline;
 
     class function Encode(bytes: TSimpleBaseLibByteArray;
       const alphabet: String): String; static;
@@ -58,33 +53,35 @@ implementation
 
 { TBase16 }
 
-class function TBase16.GetHexByte(character: Int32): Int32;
+class function TBase16.GetHexByte(c: Int32): Int32;
 var
-  c: Int32;
+  n: Int32;
 begin
-  c := character - numberOffset;
-  if (c < 10) then // is number?
+  Result := -1;
+  n := c - Ord('0');
+  if (n < 0) then
   begin
-    result := c;
+    raise EArgumentSimpleBaseLibException.CreateResFmt(@SInvalidHexCharacter,
+      [Char(c)]);
+  end;
+  if (n < 10) then
+  begin
+    Result := n;
     Exit;
   end;
-  c := c - upperNumberDiff;
-  if (c < 16) then // is uppercase?
+  n := (c or Ord(' ')) - Ord('a') + 10;
+  if (n < 0) then
   begin
-    result := c;
+    raise EArgumentSimpleBaseLibException.CreateResFmt(@SInvalidHexCharacter,
+      [Char(c)]);
+  end;
+  if (n <= Ord('z') - Ord('a')) then
+  begin
+    Result := n;
     Exit;
   end;
-  result := c - lowerUpperDiff;
-end;
-
-class procedure TBase16.ValidateHex(c: Char);
-begin
-  if (not(((c >= '0') and (c <= '9')) or ((c >= 'A') and (c <= 'F')) or
-    ((c >= 'a') and (c <= 'f')))) then
-  begin
-    raise EInvalidOperationSimpleBaseLibException.CreateResFmt
-      (@SInvalidHexCharacter, [c]);
-  end;
+  raise EArgumentSimpleBaseLibException.CreateResFmt(@SInvalidHexCharacter,
+    [Char(c)]);
 end;
 
 class function TBase16.Decode(const text: String): TSimpleBaseLibByteArray;
@@ -94,11 +91,10 @@ var
   textPtr, pInput, pEnd: PChar;
   c1, c2: Char;
 begin
-  result := Nil;
+  Result := Nil;
   textLen := System.Length(text);
   if (textLen = 0) then
   begin
-    result := Nil;
     Exit;
   end;
   if (textLen and 1 <> 0) then
@@ -106,22 +102,20 @@ begin
     raise EArgumentSimpleBaseLibException.CreateResFmt
       (@SInvalidTextLength, [text]);
   end;
-  System.SetLength(result, textLen shr 1);
-  resultPtr := PByte(result);
+  System.SetLength(Result, textLen shr 1);
+  resultPtr := PByte(Result);
   textPtr := PChar(text);
 
   pResult := resultPtr;
   pInput := textPtr;
-  pEnd := TPointerUtils.Offset(pInput, textLen);
+  pEnd := pInput + textLen;
   while (pInput <> pEnd) do
   begin
     c1 := pInput^;
     System.Inc(pInput);
-    ValidateHex(c1);
     b1 := GetHexByte(Ord(c1));
     c2 := pInput^;
     System.Inc(pInput);
-    ValidateHex(c2);
     b2 := GetHexByte(Ord(c2));
     pResult^ := Byte(b1 shl 4 or b2);
     System.Inc(pResult);
@@ -135,22 +129,21 @@ var
   resultPtr, alphabetPtr, pResult, pAlphabet: PChar;
   bytesPtr, pInput, pEnd: PByte;
 begin
-  result := '';
+  Result := '';
   bytesLen := System.Length(bytes);
   if (bytesLen = 0) then
   begin
-    result := '';
     Exit;
   end;
-  result := StringOfChar(Char(0), bytesLen * 2);
-  resultPtr := PChar(result);
+  Result := StringOfChar(Char(0), bytesLen * 2);
+  resultPtr := PChar(Result);
   bytesPtr := PByte(bytes);
   alphabetPtr := PChar(alphabet);
 
   pResult := resultPtr;
   pAlphabet := alphabetPtr;
   pInput := bytesPtr;
-  pEnd := TPointerUtils.Offset(pInput, bytesLen);
+  pEnd := pInput + bytesLen;
   while (pInput <> pEnd) do
   begin
     b := pInput^;
@@ -165,12 +158,12 @@ end;
 
 class function TBase16.EncodeLower(bytes: TSimpleBaseLibByteArray): String;
 begin
-  result := Encode(bytes, lowerAlphabet);
+  Result := Encode(bytes, lowerAlphabet);
 end;
 
 class function TBase16.EncodeUpper(bytes: TSimpleBaseLibByteArray): String;
 begin
-  result := Encode(bytes, upperAlphabet);
+  Result := Encode(bytes, upperAlphabet);
 end;
 
 end.
