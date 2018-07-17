@@ -281,7 +281,7 @@ end;
 
 function TBase85.Encode(bytes: TSimpleBaseLibByteArray): String;
 var
-  bytesLen, maxOutputLen, fullLen, remainingBytes, n: Int32;
+  bytesLen, maxOutputLen, fullLen, remainingBytes, n, outputLen: Int32;
   input: Int64;
   t1, t2, t3, t4: UInt32;
   hasShortcut: Boolean;
@@ -333,19 +333,19 @@ begin
   if (remainingBytes > 0) then
   begin
     input := 0;
-    n := remainingBytes;
-    while n > 0 do
+    n := 0;
+    while n < remainingBytes do
     begin
-      input := input or UInt32(pInput^) shl (n shl 3);
+      input := input or (UInt32(pInput^) shl ((3 - n) shl 3));
       System.Inc(pInput);
-      System.Dec(n);
+      System.Inc(n);
     end;
 
-    WriteOutput(pOutput, table, input, stringBlockSize - (remainingBytes - 2),
-      hasShortcut);
+    WriteOutput(pOutput, table, input, remainingBytes + 1, hasShortcut);
   end;
 
-  System.SetString(result, outputPtr, Int32(pOutput - outputPtr));
+  outputLen := Int32(pOutput - outputPtr);
+  System.SetString(result, outputPtr, outputLen);
 end;
 
 class function TBase85.GetAscii85: IBase85;

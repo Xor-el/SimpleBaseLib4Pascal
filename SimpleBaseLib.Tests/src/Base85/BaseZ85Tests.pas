@@ -48,8 +48,15 @@ begin
   inherited;
   FBytes := TSimpleBaseLibMatrixByteArray.Create
     (TSimpleBaseLibByteArray.Create($86, $4F, $D2, $6F, $B5, $59, $F7, $5B),
-    TSimpleBaseLibByteArray.Create($11, $22, $33, $44));
-  FStrings := TSimpleBaseLibStringArray.Create('HelloWorld', '5H620');
+    TSimpleBaseLibByteArray.Create($11), TSimpleBaseLibByteArray.Create($11,
+    $22), TSimpleBaseLibByteArray.Create($11, $22, $33),
+    TSimpleBaseLibByteArray.Create($11, $22, $33, $44),
+    TSimpleBaseLibByteArray.Create($11, $22, $33, $44, $55),
+    TSimpleBaseLibByteArray.Create($00, $00, $00, $00),
+    TSimpleBaseLibByteArray.Create($20, $20, $20, $20));
+
+  FStrings := TSimpleBaseLibStringArray.Create('HelloWorld', '5D', '5H4',
+    '5H61', '5H620', '5H620rr', '00000', 'arR^H');
 end;
 
 procedure TTestBaseZ85.TearDown;

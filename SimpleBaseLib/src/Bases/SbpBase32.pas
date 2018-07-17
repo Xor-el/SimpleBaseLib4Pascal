@@ -157,11 +157,11 @@ end;
 function TBase32.Encode(bytes: TSimpleBaseLibByteArray;
   padding: Boolean): String;
 var
-  bytesLen, outputLen, bitsLeft, currentByte, outputPad, nextBits: Int32;
-  outputBuffer: TSimpleBaseLibCharArray;
-  table: string;
+  bytesLen, outputLen, bitsLeft, currentByte, outputPad, finalOutputLen,
+    nextBits: Int32;
+  output: string;
   inputPtr, pInput, pEnd: PByte;
-  outputPtr, pOutput, pOutputEnd: PChar;
+  outputPtr, tablePtr, pOutput, pOutputEnd: PChar;
 begin
   Result := '';
   bytesLen := System.Length(bytes);
@@ -173,19 +173,20 @@ begin
   // we are ok with slightly larger buffer since the output string will always
   // have the exact length of the output produced.
   outputLen := (((bytesLen - 1) div bitsPerChar) + 1) * bitsPerByte;
-  System.SetLength(outputBuffer, outputLen);
-  table := Falphabet.Value;
+  output := StringOfChar(Char(0), outputLen);
 
   inputPtr := PByte(bytes);
-  outputPtr := PChar(outputBuffer);
+  outputPtr := PChar(output);
+  tablePtr := PChar(Falphabet.Value);
 
   pOutput := outputPtr;
-  pOutputEnd := outputPtr + outputLen;
   pInput := inputPtr;
+  pEnd := pInput + bytesLen;
 
   bitsLeft := bitsPerByte;
   currentByte := Int32(Byte(pInput^));
-  pEnd := pInput + bytesLen;
+  outputPad := 0;
+
   while (pInput <> pEnd) do
   begin
 
@@ -193,7 +194,7 @@ begin
     begin
       bitsLeft := bitsLeft - bitsPerChar;
       outputPad := TBits.Asr32(currentByte, bitsLeft);
-      pOutput^ := table[outputPad + 1];
+      pOutput^ := tablePtr[outputPad];
       System.Inc(pOutput);
       currentByte := currentByte and ((1 shl bitsLeft) - 1);
     end;
@@ -207,18 +208,27 @@ begin
       outputPad := outputPad or TBits.Asr32(currentByte, bitsLeft);
       currentByte := currentByte and ((1 shl bitsLeft) - 1);
     end;
-    pOutput^ := table[outputPad + 1];
+    pOutput^ := tablePtr[outputPad];
     System.Inc(pOutput);
   end;
   if (padding) then
   begin
+    pOutputEnd := outputPtr + outputLen;
     while (pOutput <> pOutputEnd) do
     begin
       pOutput^ := paddingChar;
       System.Inc(pOutput);
     end;
   end;
-  System.SetString(Result, outputPtr, Int32(pOutput - outputPtr));
+
+  finalOutputLen := Int32(pOutput - outputPtr);
+  if (finalOutputLen = outputLen) then
+  begin
+    Result := output; // avoid unnecessary copying
+    Exit;
+  end;
+
+  System.SetString(Result, outputPtr, finalOutputLen);
 end;
 
 class function TBase32.GetCrockford: IBase32;
