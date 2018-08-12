@@ -123,6 +123,11 @@
       <IncludeFiles Value="$(ProjOutDir)"/>
       <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64;..\src\Base85"/>
     </SearchPaths>
+    <Linking>
+      <Debugging>
+        <UseHeaptrc Value="True"/>
+      </Debugging>
+    </Linking>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

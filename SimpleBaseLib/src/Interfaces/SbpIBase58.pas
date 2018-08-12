@@ -15,7 +15,7 @@ type
     /// </summary>
     /// <param name="bytes">Bytes to encode</param>
     /// <returns>Encoded string</returns>
-    function Encode(bytes: TSimpleBaseLibByteArray): String;
+    function Encode(const bytes: TSimpleBaseLibByteArray): String;
     /// <summary>
     /// Decode a Base58 representation
     /// </summary>

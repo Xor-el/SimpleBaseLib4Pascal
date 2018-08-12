@@ -48,7 +48,7 @@ type
     /// </summary>
     /// <param name="bytes">Buffer to be encoded</param>
     /// <returns>Encoded string</returns>
-    function Encode(bytes: TSimpleBaseLibByteArray): String;
+    function Encode(const bytes: TSimpleBaseLibByteArray): String;
     /// <summary>
     /// Decode a Base64 encoded string into a byte array.
     /// </summary>
@@ -223,7 +223,7 @@ begin
   inherited Destroy;
 end;
 
-function TBase64.Encode(bytes: TSimpleBaseLibByteArray): String;
+function TBase64.Encode(const bytes: TSimpleBaseLibByteArray): String;
 var
   bytesLen, padding, blocks, BufferLen, i: Int32;
   b1, b2, b3: Byte;

@@ -3,7 +3,6 @@ unit ExtendedHexTests;
 interface
 
 uses
-  Classes,
   SysUtils,
 {$IFDEF FPC}
   fpcunit,

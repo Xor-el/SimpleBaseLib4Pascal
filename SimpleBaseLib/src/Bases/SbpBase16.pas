@@ -25,7 +25,7 @@ type
 
     class function GetHexByte(c: Int32): Int32; static; inline;
 
-    class function Encode(bytes: TSimpleBaseLibByteArray;
+    class function Encode(const bytes: TSimpleBaseLibByteArray;
       const alphabet: String): String; static;
 
   public
@@ -34,7 +34,7 @@ type
     /// </summary>
     /// <param name="bytes">Bytes to encode</param>
     /// <returns>Base16 string</returns>
-    class function EncodeUpper(bytes: TSimpleBaseLibByteArray): String;
+    class function EncodeUpper(const bytes: TSimpleBaseLibByteArray): String;
       static; inline;
 
     /// <summary>
@@ -42,7 +42,7 @@ type
     /// </summary>
     /// <param name="bytes">Bytes to encode</param>
     /// <returns>Base16 string</returns>
-    class function EncodeLower(bytes: TSimpleBaseLibByteArray): String;
+    class function EncodeLower(const bytes: TSimpleBaseLibByteArray): String;
       static; inline;
 
     class function Decode(const text: String): TSimpleBaseLibByteArray; static;
@@ -122,7 +122,7 @@ begin
   end;
 end;
 
-class function TBase16.Encode(bytes: TSimpleBaseLibByteArray;
+class function TBase16.Encode(const bytes: TSimpleBaseLibByteArray;
   const alphabet: String): String;
 var
   bytesLen, b: Int32;
@@ -156,12 +156,14 @@ begin
 
 end;
 
-class function TBase16.EncodeLower(bytes: TSimpleBaseLibByteArray): String;
+class function TBase16.EncodeLower(const bytes
+  : TSimpleBaseLibByteArray): String;
 begin
   Result := Encode(bytes, lowerAlphabet);
 end;
 
-class function TBase16.EncodeUpper(bytes: TSimpleBaseLibByteArray): String;
+class function TBase16.EncodeUpper(const bytes
+  : TSimpleBaseLibByteArray): String;
 begin
   Result := Encode(bytes, upperAlphabet);
 end;

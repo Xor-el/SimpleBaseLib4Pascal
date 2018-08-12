@@ -3,7 +3,6 @@ unit Rfc4648Tests;
 interface
 
 uses
-  Classes,
   SysUtils,
 {$IFDEF FPC}
   fpcunit,

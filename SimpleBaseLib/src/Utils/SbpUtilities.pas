@@ -5,6 +5,7 @@ unit SbpUtilities;
 interface
 
 uses
+  SysUtils,
   SbpSimpleBaseLibTypes;
 
 type
@@ -20,6 +21,9 @@ type
     class function TrimRight(const S: String;
       const trimchars: TSimpleBaseLibCharArray): String; static; inline;
 
+    class function AreArraysEqual(const A, B: TSimpleBaseLibByteArray)
+      : Boolean; static;
+
     class function LowCase(ch: Char): Char; static; inline;
 
     class function IsUpper(ch: Char): Boolean; static; inline;
@@ -31,6 +35,18 @@ type
   end;
 
 implementation
+
+class function TUtilities.AreArraysEqual(const A,
+  B: TSimpleBaseLibByteArray): Boolean;
+begin
+  if System.Length(A) <> System.Length(B) then
+  begin
+    Result := false;
+    Exit;
+  end;
+
+  Result := CompareMem(A, B, System.Length(A) * System.SizeOf(Byte));
+end;
 
 class function TUtilities.HaveChar(c: Char;
   const list: TSimpleBaseLibCharArray): Boolean;

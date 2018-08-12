@@ -3,7 +3,6 @@ unit Base64Tests;
 interface
 
 uses
-  Classes,
   SysUtils,
 {$IFDEF FPC}
   fpcunit,
@@ -152,8 +151,8 @@ begin
   for Idx := System.Low(FRawData) to System.High(FRawData) do
   begin
     bytes := TEncoding.ASCII.GetBytes(FRawData[Idx]);
-    CheckTrue(CompareMem(PByte(TBase64.Default.Decode(TBase64.
-      Default.Encode(bytes))), PByte(bytes), System.Length(bytes)),
+    CheckTrue(TUtilities.AreArraysEqual(TBase64.Default.Decode(TBase64.
+      Default.Encode(bytes)), bytes),
       Format('Encoding & Decoding Failed at Index %d', [Idx]));
   end;
 end;
@@ -166,9 +165,8 @@ begin
   for Idx := System.Low(FRawData) to System.High(FRawData) do
   begin
     bytes := TEncoding.ASCII.GetBytes(FRawData[Idx]);
-    CheckTrue(CompareMem(PByte(TBase64.DefaultNoPadding.Decode
-      (TBase64.DefaultNoPadding.Encode(bytes))), PByte(bytes),
-      System.Length(bytes)),
+    CheckTrue(TUtilities.AreArraysEqual(TBase64.DefaultNoPadding.Decode
+      (TBase64.DefaultNoPadding.Encode(bytes)), bytes),
       Format('Encoding & Decoding Failed at Index %d', [Idx]));
   end;
 end;
@@ -181,9 +179,9 @@ begin
   for Idx := System.Low(FRawData) to System.High(FRawData) do
   begin
     bytes := TEncoding.ASCII.GetBytes(FRawData[Idx]);
-    CheckTrue(CompareMem(PByte(TBase64.FileEncoding.Decode
-      (TBase64.FileEncoding.Encode(bytes))), PByte(bytes), System.Length(bytes)
-      ), Format('Encoding & Decoding Failed at Index %d', [Idx]));
+    CheckTrue(TUtilities.AreArraysEqual(TBase64.FileEncoding.Decode
+      (TBase64.FileEncoding.Encode(bytes)), bytes),
+      Format('Encoding & Decoding Failed at Index %d', [Idx]));
   end;
 end;
 
@@ -195,9 +193,9 @@ begin
   for Idx := System.Low(FRawData) to System.High(FRawData) do
   begin
     bytes := TEncoding.ASCII.GetBytes(FRawData[Idx]);
-    CheckTrue(CompareMem(PByte(TBase64.RegExEncoding.Decode
-      (TBase64.RegExEncoding.Encode(bytes))), PByte(bytes), System.Length(bytes)
-      ), Format('Encoding & Decoding Failed at Index %d', [Idx]));
+    CheckTrue(TUtilities.AreArraysEqual(TBase64.RegExEncoding.Decode
+      (TBase64.RegExEncoding.Encode(bytes)), bytes),
+      Format('Encoding & Decoding Failed at Index %d', [Idx]));
   end;
 end;
 
@@ -209,8 +207,8 @@ begin
   for Idx := System.Low(FRawData) to System.High(FRawData) do
   begin
     bytes := TEncoding.ASCII.GetBytes(FRawData[Idx]);
-    CheckTrue(CompareMem(PByte(TBase64.UrlEncoding.Decode
-      (TBase64.UrlEncoding.Encode(bytes))), PByte(bytes), System.Length(bytes)),
+    CheckTrue(TUtilities.AreArraysEqual(TBase64.UrlEncoding.Decode
+      (TBase64.UrlEncoding.Encode(bytes)), bytes),
       Format('Encoding & Decoding Failed at Index %d', [Idx]));
   end;
 end;
@@ -223,8 +221,8 @@ begin
   for Idx := System.Low(FRawData) to System.High(FRawData) do
   begin
     bytes := TEncoding.ASCII.GetBytes(FRawData[Idx]);
-    CheckTrue(CompareMem(PByte(TBase64.XmlEncoding.Decode
-      (TBase64.XmlEncoding.Encode(bytes))), PByte(bytes), System.Length(bytes)),
+    CheckTrue(TUtilities.AreArraysEqual(TBase64.XmlEncoding.Decode
+      (TBase64.XmlEncoding.Encode(bytes)), bytes),
       Format('Encoding & Decoding Failed at Index %d', [Idx]));
   end;
 end;

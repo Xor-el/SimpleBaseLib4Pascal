@@ -45,7 +45,8 @@ type
     /// <param name="bytes">Buffer to be encoded</param>
     /// <param name="padding">Append padding characters in the output</param>
     /// <returns>Encoded string</returns>
-    function Encode(bytes: TSimpleBaseLibByteArray; padding: Boolean): String;
+    function Encode(const bytes: TSimpleBaseLibByteArray;
+      padding: Boolean): String;
     /// <summary>
     /// Decode a Base32 encoded string into a byte array.
     /// </summary>
@@ -154,7 +155,7 @@ begin
   inherited Destroy;
 end;
 
-function TBase32.Encode(bytes: TSimpleBaseLibByteArray;
+function TBase32.Encode(const bytes: TSimpleBaseLibByteArray;
   padding: Boolean): String;
 var
   bytesLen, outputLen, bitsLeft, currentByte, outputPad, finalOutputLen,

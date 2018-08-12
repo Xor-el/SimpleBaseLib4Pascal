@@ -39,7 +39,7 @@ type
     /// </summary>
     /// <param name="bytes">Bytes to encode</param>
     /// <returns>Encoded string</returns>
-    function Encode(bytes: TSimpleBaseLibByteArray): String;
+    function Encode(const bytes: TSimpleBaseLibByteArray): String;
     /// <summary>
     /// Decode a Base58 representation
     /// </summary>
@@ -169,7 +169,7 @@ begin
   inherited Destroy;
 end;
 
-function TBase58.Encode(bytes: TSimpleBaseLibByteArray): String;
+function TBase58.Encode(const bytes: TSimpleBaseLibByteArray): String;
 const
   growthPercentage = Int32(138);
 var

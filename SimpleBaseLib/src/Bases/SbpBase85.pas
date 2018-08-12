@@ -59,7 +59,7 @@ type
     /// <param name="bytes">Buffer to be encoded</param>
     /// <param name="padding">Append padding characters in the output</param>
     /// <returns>Encoded string</returns>
-    function Encode(bytes: TSimpleBaseLibByteArray): String;
+    function Encode(const bytes: TSimpleBaseLibByteArray): String;
     /// <summary>
     /// Decode a Base85 encoded string into a byte array.
     /// </summary>
@@ -279,7 +279,7 @@ begin
   inherited Destroy;
 end;
 
-function TBase85.Encode(bytes: TSimpleBaseLibByteArray): String;
+function TBase85.Encode(const bytes: TSimpleBaseLibByteArray): String;
 var
   bytesLen, maxOutputLen, fullLen, remainingBytes, n, outputLen: Int32;
   input: Int64;

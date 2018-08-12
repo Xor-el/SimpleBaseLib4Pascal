@@ -3,7 +3,6 @@ unit Base58AlphabetTests;
 interface
 
 uses
-  Classes,
   SysUtils,
 {$IFDEF FPC}
   fpcunit,

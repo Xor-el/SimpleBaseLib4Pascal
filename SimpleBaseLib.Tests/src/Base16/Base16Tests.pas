@@ -15,6 +15,7 @@ uses
 {$ELSE}
   TestFramework,
 {$ENDIF FPC}
+  SbpUtilities,
   SbpSimpleBaseLibTypes,
   SbpBase16,
   SbpBase58;
@@ -134,8 +135,7 @@ begin
   for Idx := System.Low(FtestDataBytes) to System.High(FtestDataBytes) do
   begin
     result := TBase16.Decode(FtestDataString[Idx]);
-    CheckTrue(CompareMem(PByte(FtestDataBytes[Idx]), PByte(result),
-      System.Length(FtestDataBytes[Idx])),
+    CheckTrue(TUtilities.AreArraysEqual(FtestDataBytes[Idx], result),
       Format('Decode_LowerCase Failed at Index %d', [Idx]));
   end;
 end;

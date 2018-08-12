@@ -16,7 +16,7 @@ type
     /// </summary>
     /// <param name="bytes">Buffer to be encoded</param>
     /// <returns>Encoded string</returns>
-    function Encode(bytes: TSimpleBaseLibByteArray): String;
+    function Encode(const bytes: TSimpleBaseLibByteArray): String;
     /// <summary>
     /// Decode a Base64 encoded string into a byte array.
     /// </summary>

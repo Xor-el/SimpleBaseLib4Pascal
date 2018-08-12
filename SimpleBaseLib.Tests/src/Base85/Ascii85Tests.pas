@@ -14,6 +14,7 @@ uses
 {$ELSE}
   TestFramework,
 {$ENDIF FPC}
+  SbpUtilities,
   SbpSimpleBaseLibTypes,
   SbpBase85;
 
@@ -78,7 +79,7 @@ begin
   begin
     bytes := FBytes[Idx];
     result := TBase85.Ascii85.Decode(FStrings[Idx]);
-    CheckTrue(CompareMem(PByte(result), PByte(bytes), System.Length(bytes)),
+    CheckTrue(TUtilities.AreArraysEqual(result, bytes),
       Format('Decoding Failed at Index %d', [Idx]));
   end;
 end;

@@ -3,7 +3,6 @@ unit CrockfordTests;
 interface
 
 uses
-  Classes,
   SysUtils,
 {$IFDEF FPC}
   fpcunit,
@@ -11,6 +10,7 @@ uses
 {$ELSE}
   TestFramework,
 {$ENDIF FPC}
+  SbpUtilities,
   SbpSimpleBaseLibTypes,
   SbpBase32;
 
@@ -73,8 +73,7 @@ begin
   begin
     expectedResult := TBase32.Crockford.Decode(FSpecialRaw[Idx]);
     result := TBase32.Crockford.Decode(FSpecialEncoded[Idx]);
-    CheckTrue(CompareMem(PByte(expectedResult), PByte(result),
-      System.Length(expectedResult)),
+    CheckTrue(TUtilities.AreArraysEqual(expectedResult, result),
       Format('Decoding Failed at Index %d', [Idx]));
   end;
 end;
