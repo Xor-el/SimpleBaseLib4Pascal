@@ -1,4 +1,4 @@
-# SimpleBaseLib4Pascal
+# SimpleBaseLib4Pascal [![License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/Xor-el/SimpleBaseLib4Pascal/blob/master/LICENSE)
 SimpleBaseLib4Pascal as the name implies is a simple to use Base Encoding Package for Delphi/FreePascal Compilers that provides at the moment support for encoding and decoding various bases such as Base16, Base32 (various variants), Base58 (various variants) and Base64 (various variants) and Base85 (various variants).
 
 **Build Status**
