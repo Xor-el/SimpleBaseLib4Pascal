@@ -24,26 +24,33 @@ type
     /// <param name="Size">Size of the Array to Reverse.</param>
 
     class procedure ReverseByteArray(Source, Dest: Pointer;
-      Size: int64); static;
+      Size: Int64); static;
 
     /// <summary>
     /// Calculates Arithmetic shift right.
     /// </summary>
-    /// <param name="value">Int32 value to compute 'Asr' on.</param>
-    /// <param name="ShiftBits">Integer, number of bits to shift value to.</param>
+    /// <param name="AValue">Int32 value to compute 'Asr' on.</param>
+    /// <param name="AShiftBits">Byte, number of bits to shift value to.</param>
     /// <returns>Shifted value.</returns>
+    /// <remarks>
+    /// Emulated Implementation was gotten from FreePascal sources
+    /// </remarks>
 
-    class function Asr32(Value: Int32; ShiftBits: Int32): Int32; static; inline;
+    class function Asr32(AValue: Int32; AShiftBits: Byte): Int32;
+      static; inline;
 
     /// <summary>
     /// Calculates Arithmetic shift right.
     /// </summary>
-    /// <param name="value">Int64 value to compute 'Asr' on.</param>
-    /// <param name="ShiftBits">Integer, number of bits to shift value to.</param>
+    /// <param name="AValue">Int64 value to compute 'Asr' on.</param>
+    /// <param name="AShiftBits">Byte, number of bits to shift value to.</param>
     /// <returns>Shifted value.</returns>
-    /// Implementation was found here <see cref="https://github.com/Spelt/ZXing.Delphi/blob/master/Lib/Classes/Common/MathUtils.pas" />
+    /// <remarks>
+    /// Emulated Implementation was gotten from FreePascal sources
+    /// </remarks>
 
-    class function Asr64(Value: int64; ShiftBits: Int32): int64; static; inline;
+    class function Asr64(AValue: Int64; AShiftBits: Byte): Int64;
+      static; inline;
 
     class function RotateLeft32(a_value: UInt32; a_n: Int32): UInt32; overload;
       static; inline;
@@ -60,7 +67,7 @@ implementation
 
 { TBits }
 
-class procedure TBits.ReverseByteArray(Source, Dest: Pointer; Size: int64);
+class procedure TBits.ReverseByteArray(Source, Dest: Pointer; Size: Int64);
 var
   ptr_src, ptr_dest: PByte;
 begin
@@ -139,42 +146,28 @@ begin
 {$ENDIF FPC}
 end;
 
-class function TBits.Asr32(Value: Int32; ShiftBits: Int32): Int32;
+class function TBits.Asr32(AValue: Int32; AShiftBits: Byte): Int32;
 
 begin
 {$IFDEF FPC}
-  Result := SarLongInt(Value, ShiftBits);
+  Result := SarLongInt(AValue, AShiftBits);
 {$ELSE}
-  Result := Value shr ShiftBits;
-  if (Value and $80000000) > 0 then
-  begin
-    // if you don't want to cast ($FFFFFFFF) to an Int32,
-    // simply replace it with (-1) to avoid range check error.
-    Result := Result or (Int32($FFFFFFFF) shl (32 - ShiftBits));
-  end;
-
-  /// ++++++ Alternative Variant ++++++ ///
-
-  // Result := (Value shr ShiftBits) or ((0 - ((Value shr 31) and 1)) shl
-  // (32 - ShiftBits));
+  Result := Int32(UInt32(UInt32(UInt32(AValue) shr (AShiftBits and 31)) or
+    (UInt32(Int32(UInt32(0 - UInt32(UInt32(AValue) shr 31)) and
+    UInt32(Int32(0 - (Ord((AShiftBits and 31) <> 0) { and 1 } )))))
+    shl (32 - (AShiftBits and 31)))));
 {$ENDIF FPC}
 end;
 
-class function TBits.Asr64(Value: int64; ShiftBits: Int32): int64;
+class function TBits.Asr64(AValue: Int64; AShiftBits: Byte): Int64;
 begin
 {$IFDEF FPC}
-  Result := SarInt64(Value, ShiftBits);
+  Result := SarInt64(AValue, AShiftBits);
 {$ELSE}
-  Result := Value shr ShiftBits;
-  if (Value and $8000000000000000) > 0 then
-  begin
-    Result := Result or ($FFFFFFFFFFFFFFFF shl (64 - ShiftBits));
-  end;
-
-  /// ++++++ Alternative Variant ++++++ ///
-
-  // Result := (Value shr ShiftBits) or
-  // ((0 - ((Value shr 63) and 1)) shl (64 - ShiftBits));
+  Result := Int64(UInt64(UInt64(UInt64(AValue) shr (AShiftBits and 63)) or
+    (UInt64(Int64(UInt64(0 - UInt64(UInt64(AValue) shr 63)) and
+    UInt64(Int64(0 - (Ord((AShiftBits and 63) <> 0) { and 1 } )))))
+    shl (64 - (AShiftBits and 63)))));
 {$ENDIF FPC}
 end;
 
