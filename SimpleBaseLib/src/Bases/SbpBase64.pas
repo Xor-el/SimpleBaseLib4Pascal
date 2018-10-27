@@ -29,9 +29,6 @@ type
   var
     Falphabet: IBase64Alphabet;
 
-    function ProcessDecode(var pInput: PChar; pEnd: PChar; pDecodeTable: PByte;
-      PaddingCount: Int32): Byte; inline;
-
     class function GetDefault: IBase64; static; inline;
     class function GetDefaultNoPadding: IBase64; static; inline;
     class function GetFileEncoding: IBase64; static; inline;
@@ -72,36 +69,6 @@ implementation
 
 { TBase64 }
 
-function TBase64.ProcessDecode(var pInput: PChar; pEnd: PChar;
-  pDecodeTable: PByte; PaddingCount: Int32): Byte;
-var
-  c: Char;
-  b: Int32;
-begin
-  Result := 0;
-  if pInput >= pEnd then
-  begin
-    Exit;
-  end;
-
-  c := pInput^;
-
-  b := pDecodeTable[Ord(c)] - 1;
-  if (b < 0) then
-  begin
-    if ((pInput + PaddingCount) <> pEnd) then
-    begin
-      Falphabet.InvalidCharacter(c);
-    end;
-  end
-  else
-  begin
-    Result := Byte(b);
-    System.Inc(pInput);
-  end;
-
-end;
-
 class constructor TBase64.Base64;
 begin
   FDefault := TBase64.Create(TBase64Alphabet.Default as IBase64Alphabet);
@@ -129,6 +96,37 @@ begin
 end;
 
 function TBase64.Decode(const text: String): TSimpleBaseLibByteArray;
+
+  function ProcessDecode(var pInput: PChar; pEnd: PChar; pDecodeTable: PByte;
+    PaddingCount: Int32): Byte;
+  var
+    c: Char;
+    b: Int32;
+  begin
+    Result := 0;
+    if pInput >= pEnd then
+    begin
+      Exit;
+    end;
+
+    c := pInput^;
+
+    b := pDecodeTable[Ord(c)] - 1;
+    if (b < 0) then
+    begin
+      if ((pInput + PaddingCount) <> pEnd) then
+      begin
+        Falphabet.InvalidCharacter(c);
+      end;
+    end
+    else
+    begin
+      Result := Byte(b);
+      System.Inc(pInput);
+    end;
+
+  end;
+
 var
   textLen, blocks, padding, i, bytes: Int32;
   temp1, temp2: Byte;
