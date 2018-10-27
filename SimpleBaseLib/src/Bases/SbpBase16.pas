@@ -23,8 +23,6 @@ type
     lowerAlphabet: String = '0123456789abcdef';
     upperAlphabet: String = '0123456789ABCDEF';
 
-    class function GetHexByte(c: Int32): Int32; static; inline;
-
     class function Encode(const bytes: TSimpleBaseLibByteArray;
       const alphabet: String): String; static;
 
@@ -53,38 +51,27 @@ implementation
 
 { TBase16 }
 
-class function TBase16.GetHexByte(c: Int32): Int32;
-var
-  n: Int32;
-begin
-  Result := -1;
-  n := c - Ord('0');
-  if (n < 0) then
-  begin
-    raise EArgumentSimpleBaseLibException.CreateResFmt(@SInvalidHexCharacter,
-      [Char(c)]);
-  end;
-  if (n < 10) then
-  begin
-    Result := n;
-    Exit;
-  end;
-  n := (c or Ord(' ')) - Ord('a') + 10;
-  if (n < 0) then
-  begin
-    raise EArgumentSimpleBaseLibException.CreateResFmt(@SInvalidHexCharacter,
-      [Char(c)]);
-  end;
-  if (n <= Ord('z') - Ord('a')) then
-  begin
-    Result := n;
-    Exit;
-  end;
-  raise EArgumentSimpleBaseLibException.CreateResFmt(@SInvalidHexCharacter,
-    [Char(c)]);
-end;
-
 class function TBase16.Decode(const text: String): TSimpleBaseLibByteArray;
+
+  function GetHexByte(c: Int32): Int32; inline;
+  begin
+    Result := -1;
+
+    case c of
+      Ord('0') .. Ord('9'):
+        Result := c - Ord('0');
+      Ord('A') .. Ord('F'):
+        Result := c - Ord('A') + 10;
+      Ord('a') .. Ord('f'):
+        Result := c - Ord('a') + 10;
+    else
+      begin
+        raise EArgumentSimpleBaseLibException.CreateResFmt
+          (@SInvalidHexCharacter, [Char(c)]);
+      end;
+    end;
+  end;
+
 var
   textLen, b1, b2: Int32;
   resultPtr, pResult: PByte;
