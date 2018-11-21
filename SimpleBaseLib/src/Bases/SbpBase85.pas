@@ -31,12 +31,6 @@ type
 
       FZ85, FAscii85: IBase85;
 
-  var
-    Falphabet: IBase85Alphabet;
-
-    procedure WriteOutput(var pOutput: PChar; const table: String; input: Int64;
-      stringLength: Int32; hasShortcut: Boolean); inline;
-
     class procedure WriteDecodedValue(var pOutput: PByte; value: Int64;
       numBytesToWrite: Int32); static; inline;
 
@@ -50,6 +44,20 @@ type
     class function GetAscii85: IBase85; static; inline;
 
     class constructor Base85();
+
+  var
+    Falphabet: IBase85Alphabet;
+
+    /// <summary>
+    /// Decode a Base85 encoded string into a byte array.
+    /// </summary>
+    /// <param name="text">Encoded Base85 characters</param>
+    /// <returns>Decoded byte array</returns>
+    function Decode(const text: TSimpleBaseLibCharArray)
+      : TSimpleBaseLibByteArray; overload;
+
+    procedure WriteOutput(var pOutput: PChar; const table: String; input: Int64;
+      stringLength: Int32; hasShortcut: Boolean); inline;
 
   public
 
@@ -65,7 +73,7 @@ type
     /// </summary>
     /// <param name="text">Encoded Base85 string</param>
     /// <returns>Decoded byte array</returns>
-    function Decode(const text: String): TSimpleBaseLibByteArray;
+    function Decode(const text: String): TSimpleBaseLibByteArray; overload;
     /// <summary>
     /// ZeroMQ Z85 Alphabet
     /// </summary>
@@ -177,7 +185,8 @@ begin
   Falphabet := alphabet;
 end;
 
-function TBase85.Decode(const text: String): TSimpleBaseLibByteArray;
+function TBase85.Decode(const text: TSimpleBaseLibCharArray)
+  : TSimpleBaseLibByteArray;
 var
   textLen, decodeBufferLen, blockIndex, x, i, actualOutputLength: Int32;
   value: Int64;
@@ -269,9 +278,14 @@ begin
   resultPtr := PByte(result);
   // we are bound to allocate a new buffer since we don't know
   // the correct output size at the beginning. that incurs an overhead of
-  // text.Length x 4 bytes during processing. this API isn't designed to decode
+  // System.Length(text) x 4 bytes during processing. this API isn't designed to decode
   // megabytes of data anyways.
   System.Move(decodeBufferPtr^, resultPtr^, actualOutputLength);
+end;
+
+function TBase85.Decode(const text: String): TSimpleBaseLibByteArray;
+begin
+  result := Decode(TUtilities.StringToCharArray(text));
 end;
 
 destructor TBase85.Destroy;

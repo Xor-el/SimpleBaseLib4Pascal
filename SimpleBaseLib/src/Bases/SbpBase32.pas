@@ -32,10 +32,18 @@ type
     class function GetRfc4648: IBase32; static; inline;
     class function GetExtendedHex: IBase32; static; inline;
 
+    class constructor Base32();
+
   var
     Falphabet: IBase32Alphabet;
 
-    class constructor Base32();
+    /// <summary>
+    /// Decode a Base32 encoded string into a byte array.
+    /// </summary>
+    /// <param name="text">Encoded Base32 characters</param>
+    /// <returns>Decoded byte array</returns>
+    function Decode(const text: TSimpleBaseLibCharArray)
+      : TSimpleBaseLibByteArray; overload;
 
   public
 
@@ -52,7 +60,7 @@ type
     /// </summary>
     /// <param name="text">Encoded Base32 string</param>
     /// <returns>Decoded byte array</returns>
-    function Decode(const text: String): TSimpleBaseLibByteArray;
+    function Decode(const text: String): TSimpleBaseLibByteArray; overload;
     /// <summary>
     /// Douglas Crockford's Base32 flavor with substitution characters.
     /// </summary>
@@ -95,19 +103,28 @@ begin
   Falphabet := alphabet;
 end;
 
-function TBase32.Decode(const text: String): TSimpleBaseLibByteArray;
+function TBase32.Decode(const text: TSimpleBaseLibCharArray)
+  : TSimpleBaseLibByteArray;
 var
   textLen, bitsLeft, outputLen, outputPad, b, shiftBits: Int32;
   table: TSimpleBaseLibByteArray;
   resultPtr, pResult: PByte;
   inputPtr, pInput, pEnd: PChar;
   c: Char;
-  trimmed: String;
 begin
   Result := Nil;
-  trimmed := TUtilities.TrimRight(text,
-    TSimpleBaseLibCharArray.Create(paddingChar));
-  textLen := System.Length(trimmed);
+  textLen := System.Length(text);
+  // ignore trailing padding chars and whitespace
+  while (textLen > 0) do
+  begin
+    c := text[textLen - 1];
+    if ((c <> paddingChar) and (not TUtilities.IsWhiteSpace(text[textLen - 1])))
+    then
+    begin
+      break;
+    end;
+    System.Dec(textLen);
+  end;
   if (textLen = 0) then
   begin
     Exit;
@@ -120,7 +137,7 @@ begin
   table := Falphabet.ReverseLookupTable;
 
   resultPtr := PByte(Result);
-  inputPtr := PChar(trimmed);
+  inputPtr := PChar(text);
 
   pResult := resultPtr;
   pInput := inputPtr;
@@ -148,6 +165,11 @@ begin
     bitsLeft := bitsPerByte - shiftBits;
     outputPad := b shl bitsLeft;
   end;
+end;
+
+function TBase32.Decode(const text: String): TSimpleBaseLibByteArray;
+begin
+  Result := Decode(TUtilities.StringToCharArray(text));
 end;
 
 destructor TBase32.Destroy;

@@ -6,6 +6,7 @@ interface
 
 uses
   SbpBits,
+  SbpUtilities,
   SbpSimpleBaseLibTypes,
   SbpBase64Alphabet,
   SbpIBase64Alphabet,
@@ -26,9 +27,6 @@ type
       FDefault, FDefaultNoPadding, FUrlEncoding, FXmlEncoding, FRegExEncoding,
       FFileEncoding: IBase64;
 
-  var
-    Falphabet: IBase64Alphabet;
-
     class function GetDefault: IBase64; static; inline;
     class function GetDefaultNoPadding: IBase64; static; inline;
     class function GetFileEncoding: IBase64; static; inline;
@@ -37,6 +35,17 @@ type
     class function GetXmlEncoding: IBase64; static; inline;
 
     class constructor Base64();
+
+  var
+    Falphabet: IBase64Alphabet;
+
+    /// <summary>
+    /// Decode a Base64 encoded string into a byte array.
+    /// </summary>
+    /// <param name="text">Encoded Base64 characters</param>
+    /// <returns>Decoded byte array</returns>
+    function Decode(const text: TSimpleBaseLibCharArray)
+      : TSimpleBaseLibByteArray; overload;
 
   public
 
@@ -51,7 +60,7 @@ type
     /// </summary>
     /// <param name="text">Encoded Base64 string</param>
     /// <returns>Decoded byte array</returns>
-    function Decode(const text: String): TSimpleBaseLibByteArray;
+    function Decode(const text: String): TSimpleBaseLibByteArray; overload;
 
     class property Default: IBase64 read GetDefault;
     class property DefaultNoPadding: IBase64 read GetDefaultNoPadding;
@@ -95,7 +104,8 @@ begin
   Falphabet := alphabet;
 end;
 
-function TBase64.Decode(const text: String): TSimpleBaseLibByteArray;
+function TBase64.Decode(const text: TSimpleBaseLibCharArray)
+  : TSimpleBaseLibByteArray;
 
   function ProcessDecode(var pInput: PChar; pEnd: PChar; pDecodeTable: PByte;
     PaddingCount: Int32): Byte;
@@ -214,6 +224,11 @@ begin
     System.Inc(resultPtr);
   end;
 
+end;
+
+function TBase64.Decode(const text: String): TSimpleBaseLibByteArray;
+begin
+  Result := Decode(TUtilities.StringToCharArray(text));
 end;
 
 destructor TBase64.Destroy;

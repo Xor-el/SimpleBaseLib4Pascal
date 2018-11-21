@@ -39,6 +39,7 @@ type
     procedure Test_Encode_Empty_Buffer_Returns_Empty_String;
     procedure Test_Encode_UnevenBuffer_DoesNotThrowArgumentException;
     procedure Test_Decode_Empty_String_Returns_Empty_Buffer;
+    procedure Test_Decode_Whitespace_IsIgnored;
     procedure Test_Decode_TestVectors_ShouldDecodeCorrectly;
     procedure Test_Decode_UnevenText_DoesNotThrowArgumentException;
 
@@ -94,6 +95,29 @@ begin
   except
     Fail('UnevenText Decode Should Not Throw Exception');
 
+  end;
+end;
+
+procedure TTestAscii85.Test_Decode_Whitespace_IsIgnored;
+var
+  actualInput, input: String;
+  i, j: Int32;
+  result, expectedOutput: TBytes;
+begin
+  actualInput := '';
+
+  for i := System.Low(FStrings) to System.Low(FStrings) do
+  begin
+    input := FStrings[i];
+    expectedOutput := FBytes[i];
+    for j := 1 to System.Length(input) do
+    begin
+      actualInput := actualInput + '  ' + input[j];
+    end;
+    actualInput := actualInput + ' ';
+    result := TBase85.Ascii85.Decode(actualInput);
+    CheckTrue(TUtilities.AreArraysEqual(expectedOutput, result),
+      Format('Error Decoding "%s"', [actualInput]));
   end;
 end;
 

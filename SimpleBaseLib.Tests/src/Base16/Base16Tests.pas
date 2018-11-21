@@ -96,6 +96,32 @@ begin
     end;
 
   end;
+
+  try
+
+    TBase16.Decode('!AAA');
+    Fail('expected EArgumentSimpleBaseLibException');
+
+  except
+    on e: EArgumentSimpleBaseLibException do
+    begin
+      // pass
+    end;
+
+  end;
+
+  try
+
+    TBase16.Decode('=AAA');
+    Fail('expected EArgumentSimpleBaseLibException');
+
+  except
+    on e: EArgumentSimpleBaseLibException do
+    begin
+      // pass
+    end;
+
+  end;
 end;
 
 procedure TTestBase16.Test_Decode_Invalid_Length_Raise;

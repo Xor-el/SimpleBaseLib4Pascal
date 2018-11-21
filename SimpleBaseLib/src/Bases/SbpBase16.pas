@@ -6,11 +6,12 @@ interface
 
 uses
   SbpSimpleBaseLibTypes,
+  SbpUtilities,
   SbpBits;
 
 resourcestring
-  SInvalidHexCharacter = 'Invalid hex character: %s';
-  SInvalidTextLength = 'Text cannot be odd length %s';
+  SInvalidHexCharacter = 'Invalid hex character: "%s"';
+  SInvalidTextLength = 'Text cannot be odd length "%s"';
 
 type
   /// <summary>
@@ -23,8 +24,11 @@ type
     lowerAlphabet: String = '0123456789abcdef';
     upperAlphabet: String = '0123456789ABCDEF';
 
-    class function Encode(const bytes: TSimpleBaseLibByteArray;
+    class function InternalEncode(const bytes: TSimpleBaseLibByteArray;
       const alphabet: String): String; static;
+
+    class function Decode(const text: TSimpleBaseLibCharArray)
+      : TSimpleBaseLibByteArray; overload; static;
 
   public
     /// <summary>
@@ -43,7 +47,8 @@ type
     class function EncodeLower(const bytes: TSimpleBaseLibByteArray): String;
       static; inline;
 
-    class function Decode(const text: String): TSimpleBaseLibByteArray; static;
+    class function Decode(const text: String): TSimpleBaseLibByteArray;
+      overload; static;
 
   end;
 
@@ -51,7 +56,8 @@ implementation
 
 { TBase16 }
 
-class function TBase16.Decode(const text: String): TSimpleBaseLibByteArray;
+class function TBase16.Decode(const text: TSimpleBaseLibCharArray)
+  : TSimpleBaseLibByteArray;
 
   function GetHexByte(c: Int32): Int32; inline;
   begin
@@ -77,6 +83,7 @@ var
   resultPtr, pResult: PByte;
   textPtr, pInput, pEnd: PChar;
   c1, c2: Char;
+  Ltext: String;
 begin
   Result := Nil;
   textLen := System.Length(text);
@@ -84,10 +91,14 @@ begin
   begin
     Exit;
   end;
-  if (textLen and 1 <> 0) then
+  if ((textLen and 1) <> 0) then
   begin
+    if System.Length(text) > 0 then
+    begin
+      System.SetString(Ltext, PChar(@text[0]), System.Length(text));
+    end;
     raise EArgumentSimpleBaseLibException.CreateResFmt
-      (@SInvalidTextLength, [text]);
+      (@SInvalidTextLength, [Ltext]);
   end;
   System.SetLength(Result, textLen shr 1);
   resultPtr := PByte(Result);
@@ -109,7 +120,12 @@ begin
   end;
 end;
 
-class function TBase16.Encode(const bytes: TSimpleBaseLibByteArray;
+class function TBase16.Decode(const text: String): TSimpleBaseLibByteArray;
+begin
+  Result := Decode(TUtilities.StringToCharArray(text));
+end;
+
+class function TBase16.InternalEncode(const bytes: TSimpleBaseLibByteArray;
   const alphabet: String): String;
 var
   bytesLen, b: Int32;
@@ -146,13 +162,13 @@ end;
 class function TBase16.EncodeLower(const bytes
   : TSimpleBaseLibByteArray): String;
 begin
-  Result := Encode(bytes, lowerAlphabet);
+  Result := InternalEncode(bytes, lowerAlphabet);
 end;
 
 class function TBase16.EncodeUpper(const bytes
   : TSimpleBaseLibByteArray): String;
 begin
-  Result := Encode(bytes, upperAlphabet);
+  Result := InternalEncode(bytes, upperAlphabet);
 end;
 
 end.

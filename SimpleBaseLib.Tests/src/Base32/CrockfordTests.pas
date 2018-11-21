@@ -1,4 +1,4 @@
-unit CrockfordTests;
+﻿unit CrockfordTests;
 
 interface
 

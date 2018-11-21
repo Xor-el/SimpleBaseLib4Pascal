@@ -32,6 +32,9 @@ type
 
     class function IsWhiteSpace(ch: Char): Boolean; static; inline;
 
+    class function StringToCharArray(const S: String): TSimpleBaseLibCharArray;
+      static; inline;
+
   end;
 
 implementation
@@ -85,6 +88,18 @@ begin
       Result := Char((Int32(Ord(ch)) + Int32(Ord('a'))) - Int32(Ord('A')));
   else
     Result := ch;
+  end;
+end;
+
+class function TUtilities.StringToCharArray(const S: String)
+  : TSimpleBaseLibCharArray;
+begin
+  Result := Nil;
+  if System.Length(S) > 0 then
+  begin
+    System.SetLength(Result, System.Length(S) + 1);
+    StrPLCopy(PChar(Result), S, System.Length(Result));
+    System.SetLength(Result, System.Length(S)); // to remove the null terminator
   end;
 end;
 

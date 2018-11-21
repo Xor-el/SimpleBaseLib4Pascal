@@ -6,6 +6,7 @@ interface
 
 uses
   SbpSimpleBaseLibTypes,
+  SbpUtilities,
   SbpBase58Alphabet,
   SbpIBase58Alphabet,
   SbpIBase58;
@@ -27,10 +28,18 @@ type
     class function GetFlickr: IBase58; static; inline;
     class function GetRipple: IBase58; static; inline;
 
+    class constructor Base58();
+
   var
     Falphabet: IBase58Alphabet;
 
-    class constructor Base58();
+    /// <summary>
+    /// Decode a Base58 encoded string into a byte array.
+    /// </summary>
+    /// <param name="text">Encoded Base58 characters</param>
+    /// <returns>Decoded byte array</returns>
+    function Decode(const text: TSimpleBaseLibCharArray)
+      : TSimpleBaseLibByteArray; overload;
 
   public
 
@@ -45,7 +54,7 @@ type
     /// </summary>
     /// <param name="text">Base58 encoded text</param>
     /// <returns>Array of decoded bytes</returns>
-    function Decode(const text: String): TSimpleBaseLibByteArray;
+    function Decode(const text: String): TSimpleBaseLibByteArray; overload;
 
     class property BitCoin: IBase58 read GetBitCoin;
     class property Ripple: IBase58 read GetRipple;
@@ -78,7 +87,8 @@ begin
   Falphabet := alphabet;
 end;
 
-function TBase58.Decode(const text: String): TSimpleBaseLibByteArray;
+function TBase58.Decode(const text: TSimpleBaseLibCharArray)
+  : TSimpleBaseLibByteArray;
 const
   // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp
   reductionFactor = Int32(733);
@@ -86,7 +96,7 @@ var
   textLen, numZeroes, outputLen, carry, resultLen, LowPoint: Int32;
   inputPtr, pEnd, pInput: PChar;
   outputPtr, pOutputEnd, pDigit, pOutput: PByte;
-  ZeroChar, c: Char;
+  FirstChar, c: Char;
   Value: string;
   output, table: TSimpleBaseLibByteArray;
 begin
@@ -102,13 +112,13 @@ begin
   pEnd := inputPtr + textLen;
   pInput := inputPtr;
 {$IFDEF DELPHIXE3_UP}
-  LowPoint := System.Low(text);
+  LowPoint := System.Low(String);
 {$ELSE}
   LowPoint := 1;
 {$ENDIF DELPHIXE3_UP}
   Value := Falphabet.Value;
-  ZeroChar := Value[LowPoint];
-  while ((pInput^ = ZeroChar) and (pInput <> pEnd)) do
+  FirstChar := Value[LowPoint];
+  while ((pInput^ = FirstChar) and (pInput <> pEnd)) do
   begin
     System.Inc(pInput);
   end;
@@ -120,7 +130,7 @@ begin
     Exit;
   end;
 
-  outputLen := textLen * reductionFactor div 1000 + 1;
+  outputLen := ((textLen * reductionFactor) div 1000) + 1;
   table := Falphabet.ReverseLookupTable;
   System.SetLength(output, outputLen);
   outputPtr := PByte(output);
@@ -162,6 +172,11 @@ begin
   System.SetLength(result, numZeroes + resultLen);
   System.Move(output[Int32(pOutput - outputPtr)], result[numZeroes], resultLen);
 
+end;
+
+function TBase58.Decode(const text: String): TSimpleBaseLibByteArray;
+begin
+  result := Decode(TUtilities.StringToCharArray(text));
 end;
 
 destructor TBase58.Destroy;
