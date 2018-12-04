@@ -6,8 +6,7 @@ interface
 
 uses
   SbpSimpleBaseLibTypes,
-  SbpUtilities,
-  SbpBits;
+  SbpUtilities;
 
 resourcestring
   SInvalidHexCharacter = 'Invalid hex character: "%s"';
@@ -128,7 +127,8 @@ end;
 class function TBase16.InternalEncode(const bytes: TSimpleBaseLibByteArray;
   const alphabet: String): String;
 var
-  bytesLen, b: Int32;
+  bytesLen: Int32;
+  b: Byte;
   resultPtr, alphabetPtr, pResult, pAlphabet: PChar;
   bytesPtr, pInput, pEnd: PByte;
 begin
@@ -150,7 +150,7 @@ begin
   while (pInput <> pEnd) do
   begin
     b := pInput^;
-    pResult^ := pAlphabet[TBits.Asr32(b, 4)];
+    pResult^ := pAlphabet[b shr 4];
     System.Inc(pResult);
     pResult^ := pAlphabet[b and $0F];
     System.Inc(pResult);
