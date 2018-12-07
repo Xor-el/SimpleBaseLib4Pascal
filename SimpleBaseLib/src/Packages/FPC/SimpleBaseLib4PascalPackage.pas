@@ -9,9 +9,8 @@ interface
 
 uses
   SbpBase16, SbpBase32, SbpBase32Alphabet, SbpBase58, SbpBase58Alphabet, 
-  SbpBase64, SbpBase64Alphabet, SbpCrockfordBase32Alphabet, SbpIBase32, 
-  SbpIBase32Alphabet, SbpIBase58, SbpIBase58Alphabet, SbpIBase64, 
-  SbpIBase64Alphabet, SbpICrockfordBase32Alphabet, SbpBits, 
+  SbpBase64, SbpBase64Alphabet, SbpIBase32, SbpIBase32Alphabet, SbpIBase58, 
+  SbpIBase58Alphabet, SbpIBase64, SbpIBase64Alphabet, SbpBits, 
   SbpSimpleBaseLibTypes, SbpUtilities, SbpBase85Alphabet, SbpIBase85Alphabet, 
   SbpEncodingAlphabet, SbpIEncodingAlphabet, SbpBase85, SbpIBase85;
 

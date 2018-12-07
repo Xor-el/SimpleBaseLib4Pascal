@@ -14,8 +14,6 @@ uses
   SbpBase16 in '..\..\SimpleBaseLib\src\Bases\SbpBase16.pas',
   SbpBase32Alphabet in '..\..\SimpleBaseLib\src\Bases\SbpBase32Alphabet.pas',
   SbpIBase32Alphabet in '..\..\SimpleBaseLib\src\Interfaces\SbpIBase32Alphabet.pas',
-  SbpCrockfordBase32Alphabet in '..\..\SimpleBaseLib\src\Bases\SbpCrockfordBase32Alphabet.pas',
-  SbpICrockfordBase32Alphabet in '..\..\SimpleBaseLib\src\Interfaces\SbpICrockfordBase32Alphabet.pas',
   SbpBase32 in '..\..\SimpleBaseLib\src\Bases\SbpBase32.pas',
   SbpIBase32 in '..\..\SimpleBaseLib\src\Interfaces\SbpIBase32.pas',
   SbpBase64Alphabet in '..\..\SimpleBaseLib\src\Bases\SbpBase64Alphabet.pas',

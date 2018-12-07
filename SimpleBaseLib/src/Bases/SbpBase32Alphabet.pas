@@ -20,6 +20,7 @@ type
 
       FCrockford, FRfc4648, FExtendedHex: IBase32Alphabet;
 
+    procedure MapAlternate(source, destination: Char); inline;
     procedure MapLowerCaseCounterParts(const alphabet: String); inline;
 
     class function GetCrockford: IBase32Alphabet; static; inline;
@@ -33,15 +34,22 @@ type
     class property Rfc4648: IBase32Alphabet read GetRfc4648;
     class property ExtendedHex: IBase32Alphabet read GetExtendedHex;
     constructor Create(const alphabet: String);
+    constructor CreateCrockford();
     destructor Destroy; override;
   end;
 
 implementation
 
-uses
-  SbpCrockfordBase32Alphabet; // included here to avoid circular dependency :)
-
 { TBase32Alphabet }
+
+procedure TBase32Alphabet.MapAlternate(source, destination: Char);
+var
+  result: Byte;
+begin
+  result := ReverseLookupTable[Ord(destination)] - 1;
+  Map(source, result);
+  Map(TUtilities.LowCase(source), result);
+end;
 
 procedure TBase32Alphabet.MapLowerCaseCounterParts(const alphabet: String);
 var
@@ -67,7 +75,7 @@ end;
 
 class constructor TBase32Alphabet.Base32Alphabet;
 begin
-  FCrockford := TCrockfordBase32Alphabet.Create();
+  FCrockford := TBase32Alphabet.CreateCrockford();
   FRfc4648 := TBase32Alphabet.Create('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567');
   FExtendedHex := TBase32Alphabet.Create('0123456789ABCDEFGHIJKLMNOPQRSTUV');
 end;
@@ -78,6 +86,14 @@ begin
   MapLowerCaseCounterParts(alphabet);
 end;
 
+constructor TBase32Alphabet.CreateCrockford();
+begin
+  Create('0123456789ABCDEFGHJKMNPQRSTVWXYZ');
+  MapAlternate('O', '0');
+  MapAlternate('I', '1');
+  MapAlternate('L', '1');
+end;
+
 destructor TBase32Alphabet.Destroy;
 begin
   inherited Destroy;
@@ -85,17 +101,17 @@ end;
 
 class function TBase32Alphabet.GetCrockford: IBase32Alphabet;
 begin
-  Result := TCrockfordBase32Alphabet.Create();
+  result := TBase32Alphabet.CreateCrockford();
 end;
 
 class function TBase32Alphabet.GetExtendedHex: IBase32Alphabet;
 begin
-  Result := FExtendedHex;
+  result := FExtendedHex;
 end;
 
 class function TBase32Alphabet.GetRfc4648: IBase32Alphabet;
 begin
-  Result := FRfc4648;
+  result := FRfc4648;
 end;
 
 end.

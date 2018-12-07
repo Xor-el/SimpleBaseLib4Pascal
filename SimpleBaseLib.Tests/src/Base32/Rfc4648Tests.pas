@@ -1,4 +1,4 @@
-unit Rfc4648Tests;
+﻿unit Rfc4648Tests;
 
 interface
 
