@@ -110,7 +110,7 @@ begin
   begin
     input := FStrings[i];
     expectedOutput := FBytes[i];
-    for j := 1 to System.Length(input) do
+    for j := System.Low(input) to System.High(input) do
     begin
       actualInput := actualInput + '  ' + input[j];
     end;
