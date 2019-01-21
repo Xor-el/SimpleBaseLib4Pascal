@@ -33,15 +33,15 @@ type
     /// byte[] has no discernible perf impact and saves memory
     FReverseLookupTable: TSimpleBaseLibByteArray;
 
-    function GetLength: Int32; inline;
-    function GetValue: String; inline;
-    function GetReverseLookupTable: TSimpleBaseLibByteArray; inline;
-
   strict protected
     constructor Create(length: Int32; const alphabet: String);
 
     procedure InvalidCharacter(c: Char); inline;
     procedure Map(c: Char; value: Int32); inline;
+
+    function GetLength: Int32; inline;
+    function GetValue: String; inline;
+    function GetReverseLookupTable: TSimpleBaseLibByteArray; inline;
 
     property length: Int32 read GetLength;
     property value: String read GetValue;
