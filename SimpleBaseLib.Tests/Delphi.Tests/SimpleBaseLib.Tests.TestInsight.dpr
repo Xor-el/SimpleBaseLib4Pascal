@@ -1,4 +1,4 @@
-program SimpleBaseLib.Tests;
+program SimpleBaseLib.Tests.TestInsight;
 {
 
   Delphi DUnit Test Project
@@ -16,10 +16,7 @@ program SimpleBaseLib.Tests;
 {$ENDIF}
 
 uses
-  Forms,
-  TestFramework,
-  GUITestRunner,
-  TextTestRunner,
+  TestInsight.DUnit,
   SbpBase58Alphabet in '..\..\SimpleBaseLib\src\Bases\SbpBase58Alphabet.pas',
   SbpIBase58Alphabet in '..\..\SimpleBaseLib\src\Interfaces\SbpIBase58Alphabet.pas',
   SbpBase58 in '..\..\SimpleBaseLib\src\Bases\SbpBase58.pas',
@@ -53,10 +50,7 @@ uses
   Ascii85Tests in '..\src\Base85\Ascii85Tests.pas';
 
 begin
-  Application.Initialize;
-  if IsConsole then
-    TextTestRunner.RunRegisteredTests
-  else
-    GUITestRunner.RunRegisteredTests;
+
+  TestInsight.DUnit.RunRegisteredTests;
 
 end.
