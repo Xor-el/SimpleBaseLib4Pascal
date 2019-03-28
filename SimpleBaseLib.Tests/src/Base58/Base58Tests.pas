@@ -49,6 +49,7 @@ begin
     '000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6',
     '00313E1F905554E7AE2580CD36F86D0C8088382C9E1951C44D010203', '0000000000',
     '1111111111', 'FFEEDDCCBBAA', '00', '21',
+    '000102030405060708090A0B0C0D0E0F000102030405060708090A0B0C0D0E0F',
     // Test cases from https://gist.github.com/CodesInChaos/3175971
     '00000001', '61', '626262', '636363',
     '73696D706C792061206C6F6E6720737472696E67',
@@ -59,8 +60,8 @@ begin
     );
   FBase58EncodedData := TSimpleBaseLibStringArray.Create('', '11Ldp',
     '1FESiat4YpNeoYhW3Lp7sW1T6WydcW7vcE', '1mJKRNca45GU2JQuHZqZjHFNktaqAs7gh',
-    '17f1hgANcLE5bQhAGRgnBaLTTs23rK4VGVKuFQ', '11111', '2vgLdhi',
-    '3CSwN61PP', '1', 'a',
+    '17f1hgANcLE5bQhAGRgnBaLTTs23rK4VGVKuFQ', '11111', '2vgLdhi', '3CSwN61PP',
+    '1', 'a', '1thX6LZfHDZZKUs92febWaf4WJZnsKRiVwJusXxB7L',
     // Test cases from https://gist.github.com/CodesInChaos/3175971
     '1112', '2g', 'a3gV', 'aPEr', '2cFupjhnEsSn59qHXstmK2ffpLv2',
     '1NS17iag9jJgTHD1VXjvLCEnZuQ3rJDE9L', 'ABnLTmg', '3SEo3LWLoPntC', '3EFU7m',
