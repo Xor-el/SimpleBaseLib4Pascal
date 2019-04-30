@@ -1,0 +1,60 @@
+package SimpleBaseLib4PascalPackage;
+
+{$R *.res}
+{$WARNINGS OFF}
+{$HINTS OFF}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE RELEASE}
+{$ENDIF IMPLICITBUILDING}
+{$RUNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl;
+
+contains
+  SbpBase58 in '..\..\Bases\SbpBase58.pas',
+  SbpBase16 in '..\..\Bases\SbpBase16.pas',
+  SbpBase64 in '..\..\Bases\SbpBase64.pas',
+  SbpBase32 in '..\..\Bases\SbpBase32.pas',
+  SbpIBase85Alphabet in '..\..\Interfaces\SbpIBase85Alphabet.pas',
+  SbpBase85Alphabet in '..\..\Bases\SbpBase85Alphabet.pas',
+  SbpBase85 in '..\..\Bases\SbpBase85.pas',
+  SbpEncodingAlphabet in '..\..\Bases\SbpEncodingAlphabet.pas',
+  SbpBase32Alphabet in '..\..\Bases\SbpBase32Alphabet.pas',
+  SbpUtilities in '..\..\Utils\SbpUtilities.pas',
+  SbpBits in '..\..\Utils\SbpBits.pas',
+  SbpIBase32 in '..\..\Interfaces\SbpIBase32.pas',
+  SbpIBase85 in '..\..\Interfaces\SbpIBase85.pas',
+  SbpIBase64 in '..\..\Interfaces\SbpIBase64.pas',
+  SbpIBase58 in '..\..\Interfaces\SbpIBase58.pas',
+  SbpBase58Alphabet in '..\..\Bases\SbpBase58Alphabet.pas',
+  SbpBase64Alphabet in '..\..\Bases\SbpBase64Alphabet.pas',
+  SbpIBase32Alphabet in '..\..\Interfaces\SbpIBase32Alphabet.pas',
+  SbpIBase58Alphabet in '..\..\Interfaces\SbpIBase58Alphabet.pas',
+  SbpIBase64Alphabet in '..\..\Interfaces\SbpIBase64Alphabet.pas',
+  SbpIEncodingAlphabet in '..\..\Interfaces\SbpIEncodingAlphabet.pas',
+  SbpSimpleBaseLibTypes in '..\..\Utils\SbpSimpleBaseLibTypes.pas';
+
+end.
