@@ -14,8 +14,8 @@
 
 (* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& *)
 {$IFDEF FPC}
-   {$I SimpleBaseLibHelper.inc} // Had to Include this Since Delphi Does not allow "FPC_FULLVERSION" to Compile.
-   {$UNDEF DELPHI}
+{$I SimpleBaseLibHelper.inc} // Had to Include this Since Delphi Does not allow "FPC_FULLVERSION" to Compile.
+{$UNDEF DELPHI}
 {$MODE delphi}
 
 {$DEFINE USE_UNROLLED_VARIANT}
