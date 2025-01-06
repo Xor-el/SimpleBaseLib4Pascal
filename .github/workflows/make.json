@@ -1,0 +1,7 @@
+{
+    "app" : "SimpleBaseLib.Benchmark/FreePascal.Benchmark",
+    "lib" : "SimpleBaseLib/src/Packages/FPC/",
+    "tst" : "SimpleBaseLib.Tests/FreePascal.Tests/SimpleBaseLibConsole.Tests.lpi",
+    "pkg" : [
+    ]
+}
