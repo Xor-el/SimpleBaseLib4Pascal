@@ -71,8 +71,14 @@ Function Build-Project {
         true {
             ((Get-ChildItem -Filter '*.lpk' -Recurse -File –Path $Var.tst).FullName |
                 ForEach-Object {
-                    $Env:INSTANTFPC = $VAR.opt
-                    $Output = (& instantfpc $_ --all --format=plain)
+                    $Output = (
+                        & lazbuild --build-all --recursive --no-write-project $VAR.tst |
+                            Where-Object {
+                                $_.Contains('Linking')
+                            } | ForEach-Object {
+                                $_.Split(' ')[2]
+                            }
+                    )
                     $exitCode = Switch ($LastExitCode) {
                         0 {0}
                         Default {
