@@ -69,27 +69,24 @@ Function Build-Project {
     }
     Exit $(Switch (Test-Path -Path $Var.tst) {
         true {
-            ((Get-ChildItem -Filter '*.lpk' -Recurse -File –Path $Var.tst).FullName |
-                ForEach-Object {
-                    $Output = (
-                        & lazbuild --build-all --recursive --no-write-project $VAR.tst |
-                            Where-Object {
-                                $_.Contains('Linking')
-                            } | ForEach-Object {
-                                $_.Split(' ')[2]
-                            }
-                    )
-                    $exitCode = Switch ($LastExitCode) {
-                        0 {0}
-                        Default {
-                            $Output | Out-Host
-                            1
-                        }
+            $Output = (
+                & lazbuild --build-all --recursive --no-write-project $VAR.tst |
+                    Where-Object {
+                        $_.Contains('Linking')
+                    } | ForEach-Object {
+                        $_.Split(' ')[2]
                     }
-                    Return $exitCode
-                } | Measure-Object -Sum
-            ).Sum
-        }
+            )
+            $Output = (& lazbuild --build-all --recursive --no-write-project $Output)
+            $exitCode = Switch ($LastExitCode) {
+                0 {0}
+                Default {
+                    1
+                }
+            }
+            $Output | Out-Host
+            Return $exitCode
+K        }
         Default {0}
     }) + (
         (Get-ChildItem -Filter '*.lpi' -Recurse -File –Path $Var.app).FullName |
