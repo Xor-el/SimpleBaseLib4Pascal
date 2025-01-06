@@ -77,7 +77,7 @@ Function Build-Project {
                         $_.Split(' ')[2]
                     }
             )
-            $Output = (& lazbuild --build-all --recursive --no-write-project $Output)
+            $Output = (& ".\$($Output)" --all --format=plain --progress)
             $exitCode = Switch ($LastExitCode) {
                 0 {0}
                 Default {
