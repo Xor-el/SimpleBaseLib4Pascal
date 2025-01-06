@@ -74,10 +74,10 @@ Function Build-Project {
                     Where-Object {
                         $_.Contains('Linking')
                     } | ForEach-Object {
-                        $_.Split(' ')[2]
+                        $_.Split(' ')[2].Replace('bin', 'bin\.')
                     }
             )
-            $Output = (& ".\$($Output)" --all --format=plain --progress)
+            $Output = (& $Output --all --format=plain --progress)
             $exitCode = Switch ($LastExitCode) {
                 0 {0}
                 Default {
