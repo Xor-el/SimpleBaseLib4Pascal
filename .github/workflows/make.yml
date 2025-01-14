@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-latest
+          # - ubuntu-latest
           - windows-latest
     steps:
     - name: Checkout
@@ -51,4 +51,5 @@ jobs:
         & $VAR.OutFile.Replace('Temp', 'Temp\.') /SP- /VERYSILENT /SUPPRESSMSGBOXES /NORESTART | Out-Null
         $Env:PATH+=';C:\Lazarus'
         (Get-Command 'lazbuild').Source | Out-Host
-        instantfpc '-FuC:\Lazarus\components\lazutils' .github/workflows/make.pas
+        dir C:\Lazarus\fpc\bin
+        # instantfpc '-FuC:\Lazarus\components\lazutils' .github/workflows/make.pas
