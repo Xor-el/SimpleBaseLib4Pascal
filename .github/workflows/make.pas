@@ -29,21 +29,21 @@ begin
   if FileExists('.gitmodules') then
     if RunCommand('git', ['submodule', 'update', '--init', '--recursive',
       '--force', '--remote'], Output) then
-      Writeln(#27'[33m', Output, #27'[0m')
+      Writeln(stderr, #27'[33m', Output, #27'[0m')
     else
     begin
       ExitCode += 1;
-      Writeln(#27'[31m', Output, #27'[0m');
+      Writeln(stderr, #27'[31m', Output, #27'[0m');
     end;
   List := FindAllFiles(Use, '*.lpk', True);
   try
     for Each in List do
       if RunCommand('lazbuild', ['--add-package-link', Each], Output) then
-        Writeln(#27'[33m', 'added ', Each, #27'[0m')
+        Writeln(stderr, #27'[33m', 'added ', Each, #27'[0m')
       else
       begin
         ExitCode += 1;
-        Writeln(#27'[31m', 'added ', Each, #27'[0m');
+        Writeln(stderr, #27'[31m', 'added ', Each, #27'[0m');
       end;
   finally
     List.Free;
@@ -68,7 +68,7 @@ begin
           AddHeader('User-Agent', 'Mozilla/5.0 (compatible; fpweb)');
           AllowRedirect := True;
           Get(Url, Zip);
-          WriteLn('Download from ', Url, ' to ', TempFile);
+          WriteLn(stderr, 'Download from ', Url, ' to ', TempFile);
         finally
           Free;
         end;
@@ -82,7 +82,7 @@ begin
           OutputPath := PackagePath;
           Examine;
           UnZipAllFiles;
-          WriteLn('Unzip from ', TempFile, ' to ', PackagePath);
+          WriteLn(stderr, 'Unzip from ', TempFile, ' to ', PackagePath);
         finally
           Free;
         end;
@@ -93,15 +93,15 @@ begin
         for Item in List do
         try
           if RunCommand('lazbuild', ['--add-package-link', Item], Output) then
-            Writeln(#27'[33m', 'added ', Item, #27'[0m')
+            Writeln(stderr, #27'[33m', 'added ', Item, #27'[0m')
           else
           begin
             ExitCode += 1;
-            Writeln(#27'[31m', 'added ', Item, #27'[0m');
+            Writeln(stderr, #27'[31m', 'added ', Item, #27'[0m');
           end;
         except
           on E: Exception do
-            WriteLn('Error: ' + E.ClassName + #13#10 + E.Message);
+            WriteLn(stderr, 'Error: ' + E.ClassName + #13#10 + E.Message);
         end;
       finally
         List.Free;
@@ -112,33 +112,38 @@ begin
   try
     for Each in List do
     begin
-      Writeln(#27'[33m', 'build ', Each, #27'[0m');
+      Writeln(stderr, #27'[33m', 'build ', Each, #27'[0m');
       try
         if RunCommand('lazbuild', ['--build-all', '--recursive',
           '--no-write-project', Each], Output) then
           for Line in SplitString(Output, LineEnding) do
           begin
             if Pos('Linking', Line) <> 0 then
-            begin
-              if not RunCommand(
-                {$IFDEF MSWINDOWS}
-                '&'
-                {$ELSE}
-                'command'
-                {$ENDIF}
-                , [SplitString(Line, ' ')[2], '--all', '--format=plain', '--progress'],
-                Output) then
-                ExitCode += 1;
-              WriteLn(Output);
+            try
+              begin
+                if not RunCommand(
+                  {$IFDEF MSWINDOWS}
+                  '&'
+                  {$ELSE}
+                  'command'
+                  {$ENDIF}
+                  , [SplitString(Line, ' ')[2], '--all', '--format=plain', '--progress'],
+                  Output) then
+                  ExitCode += 1;
+                WriteLn(stderr, Output);
+              end;
+            except
+              on E: Exception do
+                WriteLn(stderr, 'Error: ' + E.ClassName + #13#10 + E.Message);
             end;
           end
         else
           for Line in SplitString(Output, LineEnding) do
             if Pos('Fatal', Line) <> 0 or Pos('Error', Line) then
-              Writeln(#27'[31m', Line, #27'[0m');
+              Writeln(stderr, #27'[31m', Line, #27'[0m');
       except
         on E: Exception do
-          WriteLn('Error: ' + E.ClassName + #13#10 + E.Message);
+          WriteLn(stderr, 'Error: ' + E.ClassName + #13#10 + E.Message);
       end;
     end;
   finally
@@ -154,7 +159,7 @@ begin
         for Line in SplitString(Output, LineEnding) do
         begin
           if Pos('Linking', Line) <> 0 then
-            Writeln(#27'[32m', ' to ', SplitString(Line, ' ')[2], #27'[0m');
+            Writeln(stderr, #27'[32m', ' to ', SplitString(Line, ' ')[2], #27'[0m');
         end
       else
       begin
@@ -162,13 +167,13 @@ begin
         for Line in SplitString(Output, LineEnding) do
           if Pos('Fatal:', Line) <> 0 or Pos('Error:', Line) then
           begin
-            WriteLn();
-            Writeln(#27'[31m', Line, #27'[0m');
+            WriteLn(stderr);
+            Writeln(stderr, #27'[31m', Line, #27'[0m');
           end;
       end;
     end;
   finally
     List.Free;
   end;
-  WriteLn('Errors: ', ExitCode);
+  WriteLn(stderr, 'Errors: ', ExitCode);
 end.
