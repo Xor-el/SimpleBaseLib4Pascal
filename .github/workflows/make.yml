@@ -50,6 +50,7 @@ jobs:
         Invoke-WebRequest @VAR
         & $VAR.OutFile.Replace('Temp', 'Temp\.') /SP- /VERYSILENT /SUPPRESSMSGBOXES /NORESTART | Out-Null
         $Env:PATH+=';C:\Lazarus'
+        $Env:PATH+=';C:\Lazarus\fpc\3.2.2\bin'
         (Get-Command 'lazbuild').Source | Out-Host
-        dir C:\Lazarus\fpc\3.2.2\
-        # instantfpc '-FuC:\Lazarus\components\lazutils' .github/workflows/make.pas
+        dir C:\Lazarus\fpc\3.2.2\bin\
+        instantfpc '-FuC:\Lazarus\components\lazutils' .github/workflows/make.pas

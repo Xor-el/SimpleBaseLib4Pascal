@@ -8,6 +8,7 @@ uses
   FileUtil,
   Zipper,
   fphttpclient,
+  RegExpr,
   openssl,
   opensslsockets,
   Process;
