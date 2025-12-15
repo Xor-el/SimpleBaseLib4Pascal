@@ -26,10 +26,6 @@
 
 unit uBase64;
 
-{$IFDEF FPC}
-{$MODE DELPHI}
-{$ENDIF FPC}
-
 interface
 
 uses
