@@ -114,11 +114,9 @@ begin
   begin
     System.Dec(I);
   end;
-{$IFDEF DELPHIXE3_UP}
-  LowPoint := System.Low(S);
-{$ELSE}
+
   LowPoint := 1;
-{$ENDIF DELPHIXE3_UP}
+
   if I < LowPoint then
   begin
     Result := ''

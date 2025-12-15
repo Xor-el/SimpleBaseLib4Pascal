@@ -56,13 +56,9 @@ var
   LowPoint, HighPoint, I: Int32;
   c: Char;
 begin
-{$IFDEF DELPHIXE3_UP}
-  LowPoint := System.Low(alphabet);
-  HighPoint := System.High(alphabet);
-{$ELSE}
   LowPoint := 1;
   HighPoint := System.Length(alphabet);
-{$ENDIF DELPHIXE3_UP}
+
   for I := LowPoint to HighPoint do
   begin
     c := alphabet[I];

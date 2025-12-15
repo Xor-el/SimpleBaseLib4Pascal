@@ -86,12 +86,8 @@ begin
   System.SetLength(FReverseLookupTable, lookupLength);
   FLength := length;
   FValue := alphabet;
-
-{$IFDEF DELPHIXE3_UP}
-  LowPoint := System.Low(alphabet);
-{$ELSE}
   LowPoint := 1;
-{$ENDIF DELPHIXE3_UP}
+
   for I := LowPoint to length do
   begin
     Map(alphabet[I], I - 1);

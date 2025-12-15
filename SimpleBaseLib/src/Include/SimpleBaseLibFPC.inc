@@ -11,21 +11,27 @@
 
 (* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& *)
 
-
-{---------------------------- Compiler Family Switch --------------------------}
 {$IFDEF FPC}
-  {$I SimpleBaseLibFPC.inc} // FPC-specific settings
-{$ELSE}
-  {$DEFINE DELPHI}
-  {$I ../../SimpleBaseLib/src/Include/SimpleBaseLibDelphi.inc} // Delphi-specific settings
+  {$IFDEF ENDIAN_BIG}
+     {$MESSAGE FATAL 'This Library does not support "Big Endian" processors yet.'}
+  {$ENDIF}
+
+  // FPC 3.0.0 and Above
+  {$IF FPC_FULLVERSION < 30000}
+     {$MESSAGE ERROR 'This Library requires FreePascal 3.0.0 or higher.'}
+  {$IFEND}
+
+  {$MODE DELPHI}
+  {$MACRO ON}
+  {$NOTES OFF}
+  {$OPTIMIZATION LEVEL3}
+  {$OPTIMIZATION PEEPHOLE}
+  {$OPTIMIZATION REGVAR}
+  {$OPTIMIZATION LOOPUNROLL}
+  {$OPTIMIZATION STRENGTH}
+  {$OPTIMIZATION CSE}
+  {$OPTIMIZATION DFA}
+  {$IFDEF CPUI386}  {$OPTIMIZATION USEEBP} {$ENDIF}
+  {$IFDEF CPUX86_64} {$OPTIMIZATION USERBP} {$ENDIF}
 {$ENDIF}
 
-{-------------------------- Common Compiler Settings --------------------------}
-{$SCOPEDENUMS ON}
-{$OVERFLOWCHECKS OFF}
-{$RANGECHECKS OFF}
-{$POINTERMATH ON}
-{$WARNINGS OFF}
-{$HINTS OFF}
-
-(* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& *)
