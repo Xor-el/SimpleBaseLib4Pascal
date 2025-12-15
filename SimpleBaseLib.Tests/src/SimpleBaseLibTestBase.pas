@@ -3,7 +3,6 @@ unit SimpleBaseLibTestBase;
 interface
 
 uses
-  SysUtils,
 {$IFDEF FPC}
   fpcunit,
   testregistry
