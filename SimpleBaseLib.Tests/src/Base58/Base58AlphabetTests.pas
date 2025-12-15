@@ -11,17 +11,12 @@ uses
   TestFramework,
 {$ENDIF FPC}
   SbpSimpleBaseLibTypes,
-  SbpBase58Alphabet;
+  SbpBase58Alphabet,
+  SimpleBaseLibTestBase;
 
 type
 
-  TCryptoLibTestCase = class abstract(TTestCase)
-
-  end;
-
-type
-
-  TTestBase58Alphabet = class(TCryptoLibTestCase)
+  TTestBase58Alphabet = class(TSimpleBaseLibTestCase)
 
   protected
     procedure SetUp; override;

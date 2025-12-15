@@ -12,17 +12,12 @@ uses
 {$ENDIF FPC}
   SbpSimpleBaseLibTypes,
   SbpUtilities,
-  SbpBase64;
+  SbpBase64,
+  SimpleBaseLibTestBase;
 
 type
 
-  TCryptoLibTestCase = class abstract(TTestCase)
-
-  end;
-
-type
-
-  TTestBase64 = class(TCryptoLibTestCase)
+  TTestBase64 = class(TSimpleBaseLibTestCase)
   private
   var
     FRawData, FEncodedDataBase64Default: TSimpleBaseLibStringArray;

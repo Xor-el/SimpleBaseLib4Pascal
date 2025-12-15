@@ -50,7 +50,8 @@ uses
   Base58AlphabetTests in '..\src\Base58\Base58AlphabetTests.pas',
   Base64Tests in '..\src\Base64\Base64Tests.pas',
   BaseZ85Tests in '..\src\Base85\BaseZ85Tests.pas',
-  Ascii85Tests in '..\src\Base85\Ascii85Tests.pas';
+  Ascii85Tests in '..\src\Base85\Ascii85Tests.pas',
+  SimpleBaseLibTestBase in '..\src\SimpleBaseLibTestBase.pas';
 
 begin
   Application.Initialize;

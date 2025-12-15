@@ -18,21 +18,15 @@ uses
   SbpUtilities,
   SbpSimpleBaseLibTypes,
   SbpBase16,
-  SbpBase58;
+  SimpleBaseLibTestBase;
 
 type
 
-  TCryptoLibTestCase = class abstract(TTestCase)
-
-  end;
-
-type
-
-  TTestBase16 = class(TCryptoLibTestCase)
+  TTestBase16 = class(TSimpleBaseLibTestCase)
   private
   var
-    FtestDataBytes: TSimpleBaseLibMatrixByteArray;
-    FtestDataString: TSimpleBaseLibStringArray;
+    FTestDataBytes: TSimpleBaseLibMatrixByteArray;
+    FTestDataString: TSimpleBaseLibStringArray;
   protected
     procedure SetUp; override;
     procedure TearDown; override;
@@ -50,14 +44,14 @@ implementation
 procedure TTestBase16.SetUp;
 begin
   inherited;
-  FtestDataBytes := TSimpleBaseLibMatrixByteArray.Create(Nil,
+  FTestDataBytes := TSimpleBaseLibMatrixByteArray.Create(Nil,
     TSimpleBaseLibByteArray.Create($AB), TSimpleBaseLibByteArray.Create($00,
     $01, $02, $03), TSimpleBaseLibByteArray.Create($10, $11, $12, $13),
     TSimpleBaseLibByteArray.Create($AB, $CD, $EF, $BA)
 
     );
 
-  FtestDataString := TSimpleBaseLibStringArray.Create('', 'AB', '00010203',
+  FTestDataString := TSimpleBaseLibStringArray.Create('', 'AB', '00010203',
     '10111213', 'ABCDEFBA'
 
     );
@@ -158,10 +152,10 @@ var
   Idx: Int32;
   result: TSimpleBaseLibByteArray;
 begin
-  for Idx := System.Low(FtestDataBytes) to System.High(FtestDataBytes) do
+  for Idx := System.Low(FTestDataBytes) to System.High(FTestDataBytes) do
   begin
-    result := TBase16.Decode(FtestDataString[Idx]);
-    CheckTrue(TUtilities.AreArraysEqual(FtestDataBytes[Idx], result),
+    result := TBase16.Decode(FTestDataString[Idx]);
+    CheckTrue(TUtilities.AreArraysEqual(FTestDataBytes[Idx], result),
       Format('Decode_LowerCase Failed at Index %d', [Idx]));
   end;
 end;
@@ -171,10 +165,10 @@ var
   Idx: Int32;
   result: String;
 begin
-  for Idx := System.Low(FtestDataBytes) to System.High(FtestDataBytes) do
+  for Idx := System.Low(FTestDataBytes) to System.High(FTestDataBytes) do
   begin
-    result := TBase16.EncodeLower(FtestDataBytes[Idx]);
-    CheckEquals(LowerCase(FtestDataString[Idx]), result,
+    result := TBase16.EncodeLower(FTestDataBytes[Idx]);
+    CheckEquals(LowerCase(FTestDataString[Idx]), result,
       Format('EncodeLower Failed at Index %d', [Idx]));
   end;
 end;
@@ -184,10 +178,10 @@ var
   Idx: Int32;
   result: String;
 begin
-  for Idx := System.Low(FtestDataBytes) to System.High(FtestDataBytes) do
+  for Idx := System.Low(FTestDataBytes) to System.High(FTestDataBytes) do
   begin
-    result := TBase16.EncodeUpper(FtestDataBytes[Idx]);
-    CheckEquals(FtestDataString[Idx], result,
+    result := TBase16.EncodeUpper(FTestDataBytes[Idx]);
+    CheckEquals(FTestDataString[Idx], result,
       Format('EncodeUpper Failed at Index %d', [Idx]));
   end;
 end;

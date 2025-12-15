@@ -12,17 +12,12 @@ uses
 {$ENDIF FPC}
   SbpUtilities,
   SbpSimpleBaseLibTypes,
-  SbpBase32;
+  SbpBase32,
+  SimpleBaseLibTestBase;
 
 type
 
-  TCryptoLibTestCase = class abstract(TTestCase)
-
-  end;
-
-type
-
-  TTestCrockford = class(TCryptoLibTestCase)
+  TTestCrockford = class(TSimpleBaseLibTestCase)
   private
   var
     FRawData, FEncodedData, FSpecialRaw, FSpecialEncoded

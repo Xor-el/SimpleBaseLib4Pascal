@@ -11,17 +11,12 @@ uses
   TestFramework,
 {$ENDIF FPC}
   SbpSimpleBaseLibTypes,
-  SbpBase32;
+  SbpBase32,
+  SimpleBaseLibTestBase;
 
 type
 
-  TCryptoLibTestCase = class abstract(TTestCase)
-
-  end;
-
-type
-
-  TTestExtendedHex = class(TCryptoLibTestCase)
+  TTestExtendedHex = class(TSimpleBaseLibTestCase)
   private
   var
     FRawData, FEncodedData: TSimpleBaseLibStringArray;
