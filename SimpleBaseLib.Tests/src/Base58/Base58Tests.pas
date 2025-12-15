@@ -12,17 +12,12 @@ uses
 {$ENDIF FPC}
   SbpSimpleBaseLibTypes,
   SbpBase16,
-  SbpBase58;
+  SbpBase58,
+  SimpleBaseLibTestBase;
 
 type
 
-  TCryptoLibTestCase = class abstract(TTestCase)
-
-  end;
-
-type
-
-  TTestBase58 = class(TCryptoLibTestCase)
+  TTestBase58 = class(TSimpleBaseLibTestCase)
   private
   var
     FRawDataInHex, FBase58EncodedData: TSimpleBaseLibStringArray;

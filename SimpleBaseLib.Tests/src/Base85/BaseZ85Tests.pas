@@ -16,17 +16,12 @@ uses
 {$ENDIF FPC}
   SbpUtilities,
   SbpSimpleBaseLibTypes,
-  SbpBase85;
+  SbpBase85,
+  SimpleBaseLibTestBase;
 
 type
 
-  TCryptoLibTestCase = class abstract(TTestCase)
-
-  end;
-
-type
-
-  TTestBaseZ85 = class(TCryptoLibTestCase)
+  TTestBaseZ85 = class(TSimpleBaseLibTestCase)
   private
   var
     FBytes: TSimpleBaseLibMatrixByteArray;

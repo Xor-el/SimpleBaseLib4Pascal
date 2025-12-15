@@ -113,11 +113,8 @@ begin
 
   pEnd := inputPtr + textLen;
   pInput := inputPtr;
-{$IFDEF DELPHIXE3_UP}
-  LowPoint := System.Low(String);
-{$ELSE}
   LowPoint := 1;
-{$ENDIF DELPHIXE3_UP}
+
   Value := Falphabet.Value;
   FirstChar := Value[LowPoint];
   while ((pInput^ = FirstChar) and (pInput <> pEnd)) do
