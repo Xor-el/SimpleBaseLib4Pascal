@@ -11,15 +11,6 @@
 
 (* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& *)
 
-{========================== Common Compiler Settings ==========================}
-
-{$HINTS OFF}
-{$WARNINGS OFF}
-{$RANGECHECKS OFF}
-{$OVERFLOWCHECKS OFF}
-{$SCOPEDENUMS ON}
-{$POINTERMATH ON}
-
 {========================= Compiler Specific Settings =========================}
 
 {$IFDEF FPC}
@@ -42,5 +33,14 @@
   {$IFEND}
 
 {$ENDIF}
+
+{========================== Common Compiler Settings ==========================}
+
+{$HINTS OFF}
+{$WARNINGS OFF}
+{$RANGECHECKS OFF}
+{$OVERFLOWCHECKS OFF}
+{$SCOPEDENUMS ON}
+{$POINTERMATH ON}
 
 (* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& *)
