@@ -27,11 +27,6 @@
   {$STRINGCHECKS OFF}
   {$WARN DUPLICATE_CTOR_DTOR OFF}
 
-  // XE and Above
-  {$IF CompilerVersion >= 22.0}
-     {$DEFINE DELPHIXE_UP}
-  {$IFEND}
-
 {$ENDIF}
 
 {========================== Common Compiler Settings ==========================}

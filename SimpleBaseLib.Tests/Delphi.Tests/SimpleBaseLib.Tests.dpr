@@ -11,15 +11,22 @@ program SimpleBaseLib.Tests;
 }
 
 {$WARN DUPLICATE_CTOR_DTOR OFF}
-{$IFDEF CONSOLE_TESTRUNNER}
-{$APPTYPE CONSOLE}
+
+{$IFNDEF TESTINSIGHT}
+  {$IFDEF CONSOLE_TESTRUNNER}
+    {$APPTYPE CONSOLE}
+  {$ENDIF}
 {$ENDIF}
 
 uses
-  Forms,
-  TestFramework,
-  GUITestRunner,
-  TextTestRunner,
+{$IFDEF TESTINSIGHT}
+   TestInsight.DUnit,
+{$ELSE}
+   Forms,
+   TestFramework,
+   GUITestRunner,
+   TextTestRunner,
+{$ENDIF}
   SbpBase58Alphabet in '..\..\SimpleBaseLib\src\Bases\SbpBase58Alphabet.pas',
   SbpIBase58Alphabet in '..\..\SimpleBaseLib\src\Interfaces\SbpIBase58Alphabet.pas',
   SbpBase58 in '..\..\SimpleBaseLib\src\Bases\SbpBase58.pas',
@@ -54,10 +61,15 @@ uses
   SimpleBaseLibTestBase in '..\src\SimpleBaseLibTestBase.pas';
 
 begin
+
+{$IFDEF TESTINSIGHT}
+   TestInsight.DUnit.RunRegisteredTests;
+{$ELSE}
   Application.Initialize;
   if IsConsole then
     TextTestRunner.RunRegisteredTests
   else
     GUITestRunner.RunRegisteredTests;
+{$ENDIF}
 
 end.
