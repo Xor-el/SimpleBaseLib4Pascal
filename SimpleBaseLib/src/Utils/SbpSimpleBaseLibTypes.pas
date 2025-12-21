@@ -19,23 +19,6 @@ type
   /// </summary>
   TSimpleBaseLibByteArray = TBytes;
 
-{$IFDEF DELPHIXE_UP}
-  /// <summary>
-  /// Represents a dynamic array of Char.
-  /// </summary>
-  TSimpleBaseLibCharArray = TArray<Char>;
-
-  /// <summary>
-  /// Represents a dynamic array of String.
-  /// </summary>
-  TSimpleBaseLibStringArray = TArray<String>;
-
-  /// <summary>
-  /// Represents a dynamic array of array of byte.
-  /// </summary>
-  TSimpleBaseLibMatrixByteArray = TArray<TSimpleBaseLibByteArray>;
-
-{$ELSE}
   /// <summary>
   /// Represents a dynamic array of Char.
   /// </summary>
@@ -50,8 +33,6 @@ type
   /// Represents a dynamic array of array of byte.
   /// </summary>
   TSimpleBaseLibMatrixByteArray = array of TSimpleBaseLibByteArray;
-
-{$ENDIF DELPHIXE_UP}
 
 implementation
 
