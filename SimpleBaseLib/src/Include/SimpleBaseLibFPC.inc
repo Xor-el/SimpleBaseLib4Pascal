@@ -11,27 +11,32 @@
 
 (* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& *)
 
-{$IFDEF FPC}
-  {$IFDEF ENDIAN_BIG}
-     {$MESSAGE FATAL 'This Library does not support "Big Endian" processors yet.'}
-  {$ENDIF}
-
-  // FPC 3.0.0 and Above
-  {$IF FPC_FULLVERSION < 30000}
-     {$MESSAGE ERROR 'This Library requires FreePascal 3.0.0 or higher.'}
-  {$IFEND}
-
-  {$MODE DELPHI}
-  {$MACRO ON}
-  {$NOTES OFF}
-  {$OPTIMIZATION LEVEL3}
-  {$OPTIMIZATION PEEPHOLE}
-  {$OPTIMIZATION REGVAR}
-  {$OPTIMIZATION LOOPUNROLL}
-  {$OPTIMIZATION STRENGTH}
-  {$OPTIMIZATION CSE}
-  {$OPTIMIZATION DFA}
-  {$IFDEF CPUI386}  {$OPTIMIZATION USEEBP} {$ENDIF}
-  {$IFDEF CPUX86_64} {$OPTIMIZATION USERBP} {$ENDIF}
+{$IFDEF ENDIAN_BIG}
+   {$MESSAGE FATAL 'This Library does not support "Big Endian" processors yet.'}
 {$ENDIF}
 
+{$IF FPC_FULLVERSION < 30202}
+   {$MESSAGE ERROR 'This Library requires FreePascal 3.2.2 or higher.'}
+{$IFEND}
+
+{========================= Compiler Mode & Optimizations ======================}
+
+{$MODE DELPHI}
+{$MACRO ON}
+{$NOTES OFF}
+
+(*
+{$OPTIMIZATION LEVEL3}
+{$OPTIMIZATION NOREGVAR}
+{$OPTIMIZATION NOUSELOADMODIFYSTORE}
+{$OPTIMIZATION ORDERFIELDS}
+{$OPTIMIZATION DEADVALUES}
+
+{$IFDEF CPUI386}
+   {$OPTIMIZATION USEEBP}
+{$ENDIF}
+
+{$IFDEF CPUX86_64}
+   {$OPTIMIZATION USERBP}
+{$ENDIF}
+*)

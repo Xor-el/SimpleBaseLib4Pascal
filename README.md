@@ -1,96 +1,119 @@
-# SimpleBaseLib4Pascal [![License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/Xor-el/SimpleBaseLib4Pascal/blob/master/LICENSE)
-SimpleBaseLib4Pascal as the name implies is a simple to use Base Encoding Package for Delphi/FreePascal Compilers that provides at the moment support for encoding and decoding various bases such as Base16, Base32 (various variants), Base58 (various variants) and Base64 (various variants) and Base85 (various variants).
+# SimpleBaseLib4Pascal
 
-**Build Status**
 [![Build Status](https://github.com/Xor-el/SimpleBaseLib4Pascal/actions/workflows/make.yml/badge.svg)](https://github.com/Xor-el/SimpleBaseLib4Pascal/actions/workflows/make.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Xor-el/SimpleBaseLib4Pascal/blob/master/LICENSE)
+[![Delphi](https://img.shields.io/badge/Delphi-2010%2B-red.svg)](https://www.embarcadero.com/products/delphi)
+[![FreePascal](https://img.shields.io/badge/FreePascal-3.2.2%2B-blue.svg)](https://www.freepascal.org/)
 
-**Supported Encodings:**
+SimpleBaseLib4Pascal is a base encoding/decoding library for Object Pascal with support for multiple base families, non-allocating APIs, and stream-based APIs across Delphi and FreePascal.
 
-    Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford character substitution 
-    and custom flavors.
-    
-    Base58: Bitcoin, Ripple and Flickr alphabets and custom flavors.
-    
-    Base64: Default, DefaultNoPadding, UrlEncoding, XmlEncoding, RegExEncoding and FileEncoding alphabets 
-    (and any custom alphabet you might have)
-    
-    Base85: Ascii85 (Original), Z85 and custom flavors.
-    
-    Base16: An experimental hexadecimal encoder/decoder.
+## Table of Contents
 
-**Supported Compilers**
- 
-    FreePascal 3.0.0 and Above.
-    
-    Delphi 2010 and Above.
+- [Features](#features)
+- [Available Encodings](#available-encodings)
+- [Getting Started](#getting-started)
+- [Quick Examples](#quick-examples)
+- [Running Tests](#running-tests)
+- [Tip Jar](#tip-jar)
+- [License](#license)
 
-**Installing the Library.**
+## Features
 
-**Method One:**
+- Base encoding/decoding implementations for common and extended base families.
+- Multiple alphabet variants for several bases (for example Base32, Base58, Base64, Base85).
+- Non-allocating `TryEncode`/`TryDecode` APIs for performance-sensitive paths.
+- Stream-based encode/decode support for large inputs.
+- Compatible with both Delphi and FreePascal toolchains.
 
- Use the Provided Packages in the "Packages" Folder.
+## Available Encodings
 
-**Method Two:**
+- **Base2**
+- **Base8**
+- **Base10**
+- **Base16**
+- **Base32** (RFC 4648, Crockford, Extended Hex, and more)
+- **Base36**
+- **Base45**
+- **Base58** (Bitcoin, Ripple, Flickr, Monero variants)
+- **Base62**
+- **Base64** (Default, URL-style variants)
+- **Base85** (Ascii85, Z85)
 
- Add the Library Path and Sub Path to your Project Search Path.
+## Getting Started
 
-**Usage Examples.**
+### Prerequisites
 
-    Check the "SimpleBaseLib.Benchmark" folder and the Unit Tests.
+- **Delphi:** 2010 and above
+- **FreePascal:** 3.2.2 and above
 
- **Unit Tests.**
+### Installation
 
-To Run Unit Tests,
+#### Delphi
 
-**For FPC 3.0.0 and above**
+1. Open package:
+   - `SimpleBaseLib/src/Packages/Delphi/SimpleBaseLib4PascalPackage.dpk`
+2. Build and install the package in the IDE.
+3. Add `SimpleBaseLib/src` subfolders to your project search path if needed.
 
+#### FreePascal / Lazarus
 
-    Simply compile and run "SimpleBaseLib.Tests" project in "FreePascal.Tests" Folder.
+1. Open package:
+   - `SimpleBaseLib/src/Packages/FPC/SimpleBaseLib4PascalPackage.lpk`
+2. Build/install package in Lazarus, or add `SimpleBaseLib/src` paths to your FPC project.
 
-**For Delphi 2010 and above**
+## Quick Examples
 
-   **Method One (Using DUnit Test Runner)**
+### Base16 Encode/Decode
 
-     To Build and Run the Unit Tests For Delphi 10 Tokyo (should be similar for 
-     other versions)
-    
-    1). Open Project Options of Unit Test (SimpleBaseLib.Tests) in "Delphi.Tests" Folder.
-    
-    2). Change Target to All Configurations (Or "Base" In Older Delphi Versions.)
-    
-    3). In Output directory add ".\$(Platform)\$(Config)" without the quotes.
-    
-    4). In Search path add "$(BDS)\Source\DUnit\src" without the quotes.
-    
-    5). In Unit output directory add "." without the quotes.
-    
-    6). In Unit scope names (If Available), Delete "DUnitX" from the List.
-    
-    Press Ok and save, then build and run.
-    
- **Method Two (Using TestInsight) (Preferred).**
+```pascal
+uses
+  SysUtils, SbpBase16;
 
-    1). Download and Install TestInsight.
-    
-    2). Open Project Options of Unit Test (SimpleBaseLib.Tests.TestInsight) in "Delphi.Tests" 
-        Folder. 
+var
+  LBytes: TBytes;
+  LText: String;
+begin
+  LBytes := TBytes.Create($DE, $AD, $BE, $EF);
+  LText := TBase16.UpperCase.Encode(LBytes); // DEADBEEF
+  LBytes := TBase16.UpperCase.Decode(LText);
+end;
+```
 
-    3). Change Target to All Configurations (Or "Base" In Older Delphi Versions.)
+### Base64 URL Variant
 
-    4). In Unit scope names (If Available), Delete "DUnitX" from the List.
+```pascal
+uses
+  SysUtils, SbpBase64;
 
-    5). To Use TestInsight, right-click on the project, then select 
-		"Enable for TestInsight" or "TestInsight Project".
-        Save Project then Build and Run Test Project through TestInsight. 
+var
+  LData: TBytes;
+  LEncoded: String;
+begin
+  LData := TBytes.Create($FB, $FF, $EF);
+  LEncoded := TBase64.Url.Encode(LData);
+  LData := TBase64.Url.Decode(LEncoded);
+end;
+```
 
-**License**
+## Running Tests
 
-This "Software" is Licensed Under  **`MIT License (MIT)`** .
+Tests are provided for both Delphi and FreePascal.
 
-#### Tip Jar
-* :dollar: **Bitcoin**: `1MhFfW7tDuEHQSgie65uJcAfJgCNchGeKf`
-* :euro: **Ethereum**: `0x6c1DC21aeC49A822A4f1E3bf07c623C2C1978a98`
-* :pound: **Pascalcoin**: `345367-40`
+- **Delphi:** open and run
+  - `SimpleBaseLib.Tests/Delphi.Tests/SimpleBaseLib.Tests.dpr`
+- **FreePascal/Lazarus:** open and run
+  - `SimpleBaseLib.Tests/FreePascal.Tests/SimpleBaseLib.Tests.lpi`
 
+## Tip Jar
 
+If you find this library useful and would like to support its continued development, tips are greatly appreciated! 🙏
 
+| Cryptocurrency | Wallet Address |
+|---|---|
+| <img src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/btc.png" width="20" alt="Bitcoin" /> **Bitcoin (BTC)** | `bc1quqhe342vw4ml909g334w9ygade64szqupqulmu` |
+| <img src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/eth.png" width="20" alt="Ethereum" /> **Ethereum (ETH)** | `0x53651185b7467c27facab542da5868bfebe2bb69` |
+| <img src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/sol.png" width="20" alt="Solana" /> **Solana (SOL)** | `BPZHjY1eYCdQjLecumvrTJRi5TXj3Yz1vAWcmyEB9Miu` |
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
