@@ -256,8 +256,8 @@ begin
       Exit;
     end;
 
-    AOutput[ABytesWritten] := Byte(((LB2 and 1) shl 7) or (LB3 shl 4) or
-      (LB4 shl 1) or (LB5 shr 2));
+    AOutput[ABytesWritten] := Byte((Int32(LB2 and 1) shl 7) or
+      (Int32(LB3) shl 4) or (Int32(LB4) shl 1) or Int32(LB5 shr 2));
     Inc(ABytesWritten);
 
     if LI > LInputLen then
@@ -279,7 +279,8 @@ begin
       Exit;
     end;
 
-    AOutput[ABytesWritten] := Byte(((LB5 and 3) shl 6) or (LB6 shl 3) or (LB7 shr 0));
+    AOutput[ABytesWritten] := Byte((Int32(LB5 and 3) shl 6) or
+      (Int32(LB6) shl 3) or Int32(LB7 shr 0));
     Inc(ABytesWritten);
   end;
 

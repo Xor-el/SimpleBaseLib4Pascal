@@ -15,9 +15,15 @@
       </SearchPaths>
       <CodeGeneration>
         <Optimizations>
-          <OptimizationLevel Value="4"/>
+          <OptimizationLevel Value="3"/>
         </Optimizations>
       </CodeGeneration>
+      <Other>
+        <ConfigFile>
+          <CustomConfigFile Value="True"/>
+          <ConfigFilePath Value="..\..\..\..\BuildConfig\FPC\SimpleBaseLibFPCMessages.cfg"/>
+        </ConfigFile>
+      </Other>
     </CompilerOptions>
     <Description Value="SimpleBaseLib4Pascal as the name implies is a simple to use Base Encoding Package for Delphi/FreePascal Compilers that provides at the moment support for encoding and decoding various bases such as Base16, Base32 (various variants), Base58 (various variants), Base64 (various variants) and Base85 (various variants)."/>
     <License Value="MIT License"/>

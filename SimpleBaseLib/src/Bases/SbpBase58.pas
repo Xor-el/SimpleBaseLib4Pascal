@@ -13,7 +13,7 @@ uses
   SbpMoneroBase58;
 
 type
-  TBase58 = class(TDividingCoder<ICodingAlphabet>, IBase58)
+  TBase58 = class(TDividingCoder, IBase58)
   strict private
   const
     ReductionFactor = Int32(733);

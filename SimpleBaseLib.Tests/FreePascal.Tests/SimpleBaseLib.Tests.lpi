@@ -71,7 +71,7 @@
         <PackageName Value="FCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="31">
+    <Units Count="25">
       <Unit0>
         <Filename Value="SimpleBaseLib.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -82,121 +82,97 @@
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\src\Base32\CrockfordTests.pas"/>
+        <Filename Value="..\src\Base58\Base58Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\src\Base32\ExtendedHexTests.pas"/>
+        <Filename Value="..\src\Base64\Base64Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="..\src\Base32\Rfc4648Tests.pas"/>
+        <Filename Value="..\src\SimpleBaseLibTestBase.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="..\src\Base58\Base58AlphabetTests.pas"/>
+        <Filename Value="..\src\Multibase\MultibaseTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="..\src\Base58\Base58Tests.pas"/>
+        <Filename Value="..\src\Misc\EncodingAlphabetTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="..\src\Base64\Base64Tests.pas"/>
+        <Filename Value="..\src\Misc\CodingAlphabetTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="..\src\Base85\Ascii85Tests.pas"/>
+        <Filename Value="..\src\Misc\BitsTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="..\src\Base85\BaseZ85Tests.pas"/>
+        <Filename Value="..\src\Base85\Base85Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
       <Unit10>
-        <Filename Value="..\src\SimpleBaseLibTestBase.pas"/>
+        <Filename Value="..\src\Base85\Base85StreamRegressionTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
       <Unit11>
-        <Filename Value="..\src\Multibase\MultibaseTests.pas"/>
+        <Filename Value="..\src\Base8\Base8Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
       <Unit12>
-        <Filename Value="..\src\Misc\EncodingAlphabetTests.pas"/>
+        <Filename Value="..\src\Base8\Base8StreamRegressionTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit12>
       <Unit13>
-        <Filename Value="..\src\Misc\CodingAlphabetTests.pas"/>
+        <Filename Value="..\src\Base64\Base64StreamRegressionTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit13>
       <Unit14>
-        <Filename Value="..\src\Misc\BitsTests.pas"/>
+        <Filename Value="..\src\Base62\Base62Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit14>
       <Unit15>
-        <Filename Value="..\src\Base85\Base85Tests.pas"/>
+        <Filename Value="..\src\Base45\Base45Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit15>
       <Unit16>
-        <Filename Value="..\src\Base85\Base85StreamRegressionTests.pas"/>
+        <Filename Value="..\src\Base45\Base45StreamRegressionTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit16>
       <Unit17>
-        <Filename Value="..\src\Base8\Base8Tests.pas"/>
+        <Filename Value="..\src\Base32\Base32Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit17>
       <Unit18>
-        <Filename Value="..\src\Base8\Base8StreamRegressionTests.pas"/>
+        <Filename Value="..\src\Base32\Base32StreamRegressionTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit18>
       <Unit19>
-        <Filename Value="..\src\Base64\Base64StreamRegressionTests.pas"/>
+        <Filename Value="..\src\Base32\Base32AlphabetTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit19>
       <Unit20>
-        <Filename Value="..\src\Base62\Base62Tests.pas"/>
+        <Filename Value="..\src\Base2\Base2StreamRegressionTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit20>
       <Unit21>
-        <Filename Value="..\src\Base45\Base45Tests.pas"/>
+        <Filename Value="..\src\Base2\Base2Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit21>
       <Unit22>
-        <Filename Value="..\src\Base45\Base45StreamRegressionTests.pas"/>
+        <Filename Value="..\src\Base16\Base16StreamRegressionTests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
       <Unit23>
-        <Filename Value="..\src\Base32\Base32Tests.pas"/>
+        <Filename Value="..\src\Base10\Base10Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit23>
       <Unit24>
-        <Filename Value="..\src\Base32\Base32StreamRegressionTests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit24>
-      <Unit25>
-        <Filename Value="..\src\Base32\Base32AlphabetTests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit25>
-      <Unit26>
-        <Filename Value="..\src\Base2\Base2StreamRegressionTests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit26>
-      <Unit27>
-        <Filename Value="..\src\Base2\Base2Tests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit27>
-      <Unit28>
-        <Filename Value="..\src\Base16\Base16StreamRegressionTests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit28>
-      <Unit29>
-        <Filename Value="..\src\Base10\Base10Tests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit29>
-      <Unit30>
         <Filename Value="..\src\Base36\Base36Tests.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit30>
+      </Unit24>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -214,6 +190,12 @@
         <UseHeaptrc Value="True"/>
       </Debugging>
     </Linking>
+    <Other>
+      <ConfigFile>
+        <CustomConfigFile Value="True"/>
+        <ConfigFilePath Value="..\..\BuildConfig\FPC\SimpleBaseLibFPCMessages.cfg"/>
+      </ConfigFile>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

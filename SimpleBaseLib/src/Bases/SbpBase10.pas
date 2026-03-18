@@ -11,7 +11,7 @@ uses
   SbpBase10Alphabet;
 
 type
-  TBase10 = class(TDividingCoder<ICodingAlphabet>, IBase10)
+  TBase10 = class(TDividingCoder, IBase10)
   strict private
     class var FDefault: IBase10;
     class function GetDefault: IBase10; static;

@@ -2,6 +2,8 @@ unit Base32Tests;
 
 {$IFDEF FPC}
 {$MODE DELPHI}
+{$HINTS OFF}
+{$WARNINGS OFF}
 {$ENDIF FPC}
 
 interface

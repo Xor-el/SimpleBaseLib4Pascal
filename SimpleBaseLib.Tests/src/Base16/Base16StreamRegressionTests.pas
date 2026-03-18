@@ -2,6 +2,8 @@ unit Base16StreamRegressionTests;
 
 {$IFDEF FPC}
 {$MODE DELPHI}
+{$HINTS OFF}
+{$WARNINGS OFF}
 {$ENDIF FPC}
 
 interface

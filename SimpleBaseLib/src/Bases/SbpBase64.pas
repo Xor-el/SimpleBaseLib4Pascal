@@ -210,10 +210,10 @@ begin
     LB2 := ABytes[LI + 2];
 
     Result[LOutIndex] := AAlphabetValue[(LB0 shr 2) + 1];
-    Result[LOutIndex + 1] := AAlphabetValue[(((LB0 and $03) shl 4) or
-      (LB1 shr 4)) + 1];
-    Result[LOutIndex + 2] := AAlphabetValue[(((LB1 and $0F) shl 2) or
-      (LB2 shr 6)) + 1];
+    Result[LOutIndex + 1] := AAlphabetValue[((Int32(LB0 and $03) shl 4) or
+      Int32(LB1 shr 4)) + 1];
+    Result[LOutIndex + 2] := AAlphabetValue[((Int32(LB1 and $0F) shl 2) or
+      Int32(LB2 shr 6)) + 1];
     Result[LOutIndex + 3] := AAlphabetValue[(LB2 and $3F) + 1];
 
     Inc(LI, 3);
@@ -237,8 +237,8 @@ begin
     LB0 := ABytes[LI];
     LB1 := ABytes[LI + 1];
     Result[LOutIndex] := AAlphabetValue[(LB0 shr 2) + 1];
-    Result[LOutIndex + 1] := AAlphabetValue[(((LB0 and $03) shl 4) or
-      (LB1 shr 4)) + 1];
+    Result[LOutIndex + 1] := AAlphabetValue[((Int32(LB0 and $03) shl 4) or
+      Int32(LB1 shr 4)) + 1];
     Result[LOutIndex + 2] := AAlphabetValue[((LB1 and $0F) shl 2) + 1];
 
     if APadding then
@@ -483,7 +483,7 @@ begin
     LV3 := DecodeValue(LC3, AReverseLookup);
     Result[LOutPos] := Byte((LV1 shl 2) or (LV2 shr 4));
     Inc(LOutPos);
-    Result[LOutPos] := Byte(((LV2 and $0F) shl 4) or (LV3 shr 2));
+    Result[LOutPos] := Byte((Int32(LV2 and $0F) shl 4) or Int32(LV3 shr 2));
 
     if LC4 = PaddingChar then
     begin

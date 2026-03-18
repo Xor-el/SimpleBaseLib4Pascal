@@ -19,12 +19,12 @@ uses
 
 type
   /// <summary>
-  /// Generic dividing Encoding/Decoding implementation to be used by other dividing encoders.
+  /// Dividing Encoding/Decoding implementation to be used by other dividing encoders.
   /// Dividing encoding schemes can't encode prefixing zeroes due to mathematical insignificance
   /// of them. So they're always encoded as hardcoded zero characters at the beginning.
   /// </summary>
-  TDividingCoder<TAlphabet: ICodingAlphabet> = class abstract(TInterfacedObject,
-    IBaseCoder, INonAllocatingBaseCoder, IDividingCoder<TAlphabet>)
+  TDividingCoder = class abstract(TInterfacedObject,
+    IBaseCoder, INonAllocatingBaseCoder, IDividingCoder)
   strict private
   type
     TDecodeResult = (
@@ -44,7 +44,7 @@ type
     end;
 
   var
-    FAlphabet: TAlphabet;
+    FAlphabet: ICodingAlphabet;
     FReductionFactor: Int32;
     FZeroChar: Char;
 
@@ -67,10 +67,10 @@ type
       out ARangeWritten: TRangeWritten): TDecodeOutcome;
 
   strict protected
-    function GetAlphabet: TAlphabet;
+    function GetAlphabet: ICodingAlphabet;
 
   public
-    constructor Create(const AAlphabet: TAlphabet);
+    constructor Create(const AAlphabet: ICodingAlphabet);
 
     function GetSafeByteCountForDecoding(const AText: String): Int32; virtual;
     function GetSafeCharCountForEncoding(const ABytes: TSimpleBaseLibByteArray): Int32; virtual;
@@ -85,14 +85,14 @@ type
       const AOutput: TSimpleBaseLibByteArray;
       out ABytesWritten: Int32): Boolean;
 
-    property Alphabet: TAlphabet read GetAlphabet;
+    property Alphabet: ICodingAlphabet read GetAlphabet;
   end;
 
 implementation
 
-{ TDividingCoder<TAlphabet> }
+{ TDividingCoder }
 
-constructor TDividingCoder<TAlphabet>.Create(const AAlphabet: TAlphabet);
+constructor TDividingCoder.Create(const AAlphabet: ICodingAlphabet);
 var
   LAlphabetValue: String;
 begin
@@ -103,12 +103,12 @@ begin
   FZeroChar := LAlphabetValue[1];
 end;
 
-function TDividingCoder<TAlphabet>.GetAlphabet: TAlphabet;
+function TDividingCoder.GetAlphabet: ICodingAlphabet;
 begin
   Result := FAlphabet;
 end;
 
-class function TDividingCoder<TAlphabet>.CountPrefixChars(
+class function TDividingCoder.CountPrefixChars(
   const AText: String; AZeroChar: Char): Int32;
 var
   LI: Int32;
@@ -124,33 +124,33 @@ begin
   Result := System.Length(AText);
 end;
 
-function TDividingCoder<TAlphabet>.GetSafeByteCountForDecodingInternal(
+function TDividingCoder.GetSafeByteCountForDecodingInternal(
   ATextLen: Int32; AZeroPrefixLen: Int32): Int32;
 begin
   Result := AZeroPrefixLen + ((ATextLen - AZeroPrefixLen) * FReductionFactor div 1000) + 1;
 end;
 
-function TDividingCoder<TAlphabet>.GetSafeCharCountForEncodingInternal(
+function TDividingCoder.GetSafeCharCountForEncodingInternal(
   ABytesLen: Int32; AZeroPrefixLen: Int32): Int32;
 begin
   Result := AZeroPrefixLen + ((ABytesLen - AZeroPrefixLen) * 1000 div FReductionFactor) + 1;
 end;
 
-function TDividingCoder<TAlphabet>.GetSafeByteCountForDecoding(
+function TDividingCoder.GetSafeByteCountForDecoding(
   const AText: String): Int32;
 begin
   Result := GetSafeByteCountForDecodingInternal(System.Length(AText),
     CountPrefixChars(AText, FZeroChar));
 end;
 
-function TDividingCoder<TAlphabet>.GetSafeCharCountForEncoding(
+function TDividingCoder.GetSafeCharCountForEncoding(
   const ABytes: TSimpleBaseLibByteArray): Int32;
 begin
   Result := GetSafeCharCountForEncodingInternal(System.Length(ABytes),
     TBits.CountPrefixingZeroes(ABytes));
 end;
 
-class procedure TDividingCoder<TAlphabet>.TranslatedCopy(
+class procedure TDividingCoder.TranslatedCopy(
   const ASource: TSimpleBaseLibCharArray; ASourceOffset: Int32;
   const ADestination: TSimpleBaseLibCharArray; ADestOffset: Int32;
   ACount: Int32; const AAlphabet: String);
@@ -168,7 +168,7 @@ begin
   end;
 end;
 
-function TDividingCoder<TAlphabet>.InternalEncode(
+function TDividingCoder.InternalEncode(
   const AInput: TSimpleBaseLibByteArray;
   const AOutput: TSimpleBaseLibCharArray; AZeroPrefixLen: Int32;
   out ACharsWritten: Int32): Boolean;
@@ -207,7 +207,7 @@ begin
     LJ := LOutputLen - 1;
     while ((LCarry <> 0) or (LI < LNumDigits)) and (LJ >= 0) do
     begin
-      LCarry := LCarry + (Ord(AOutput[LJ]) shl 8);
+      LCarry := LCarry + (Int32(Ord(AOutput[LJ])) shl 8);
       LRemainder := LCarry mod LDivisor;
       LCarry := LCarry div LDivisor;
       AOutput[LJ] := Char(LRemainder);
@@ -224,7 +224,7 @@ begin
   Result := True;
 end;
 
-function TDividingCoder<TAlphabet>.InternalDecode(
+function TDividingCoder.InternalDecode(
   const AInput: String;
   const AOutput: TSimpleBaseLibByteArray; AZeroPrefixLen: Int32;
   out ARangeWritten: TRangeWritten): TDecodeOutcome;
@@ -279,7 +279,7 @@ begin
   Result.InvalidChar := TSimpleBaseLibConstants.NullChar;
 end;
 
-function TDividingCoder<TAlphabet>.Encode(
+function TDividingCoder.Encode(
   const ABytes: TSimpleBaseLibByteArray): String;
 var
   LZeroPrefixLen, LOutputLen, LCharsWritten: Int32;
@@ -306,7 +306,7 @@ begin
   end;
 end;
 
-function TDividingCoder<TAlphabet>.Decode(
+function TDividingCoder.Decode(
   const AText: String): TSimpleBaseLibByteArray;
 var
   LZeroPrefixLen, LOutputLen: Int32;
@@ -345,7 +345,7 @@ begin
   end;
 end;
 
-function TDividingCoder<TAlphabet>.TryEncode(
+function TDividingCoder.TryEncode(
   const ABytes: TSimpleBaseLibByteArray;
   const AOutput: TSimpleBaseLibCharArray;
   out ACharsWritten: Int32): Boolean;
@@ -361,7 +361,7 @@ begin
     TBits.CountPrefixingZeroes(ABytes), ACharsWritten);
 end;
 
-function TDividingCoder<TAlphabet>.TryDecode(const AText: String;
+function TDividingCoder.TryDecode(const AText: String;
   const AOutput: TSimpleBaseLibByteArray;
   out ABytesWritten: Int32): Boolean;
 var

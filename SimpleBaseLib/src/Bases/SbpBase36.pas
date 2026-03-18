@@ -11,7 +11,7 @@ uses
   SbpBase36Alphabet;
 
 type
-  TBase36 = class(TDividingCoder<ICodingAlphabet>, IBase36)
+  TBase36 = class(TDividingCoder, IBase36)
   strict private
     class var FUpperCase: IBase36;
     class var FLowerCase: IBase36;

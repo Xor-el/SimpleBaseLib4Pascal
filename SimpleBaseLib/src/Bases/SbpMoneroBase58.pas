@@ -12,7 +12,6 @@ uses
   SbpINonAllocatingBaseCoder,
   SbpIMoneroBase58,
   SbpBase58Alphabet,
-  SbpBits,
   SbpBinaryPrimitives;
 
 type

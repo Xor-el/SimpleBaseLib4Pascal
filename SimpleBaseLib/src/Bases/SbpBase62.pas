@@ -11,7 +11,7 @@ uses
   SbpBase62Alphabet;
 
 type
-  TBase62 = class(TDividingCoder<ICodingAlphabet>, IBase62)
+  TBase62 = class(TDividingCoder, IBase62)
   strict private
     class var FDefault: IBase62;
     class var FLowerFirst: IBase62;

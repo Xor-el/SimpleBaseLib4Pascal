@@ -2,6 +2,8 @@ unit Base58Tests;
 
 {$IFDEF FPC}
 {$MODE DELPHI}
+{$HINTS OFF}
+{$WARNINGS OFF}
 {$ENDIF FPC}
 
 interface
@@ -36,7 +38,6 @@ type
     procedure TearDown; override;
   published
     procedure Test_Bitcoin_Encode_NullBuffer_ReturnsEmptyString;
-    procedure Test_Bitcoin_Encode_EmptyBuffer_ReturnsEmptyString;
     procedure Test_Bitcoin_Decode_EmptyString_ReturnsEmptyBuffer;
     procedure Test_Bitcoin_TryDecode_EmptyString_ReturnsEmptyBuffer;
     procedure Test_Bitcoin_Encode_ReturnsExpectedResults;
@@ -47,7 +48,6 @@ type
     procedure Test_Bitcoin_TryDecode_InvalidCharacter_ReturnsFalse;
 
     procedure Test_Ripple_Encode_NullBuffer_ReturnsEmptyString;
-    procedure Test_Ripple_Encode_EmptyBuffer_ReturnsEmptyString;
     procedure Test_Ripple_Decode_EmptyString_ReturnsEmptyBuffer;
     procedure Test_Ripple_Encode_ReturnsExpectedResults;
     procedure Test_Ripple_TryEncode_ReturnsExpectedResults;
@@ -55,7 +55,6 @@ type
     procedure Test_Ripple_Decode_InvalidCharacter_Throws;
 
     procedure Test_Flickr_Encode_NullBuffer_ReturnsEmptyString;
-    procedure Test_Flickr_Encode_EmptyBuffer_ReturnsEmptyString;
     procedure Test_Flickr_Decode_EmptyString_ReturnsEmptyBuffer;
     procedure Test_Flickr_Encode_ReturnsExpectedResults;
     procedure Test_Flickr_TryEncode_ReturnsExpectedResults;
@@ -63,7 +62,6 @@ type
     procedure Test_Flickr_Decode_InvalidCharacter_Throws;
 
     procedure Test_Monero_Encode_NullBuffer_ReturnsEmptyString;
-    procedure Test_Monero_Encode_EmptyBuffer_ReturnsEmptyString;
     procedure Test_Monero_Decode_EmptyString_ReturnsEmptyBuffer;
     procedure Test_Monero_Encode_ReturnsExpectedResults;
     procedure Test_Monero_TryEncode_ReturnsExpectedResults;
@@ -199,11 +197,6 @@ begin
   CheckEquals('', TBase58.Bitcoin.Encode(LBytes));
 end;
 
-procedure TTestBase58.Test_Bitcoin_Encode_EmptyBuffer_ReturnsEmptyString;
-begin
-  CheckEquals('', TBase58.Bitcoin.Encode(TSimpleBaseLibByteArray.Create()));
-end;
-
 procedure TTestBase58.Test_Bitcoin_Decode_EmptyString_ReturnsEmptyBuffer;
 var
   LResult: TSimpleBaseLibByteArray;
@@ -300,11 +293,6 @@ begin
   CheckEquals('', TBase58.Ripple.Encode(LBytes));
 end;
 
-procedure TTestBase58.Test_Ripple_Encode_EmptyBuffer_ReturnsEmptyString;
-begin
-  CheckEquals('', TBase58.Ripple.Encode(TSimpleBaseLibByteArray.Create()));
-end;
-
 procedure TTestBase58.Test_Ripple_Decode_EmptyString_ReturnsEmptyBuffer;
 var
   LResult: TSimpleBaseLibByteArray;
@@ -369,11 +357,6 @@ begin
   CheckEquals('', TBase58.Flickr.Encode(LBytes));
 end;
 
-procedure TTestBase58.Test_Flickr_Encode_EmptyBuffer_ReturnsEmptyString;
-begin
-  CheckEquals('', TBase58.Flickr.Encode(TSimpleBaseLibByteArray.Create()));
-end;
-
 procedure TTestBase58.Test_Flickr_Decode_EmptyString_ReturnsEmptyBuffer;
 var
   LResult: TSimpleBaseLibByteArray;
@@ -436,11 +419,6 @@ var
 begin
   LBytes := nil;
   CheckEquals('', TBase58.Monero.Encode(LBytes));
-end;
-
-procedure TTestBase58.Test_Monero_Encode_EmptyBuffer_ReturnsEmptyString;
-begin
-  CheckEquals('', TBase58.Monero.Encode(TSimpleBaseLibByteArray.Create()));
 end;
 
 procedure TTestBase58.Test_Monero_Decode_EmptyString_ReturnsEmptyBuffer;

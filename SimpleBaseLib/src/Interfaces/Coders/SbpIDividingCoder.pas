@@ -9,9 +9,9 @@ uses
   SbpICodingAlphabet;
 
 type
-  IDividingCoder<TAlphabet: ICodingAlphabet> = interface(IInterface)
+  IDividingCoder = interface(IInterface)
 
-    function GetAlphabet: TAlphabet;
+    function GetAlphabet: ICodingAlphabet;
 
     function GetSafeByteCountForDecoding(const AText: String): Int32;
     function GetSafeCharCountForEncoding(const ABytes: TSimpleBaseLibByteArray): Int32;
@@ -24,7 +24,7 @@ type
     function TryDecode(const AText: String;
       const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): Boolean;
 
-    property Alphabet: TAlphabet read GetAlphabet;
+    property Alphabet: ICodingAlphabet read GetAlphabet;
   end;
 
 implementation

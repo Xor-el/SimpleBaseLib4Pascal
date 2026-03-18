@@ -36,35 +36,11 @@
         <UnitName Value="SimpleBaseLib.Tests"/>
       </Unit>
       <Unit>
-        <Filename Value="..\src\Base58\Base58AlphabetTests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="..\src\Base58\Base58Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="..\src\Base32\Rfc4648Tests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\src\Base32\ExtendedHexTests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\src\Base32\CrockfordTests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="..\src\Base16\Base16Tests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\src\Base85\BaseZ85Tests.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\src\Base85\Ascii85Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -168,6 +144,12 @@
       <OtherUnitFiles Value="..\src;..\src\Base64;..\src\Multibase;..\src\Misc;..\src\Base85;..\src\Base8;..\src\Base62;..\src\Base58;..\src\Base45;..\src\Base32;..\src\Base2;..\src\Base16;..\src\Base10;..\src\Base36"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Other>
+      <ConfigFile>
+        <CustomConfigFile Value="True"/>
+        <ConfigFilePath Value="..\..\BuildConfig\FPC\SimpleBaseLibFPCMessages.cfg"/>
+      </ConfigFile>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions>
