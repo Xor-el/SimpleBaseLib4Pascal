@@ -44,6 +44,7 @@ type
     procedure Test_Encode_Stream_ReturnsExpectedValues;
     procedure Test_Decode_Stream_ReturnsExpectedValues;
     procedure Test_Encode_NullBytes_ReturnsEmptyString;
+    procedure Test_Instances_AreIsolated;
     procedure Test_GetSafeCount_APIs_ReturnExpectedValues;
     procedure Test_Decode_InvalidInput_Throws;
     procedure Test_TryDecode_InvalidInput_ReturnsFalse;
@@ -259,6 +260,21 @@ begin
   begin
     CheckEquals('', FCoders[LI].Encode(LBytes), Format('%s Nil encode', [FCoderNames[LI]]));
   end;
+end;
+
+procedure TTestBase64.Test_Instances_AreIsolated;
+var
+  LInput: TSimpleBaseLibByteArray;
+begin
+  LInput := HexToBytes('FBFFEF');
+  AssertCodersAreIsolated(
+    TBase64.Default,
+    TBase64.Url,
+    LInput,
+    'Base64.Default',
+    'Base64.Url',
+    True
+  );
 end;
 
 procedure TTestBase64.Test_GetSafeCount_APIs_ReturnExpectedValues;

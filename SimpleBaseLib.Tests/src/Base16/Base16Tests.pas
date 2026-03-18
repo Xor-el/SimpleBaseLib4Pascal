@@ -56,6 +56,7 @@ type
     procedure Test_TryDecode_UnevenInputBuffer_Fails;
     procedure Test_Decode_InvalidChar_Throws;
     procedure Test_Decode_InvalidLength_Throws;
+    procedure Test_Instances_AreIsolated;
     procedure Test_GetSafeCharCountForEncoding_ReturnsCorrectValue;
     procedure Test_GetSafeByteCountForDecoding_ReturnsCorrectValue;
     procedure Test_GetSafeByteCountForDecoding_InvalidLength_ReturnsZero;
@@ -381,6 +382,21 @@ begin
       // expected
     end;
   end;
+end;
+
+procedure TTestBase16.Test_Instances_AreIsolated;
+var
+  LInput: TSimpleBaseLibByteArray;
+begin
+  LInput := TSimpleBaseLibByteArray.Create($AB, $CD, $EF, $BA);
+  AssertCodersAreIsolated(
+    TBase16.UpperCase,
+    TBase16.LowerCase,
+    LInput,
+    'Base16.UpperCase',
+    'Base16.LowerCase',
+    True
+  );
 end;
 
 procedure TTestBase16.Test_GetSafeCharCountForEncoding_ReturnsCorrectValue;

@@ -17,6 +17,7 @@ uses
   TestFramework,
 {$ENDIF FPC}
   SbpBase36,
+  SbpSimpleBaseLibTypes,
   SimpleBaseLibTestBase;
 
 type
@@ -31,6 +32,7 @@ type
   published
     procedure Test_UpperCase_Encode_EncodesCorrectly;
     procedure Test_LowerCase_Encode_EncodesCorrectly;
+    procedure Test_Instances_AreIsolated;
   end;
 
 implementation
@@ -84,6 +86,21 @@ begin
     CheckEquals(FLowerEncoded[LI], LResult,
       Format('LowerCase encode mismatch at index %d', [LI]));
   end;
+end;
+
+procedure TTestBase36.Test_Instances_AreIsolated;
+var
+  LInput: TSimpleBaseLibByteArray;
+begin
+  LInput := TEncoding.UTF8.GetBytes('a');
+  AssertCodersAreIsolated(
+    TBase36.UpperCase,
+    TBase36.LowerCase,
+    LInput,
+    'Base36.UpperCase',
+    'Base36.LowerCase',
+    True
+  );
 end;
 
 initialization

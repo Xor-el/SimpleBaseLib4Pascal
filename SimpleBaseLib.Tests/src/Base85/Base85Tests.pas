@@ -53,6 +53,7 @@ type
     procedure Test_Alphabet_GetSafeCharCountForEncoding_Buffer_Works;
     procedure Test_Alphabet_GetSafeCharCountForEncoding_Length_Works;
     procedure Test_Alphabet_HasShortcut_Works;
+    procedure Test_Instances_AreIsolated;
   end;
 
 implementation
@@ -360,6 +361,21 @@ procedure TTestBase85.Test_Alphabet_HasShortcut_Works;
 begin
   CheckTrue(TBase85.Ascii85.Alphabet.HasShortcut);
   CheckFalse(TBase85.Z85.Alphabet.HasShortcut);
+end;
+
+procedure TTestBase85.Test_Instances_AreIsolated;
+var
+  LInput: TSimpleBaseLibByteArray;
+begin
+  LInput := HexToBytes('864FD26FB559F75B');
+  AssertCodersAreIsolated(
+    TBase85.Ascii85,
+    TBase85.Z85,
+    LInput,
+    'Base85.Ascii85',
+    'Base85.Z85',
+    True
+  );
 end;
 
 initialization

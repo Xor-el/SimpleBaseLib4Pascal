@@ -6,10 +6,11 @@ interface
 
 uses
   SbpSimpleBaseLibTypes,
+  SbpIBaseCoder,
   SbpICodingAlphabet;
 
 type
-  IDividingCoder = interface(IInterface)
+  IDividingCoder = interface(IBaseCoder)
 
     function GetAlphabet: ICodingAlphabet;
 

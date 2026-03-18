@@ -36,6 +36,7 @@ type
     procedure Test_LowerFirst_Encode_ReturnsCorrectValues;
     procedure Test_LowerFirst_Decode_ReturnsCorrectValues;
     procedure Test_LowerFirst_TryDecode_ReturnsCorrectValues;
+    procedure Test_Instances_AreIsolated;
   end;
 
 implementation
@@ -167,6 +168,21 @@ begin
     CheckTrue(AreEqual(LExpected, System.Copy(LOut, 0, LBytesWritten)),
       Format('LowerFirst: TryDecode mismatch at index %d', [LI]));
   end;
+end;
+
+procedure TTestBase62.Test_Instances_AreIsolated;
+var
+  LInput: TSimpleBaseLibByteArray;
+begin
+  LInput := TEncoding.UTF8.GetBytes('abc');
+  AssertCodersAreIsolated(
+    TBase62.Default,
+    TBase62.LowerFirst,
+    LInput,
+    'Base62.Default',
+    'Base62.LowerFirst',
+    True
+  );
 end;
 
 initialization

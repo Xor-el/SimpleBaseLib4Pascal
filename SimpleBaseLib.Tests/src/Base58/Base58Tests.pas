@@ -73,6 +73,7 @@ type
 
     procedure Test_Alphabet_Ctor_InvalidLength_Throws;
     procedure Test_Alphabet_GetSafeCharCountForEncoding_Works;
+    procedure Test_Instances_AreIsolated;
   end;
 
 implementation
@@ -532,6 +533,21 @@ var
 begin
   LInput := TSimpleBaseLibByteArray.Create(0, 0, 0, 0, 1, 2, 3, 4);
   CheckEquals(10, TBase58.Bitcoin.GetSafeCharCountForEncoding(LInput));
+end;
+
+procedure TTestBase58.Test_Instances_AreIsolated;
+var
+  LInput: TSimpleBaseLibByteArray;
+begin
+  LInput := HexToBytes('0000010203');
+  AssertCodersAreIsolated(
+    TBase58.Bitcoin,
+    TBase58.Ripple,
+    LInput,
+    'Base58.Bitcoin',
+    'Base58.Ripple',
+    True
+  );
 end;
 
 initialization

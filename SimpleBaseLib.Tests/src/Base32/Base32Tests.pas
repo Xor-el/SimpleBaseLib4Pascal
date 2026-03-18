@@ -93,6 +93,7 @@ type
 
     procedure Test_Geohash_Decode_SmokeTest;
     procedure Test_Geohash_Encode_SmokeTest;
+    procedure Test_Instances_AreIsolated;
   end;
 
 implementation
@@ -668,6 +669,21 @@ end;
 procedure TTestBase32.Test_Geohash_Encode_SmokeTest;
 begin
   CheckEquals('ezs42', TBase32.Geohash.Encode(TSimpleBaseLibByteArray.Create($6F, $F0, $41)));
+end;
+
+procedure TTestBase32.Test_Instances_AreIsolated;
+var
+  LInput: TSimpleBaseLibByteArray;
+begin
+  LInput := TSimpleBaseLibByteArray.Create($00);
+  AssertCodersAreIsolated(
+    TBase32.Rfc4648,
+    TBase32.Crockford,
+    LInput,
+    'Base32.Rfc4648',
+    'Base32.Crockford',
+    True
+  );
 end;
 
 initialization

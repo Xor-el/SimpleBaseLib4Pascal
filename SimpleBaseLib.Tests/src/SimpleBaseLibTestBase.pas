@@ -9,6 +9,7 @@ uses
   Classes,
 {$ENDIF}
  SysUtils,
+ SbpIBaseCoder,
  SbpSimpleBaseLibTypes,
  SbpArrayUtilities,
 {$IFDEF FPC}
@@ -28,6 +29,9 @@ type
       ACount: Int32): String;
     function HexToBytes(const AHex: String): TSimpleBaseLibByteArray;
     function BytesToHex(const ABytes: TSimpleBaseLibByteArray): String;
+    procedure AssertCodersAreIsolated(const ACoderA, ACoderB: IBaseCoder;
+      const AInput: TSimpleBaseLibByteArray; const ANameA, ANameB: String;
+      AExpectDifferentEncoded: Boolean = True);
   end;
 
 implementation
@@ -72,6 +76,36 @@ begin
   SetLength(Result, LCount * 2);
   if LCount > 0 then
     {$IFDEF FPC}StrUtils.{$ENDIF}BinToHex(@ABytes[0], PChar(Result), LCount);
+end;
+
+procedure TSimpleBaseLibTestCase.AssertCodersAreIsolated(
+  const ACoderA, ACoderB: IBaseCoder;
+  const AInput: TSimpleBaseLibByteArray; const ANameA, ANameB: String;
+  AExpectDifferentEncoded: Boolean);
+var
+  LAEncodedBefore, LAEncodedAfter, LBEncoded: String;
+  LADecoded, LBDecoded: TSimpleBaseLibByteArray;
+begin
+  LAEncodedBefore := ACoderA.Encode(AInput);
+  LADecoded := ACoderA.Decode(LAEncodedBefore);
+  CheckTrue(AreEqual(AInput, LADecoded), ANameA + ' roundtrip failed');
+
+  LBEncoded := ACoderB.Encode(AInput);
+  LBDecoded := ACoderB.Decode(LBEncoded);
+  CheckTrue(AreEqual(AInput, LBDecoded), ANameB + ' roundtrip failed');
+
+  LAEncodedAfter := ACoderA.Encode(AInput);
+  CheckEquals(LAEncodedBefore, LAEncodedAfter,
+    ANameA + ' output changed after using ' + ANameB);
+
+  if AExpectDifferentEncoded then
+  begin
+    CheckTrue(LAEncodedBefore <> LBEncoded,
+      ANameA + ' and ' + ANameB + ' should encode differently for this vector');
+  end;
+
+  CheckFalse(ACoderA = ACoderB,
+    ANameA + ' and ' + ANameB + ' should be distinct instances');
 end;
 
 end.
