@@ -56,6 +56,8 @@ type
     procedure Test_TryDecode_UnevenInputBuffer_Fails;
     procedure Test_Decode_InvalidChar_Throws;
     procedure Test_Decode_InvalidLength_Throws;
+    procedure Test_UpperCaseDecode_DecodesBothLowerAndUpperCase;
+    procedure Test_LowerCaseDecode_DecodesBothLowerAndUpperCase;
     procedure Test_Instances_AreIsolated;
     procedure Test_GetSafeCharCountForEncoding_ReturnsCorrectValue;
     procedure Test_GetSafeByteCountForDecoding_ReturnsCorrectValue;
@@ -382,6 +384,34 @@ begin
       // expected
     end;
   end;
+end;
+
+procedure TTestBase16.Test_UpperCaseDecode_DecodesBothLowerAndUpperCase;
+var
+  LExpected, LUpper, LLower: TSimpleBaseLibByteArray;
+begin
+  LExpected := TSimpleBaseLibByteArray.Create($AB, $CD, $EF, $F0);
+  LUpper := TBase16.UpperCase.Decode('ABCDEFF0');
+  LLower := TBase16.UpperCase.Decode('abcdeff0');
+
+  CheckTrue(AreEqual(LExpected, LUpper),
+    'UpperCase.Decode should decode upper-case base16 input');
+  CheckTrue(AreEqual(LExpected, LLower),
+    'UpperCase.Decode should decode lower-case base16 input');
+end;
+
+procedure TTestBase16.Test_LowerCaseDecode_DecodesBothLowerAndUpperCase;
+var
+  LExpected, LUpper, LLower: TSimpleBaseLibByteArray;
+begin
+  LExpected := TSimpleBaseLibByteArray.Create($AB, $CD, $EF, $F0);
+  LUpper := TBase16.LowerCase.Decode('ABCDEFF0');
+  LLower := TBase16.LowerCase.Decode('abcdeff0');
+
+  CheckTrue(AreEqual(LExpected, LUpper),
+    'LowerCase.Decode should decode upper-case base16 input');
+  CheckTrue(AreEqual(LExpected, LLower),
+    'LowerCase.Decode should decode lower-case base16 input');
 end;
 
 procedure TTestBase16.Test_Instances_AreIsolated;

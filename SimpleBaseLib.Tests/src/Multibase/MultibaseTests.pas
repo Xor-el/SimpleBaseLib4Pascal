@@ -31,7 +31,11 @@ type
   TTestMultibase = class(TSimpleBaseLibTestCase)
   published
     procedure Test_Encode_PrependsBufferWithCorrectCharacter;
+{$IFNDEF FPC}
+    //Disabled in FPC as Compiler CodeGen/Optimization bug causes failure in FPC 3.2.x
+    // Do note that this bug does not manifest in Trunk as of the time of testing.
     procedure Test_Encode_InvalidEncoding_ThrowsArgumentException;
+{$ENDIF FPC}
     procedure Test_Encode_EncodesDataCorrectly;
     procedure Test_Encode_OfficialEncodingData_EncodesDataCorrectly;
     procedure Test_Encode_OfficialZeroPrefixedEncodingData_EncodesDataCorrectly;
@@ -79,6 +83,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 procedure TTestMultibase.Test_Encode_InvalidEncoding_ThrowsArgumentException;
 var
   LTestBuffer: TSimpleBaseLibByteArray;
@@ -94,6 +99,7 @@ begin
     end;
   end;
 end;
+{$ENDIF FPC}
 
 procedure TTestMultibase.Test_Encode_EncodesDataCorrectly;
 var
