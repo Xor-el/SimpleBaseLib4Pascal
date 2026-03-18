@@ -5,169 +5,321 @@ unit SbpBase16;
 interface
 
 uses
+  SysUtils,
+  Classes,
   SbpSimpleBaseLibTypes,
-  SbpUtilities;
-
-resourcestring
-  SInvalidHexCharacter = 'Invalid hex character: "%s"';
-  SInvalidTextLength = 'Text cannot be odd length "%s"';
+  SbpICodingAlphabet,
+  SbpIBase16,
+  SbpIBaseStreamCoder,
+  SbpINonAllocatingBaseCoder,
+  SbpStreamUtilities,
+  SbpBase16Alphabet;
 
 type
-  /// <summary>
-  /// Hexadecimal encoding/decoding
-  /// </summary>
-  TBase16 = class sealed(TObject)
+  TBase16 = class(TInterfacedObject, IBase16, IBaseStreamCoder, INonAllocatingBaseCoder)
   strict private
   const
+    EncodeBlockSize = Int32(1);
+    DecodeBlockSize = Int32(2);
 
-    lowerAlphabet: String = '0123456789abcdef';
-    upperAlphabet: String = '0123456789ABCDEF';
+  var
+    FAlphabet: ICodingAlphabet;
 
-    class function InternalEncode(const bytes: TSimpleBaseLibByteArray;
-      const alphabet: String): String; static;
+    class var FUpperCase: IBase16;
+    class var FLowerCase: IBase16;
+    class var FModHex: IBase16;
 
-    class function Decode(const text: TSimpleBaseLibCharArray)
-      : TSimpleBaseLibByteArray; overload; static;
+    class function GetUpperCase: IBase16; static;
+    class function GetLowerCase: IBase16; static;
+    class function GetModHex: IBase16; static;
+
+    function DecodeBuffer(AText: String): TSimpleBaseLibByteArray;
+    function EncodeBuffer(ABytes: TSimpleBaseLibByteArray; ALastBlock: Boolean): String;
+
+    function GetAlphabet: ICodingAlphabet;
+
+    class procedure InternalEncode(const AInput: TSimpleBaseLibByteArray;
+      const AOutput: TSimpleBaseLibCharArray; const AAlphabet: String); static;
 
   public
-    /// <summary>
-    /// Encode to Base16 representation using uppercase lettering
-    /// </summary>
-    /// <param name="bytes">Bytes to encode</param>
-    /// <returns>Base16 string</returns>
-    class function EncodeUpper(const bytes: TSimpleBaseLibByteArray): String;
-      static; inline;
+    class constructor Create;
 
-    /// <summary>
-    /// Encode to Base16 representation using lowercase lettering
-    /// </summary>
-    /// <param name="bytes">Bytes to encode</param>
-    /// <returns>Base16 string</returns>
-    class function EncodeLower(const bytes: TSimpleBaseLibByteArray): String;
-      static; inline;
+    constructor Create(const AAlphabet: ICodingAlphabet);
 
-    class function Decode(const text: String): TSimpleBaseLibByteArray;
-      overload; static;
+    function ToString: String; override;
+    function GetHashCode: {$IFDEF DELPHI}Int32;{$ELSE}PtrInt;{$ENDIF DELPHI}override;
 
+    function Encode(const ABytes: TSimpleBaseLibByteArray): String; overload;
+    function Decode(const AText: String): TSimpleBaseLibByteArray; overload;
+
+    function GetSafeByteCountForDecoding(const AText: String): Int32;
+    function GetSafeCharCountForEncoding(const ABytes: TSimpleBaseLibByteArray): Int32;
+    function TryDecode(const AText: String; const AOutput: TSimpleBaseLibByteArray;
+      out ABytesWritten: Int32): Boolean;
+    function TryEncode(const ABytes: TSimpleBaseLibByteArray;
+      const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
+
+    procedure Decode(const AInput: TStringBuilder; const AOutput: TStream); overload;
+    procedure Encode(const AInput: TStream; const AOutput: TStringBuilder); overload;
+
+    class property UpperCase: IBase16 read GetUpperCase;
+    class property LowerCase: IBase16 read GetLowerCase;
+    class property ModHex: IBase16 read GetModHex;
+
+    property Alphabet: ICodingAlphabet read GetAlphabet;
   end;
 
 implementation
 
 { TBase16 }
 
-class function TBase16.Decode(const text: TSimpleBaseLibCharArray)
-  : TSimpleBaseLibByteArray;
-
-  function GetHexByte(c: Int32): Int32; inline;
-  begin
-    case c of
-      Ord('0') .. Ord('9'):
-        Result := c - Ord('0');
-      Ord('A') .. Ord('F'):
-        Result := c - Ord('A') + 10;
-      Ord('a') .. Ord('f'):
-        Result := c - Ord('a') + 10;
-    else
-      begin
-        raise EArgumentSimpleBaseLibException.CreateResFmt
-          (@SInvalidHexCharacter, [Char(c)]);
-      end;
-    end;
-  end;
-
-var
-  textLen, b1, b2: Int32;
-  resultPtr, pResult: PByte;
-  textPtr, pInput, pEnd: PChar;
-  c1, c2: Char;
-  Ltext: String;
+class constructor TBase16.Create;
 begin
-  Result := Nil;
-  textLen := System.Length(text);
-  if (textLen = 0) then
+  FUpperCase := nil;
+  FLowerCase := nil;
+  FModHex := nil;
+end;
+
+function TBase16.DecodeBuffer(AText: String): TSimpleBaseLibByteArray;
+begin
+  Result := Decode(AText);
+end;
+
+function TBase16.EncodeBuffer(ABytes: TSimpleBaseLibByteArray;
+  ALastBlock: Boolean): String;
+begin
+  Result := Encode(ABytes);
+end;
+
+constructor TBase16.Create(const AAlphabet: ICodingAlphabet);
+begin
+  inherited Create;
+  FAlphabet := AAlphabet;
+end;
+
+function TBase16.GetHashCode: {$IFDEF DELPHI}Int32;{$ELSE}PtrInt;{$ENDIF DELPHI}
+begin
+  Result := Alphabet.GetHashCode;
+end;
+
+function TBase16.ToString: String;
+begin
+  Result := 'Base16_' + Alphabet.ToString;
+end;
+
+function TBase16.GetAlphabet: ICodingAlphabet;
+begin
+  Result := FAlphabet;
+end;
+
+class function TBase16.GetUpperCase: IBase16;
+begin
+  if FUpperCase = nil then
   begin
+    FUpperCase := TBase16.Create(TBase16Alphabet.UpperCase);
+  end;
+  Result := FUpperCase;
+end;
+
+class function TBase16.GetLowerCase: IBase16;
+begin
+  if FLowerCase = nil then
+  begin
+    FLowerCase := TBase16.Create(TBase16Alphabet.LowerCase);
+  end;
+  Result := FLowerCase;
+end;
+
+class function TBase16.GetModHex: IBase16;
+begin
+  if FModHex = nil then
+  begin
+    FModHex := TBase16.Create(TBase16Alphabet.ModHex);
+  end;
+  Result := FModHex;
+end;
+
+function TBase16.Decode(const AText: String): TSimpleBaseLibByteArray;
+var
+  LTextLen: Int32;
+  LSafeCount: Int32;
+  LBytesWritten: Int32;
+begin
+  LTextLen := System.Length(AText);
+  if LTextLen = 0 then
+  begin
+    Result := nil;
     Exit;
   end;
-  if ((textLen and 1) <> 0) then
+
+  LSafeCount := GetSafeByteCountForDecoding(AText);
+  System.SetLength(Result, LSafeCount);
+
+  if not TryDecode(AText, Result, LBytesWritten) then
   begin
-    Ltext := '';
-    if System.Length(text) > 0 then
+    raise EArgumentSimpleBaseLibException.Create('Invalid text');
+  end;
+end;
+
+procedure TBase16.Decode(const AInput: TStringBuilder;
+  const AOutput: TStream);
+var
+  LBufferSize: Int32;
+begin
+  LBufferSize := TStreamUtilities.GetAlignedBufferSize(DecodeBlockSize);
+  TStreamUtilities.Decode(AInput, AOutput, DecodeBuffer, LBufferSize);
+end;
+
+function TBase16.GetSafeByteCountForDecoding(const AText: String): Int32;
+var
+  LTextLen: Int32;
+begin
+  LTextLen := System.Length(AText);
+  if (LTextLen and 1) <> 0 then
+  begin
+    Result := 0;
+    Exit;
+  end;
+  Result := LTextLen div 2;
+end;
+
+function TBase16.GetSafeCharCountForEncoding(
+  const ABytes: TSimpleBaseLibByteArray): Int32;
+begin
+  Result := System.Length(ABytes) * 2;
+end;
+
+function TBase16.TryDecode(const AText: String;
+  const AOutput: TSimpleBaseLibByteArray;
+  out ABytesWritten: Int32): Boolean;
+var
+  LTextLen, LI, LO, LByte1, LByte2, LOutputLen: Int32;
+  LChar1, LChar2: Char;
+begin
+  LTextLen := System.Length(AText);
+  if LTextLen = 0 then
+  begin
+    ABytesWritten := 0;
+    Result := True;
+    Exit;
+  end;
+
+  if (LTextLen and 1) <> 0 then
+  begin
+    ABytesWritten := 0;
+    Result := False;
+    Exit;
+  end;
+
+  LOutputLen := LTextLen div 2;
+  if System.Length(AOutput) < LOutputLen then
+  begin
+    ABytesWritten := 0;
+    Result := False;
+    Exit;
+  end;
+
+  LO := 0;
+  LI := 1;
+  while LI <= LTextLen do
+  begin
+    LChar1 := AText[LI];
+    LChar2 := AText[LI + 1];
+
+    LByte1 := FAlphabet.ReverseLookupTable[Ord(LChar1)] - 1;
+    LByte2 := FAlphabet.ReverseLookupTable[Ord(LChar2)] - 1;
+
+    if (LByte1 < 0) or (LByte2 < 0) then
     begin
-      System.SetString(Ltext, PChar(@text[0]), System.Length(text));
+      ABytesWritten := LO;
+      Result := False;
+      Exit;
     end;
-    raise EArgumentSimpleBaseLibException.CreateResFmt
-      (@SInvalidTextLength, [Ltext]);
-  end;
-  System.SetLength(Result, textLen shr 1);
-  resultPtr := PByte(Result);
-  textPtr := PChar(text);
 
-  pResult := resultPtr;
-  pInput := textPtr;
-  pEnd := pInput + textLen;
-  while (pInput <> pEnd) do
-  begin
-    c1 := pInput^;
-    System.Inc(pInput);
-    b1 := GetHexByte(Ord(c1));
-    c2 := pInput^;
-    System.Inc(pInput);
-    b2 := GetHexByte(Ord(c2));
-    pResult^ := Byte(b1 shl 4 or b2);
-    System.Inc(pResult);
+    AOutput[LO] := Byte((LByte1 * 16) or LByte2);
+    Inc(LO);
+    Inc(LI, 2);
   end;
+
+  ABytesWritten := LO;
+  Result := True;
 end;
 
-class function TBase16.Decode(const text: String): TSimpleBaseLibByteArray;
-begin
-  Result := Decode(TUtilities.StringToCharArray(text));
-end;
-
-class function TBase16.InternalEncode(const bytes: TSimpleBaseLibByteArray;
-  const alphabet: String): String;
+function TBase16.Encode(const ABytes: TSimpleBaseLibByteArray): String;
 var
-  bytesLen: Int32;
-  b: Byte;
-  resultPtr, alphabetPtr, pResult, pAlphabet: PChar;
-  bytesPtr, pInput, pEnd: PByte;
+  LLen, LSafeCount: Int32;
+  LAlphabet: String;
+  LOutput: TSimpleBaseLibCharArray;
 begin
-  Result := '';
-  bytesLen := System.Length(bytes);
-  if (bytesLen = 0) then
+  LLen := System.Length(ABytes);
+  if LLen = 0 then
   begin
+    Result := '';
     Exit;
   end;
-  Result := StringOfChar(Char(0), bytesLen * 2);
-  resultPtr := PChar(Result);
-  bytesPtr := PByte(bytes);
-  alphabetPtr := PChar(alphabet);
 
-  pResult := resultPtr;
-  pAlphabet := alphabetPtr;
-  pInput := bytesPtr;
-  pEnd := pInput + bytesLen;
-  while (pInput <> pEnd) do
+  LAlphabet := FAlphabet.Value;
+  LSafeCount := GetSafeCharCountForEncoding(ABytes);
+  SetLength(LOutput, LSafeCount);
+  InternalEncode(ABytes, LOutput, LAlphabet);
+  SetString(Result, PChar(@LOutput[0]), Length(LOutput));
+end;
+
+function TBase16.TryEncode(const ABytes: TSimpleBaseLibByteArray;
+  const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
+var
+  LLen, LOutputLen: Int32;
+  LAlphabet: String;
+begin
+  LLen := System.Length(ABytes);
+  LOutputLen := LLen * 2;
+
+  if System.Length(AOutput) < LOutputLen then
   begin
-    b := pInput^;
-    pResult^ := pAlphabet[b shr 4];
-    System.Inc(pResult);
-    pResult^ := pAlphabet[b and $0F];
-    System.Inc(pResult);
-    System.Inc(pInput);
+    ACharsWritten := 0;
+    Result := False;
+    Exit;
   end;
 
+  if LOutputLen = 0 then
+  begin
+    ACharsWritten := 0;
+    Result := True;
+    Exit;
+  end;
+
+  LAlphabet := FAlphabet.Value;
+  InternalEncode(ABytes, AOutput, LAlphabet);
+
+  ACharsWritten := LOutputLen;
+  Result := True;
 end;
 
-class function TBase16.EncodeLower(const bytes
-  : TSimpleBaseLibByteArray): String;
+class procedure TBase16.InternalEncode(const AInput: TSimpleBaseLibByteArray;
+  const AOutput: TSimpleBaseLibCharArray; const AAlphabet: String);
+var
+  LI, LO, LLen: Int32;
+  LByte: Byte;
 begin
-  Result := InternalEncode(bytes, lowerAlphabet);
+  LLen := System.Length(AInput);
+  LO := 0;
+  for LI := 0 to LLen - 1 do
+  begin
+    LByte := AInput[LI];
+    AOutput[LO] := AAlphabet[(LByte shr 4) + 1];
+    AOutput[LO + 1] := AAlphabet[(LByte and $0F) + 1];
+    Inc(LO, 2);
+  end;
 end;
 
-class function TBase16.EncodeUpper(const bytes
-  : TSimpleBaseLibByteArray): String;
+procedure TBase16.Encode(const AInput: TStream;
+  const AOutput: TStringBuilder);
+var
+  LBufferSize: Int32;
 begin
-  Result := InternalEncode(bytes, upperAlphabet);
+  LBufferSize := TStreamUtilities.GetAlignedBufferSize(EncodeBlockSize);
+  TStreamUtilities.Encode(AInput, AOutput, EncodeBuffer, LBufferSize);
 end;
 
 end.
+

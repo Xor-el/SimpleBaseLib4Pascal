@@ -5,374 +5,537 @@ unit SbpBase85;
 interface
 
 uses
-  SbpBits,
-  SbpUtilities,
+  Classes,
+  SysUtils,
   SbpSimpleBaseLibTypes,
-  SbpBase85Alphabet,
+  SbpSimpleBaseLibConstants,
+  SbpIBase85,
   SbpIBase85Alphabet,
-  SbpIBase85;
-
-resourcestring
-  SAlphabetNil = 'Alphabet Instance cannot be Nil "%s"';
-  SUnExpectedCharacter =
-    'Unexpected Shortcut Character In The Middle Of a Regular Block';
+  SbpINonAllocatingBaseCoder,
+  SbpIBaseStreamCoder,
+  SbpBase85Alphabet,
+  SbpStreamUtilities;
 
 type
-  TBase85 = class sealed(TInterfacedObject, IBase85)
-
+  TBase85 = class(TInterfacedObject, IBase85, IBaseStreamCoder, INonAllocatingBaseCoder)
   strict private
-  const
-    baseLength = Int32(85);
-    byteBlockSize = Int32(4);
-    stringBlockSize = Int32(5);
-    allSpace = Int64($20202020);
+    type
+    TDecodeResult = (
+      Success,
+      InsufficientOutputBuffer,
+      InvalidCharacter,
+      InvalidShortcut
+    );
 
-    class var
+    TDecodeOutcome = record
+      Status: TDecodeResult;
+      InvalidChar: Char;
+    end;
 
-      FZ85, FAscii85: IBase85;
+    const
+    BaseLength = Int32(85);
+    EncodeBlockSize = Int32(4);
+    DecodeBlockSize = Int32(5);
+    FourSpaceChars = Int64($20202020);
 
-    class procedure WriteDecodedValue(var pOutput: PByte; value: Int64;
-      numBytesToWrite: Int32); static; inline;
+    var
+    FAlphabet: IBase85Alphabet;
+    class var FZ85: IBase85;
+    class var FAscii85: IBase85;
+    class function GetZ85: IBase85; static;
+    class function GetAscii85: IBase85; static;
 
-    class procedure WriteShortcut(var pOutput: PByte; blockIndex: Int32;
-      value: Int64); static; inline;
+    function DecodeBuffer(AText: String): TSimpleBaseLibByteArray;
+    function EncodeBuffer(ABytes: TSimpleBaseLibByteArray; ALastBlock: Boolean): String;
+    function GetAlphabet: IBase85Alphabet;
 
-    class function GetDecodeBufferLength(textLen: Int32;
-      usingShortcuts: Boolean): Int32; static; inline;
+    class function IsWhiteSpace(AChar: Char): Boolean; static; inline;
+    class function GetSafeCharCountForEncodingInternal(ABytesLength: Int32): Int32; static;
+    class function GetSafeByteCountForDecodingInternal(ATextLength: Int32;
+      AUsingShortcuts: Boolean): Int32; static;
 
-    class function GetZ85: IBase85; static; inline;
-    class function GetAscii85: IBase85; static; inline;
+    class function WriteEncodedValue(ABlock: UInt32;
+      const AOutput: TSimpleBaseLibCharArray; AOutputOffset: Int32;
+      const ATable: String; ABlockLength: Int32;
+      AHasZeroShortcut: Boolean; AZeroShortcut: Char;
+      AHasSpaceShortcut: Boolean; ASpaceShortcut: Char;
+      out ACharsWritten: Int32): Boolean; static;
 
-    class constructor Base85();
+    class function WriteDecodedValue(const AOutput: TSimpleBaseLibByteArray;
+      AOutputOffset: Int32; AValue: Int64; ANumBytesToWrite: Int32;
+      out ABytesWritten: Int32): TDecodeResult; static;
 
-  var
-    Falphabet: IBase85Alphabet;
+    class function WriteShortcut(const AOutput: TSimpleBaseLibByteArray;
+      AOutputOffset: Int32; var ABlockIndex: Int32; AValue: Int64;
+      out ABytesWritten: Int32): TDecodeResult; static;
 
-    /// <summary>
-    /// Decode a Base85 encoded string into a byte array.
-    /// </summary>
-    /// <param name="text">Encoded Base85 characters</param>
-    /// <returns>Decoded byte array</returns>
-    function Decode(const text: TSimpleBaseLibCharArray)
-      : TSimpleBaseLibByteArray; overload;
-
-    procedure WriteOutput(var pOutput: PChar; const table: String; input: Int64;
-      stringLength: Int32; usesZeroShortcut, usesSpaceShortcut
-      : Boolean); inline;
-
+    function InternalEncode(const AInput: TSimpleBaseLibByteArray;
+      const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
+    function InternalDecode(const AInput: String;
+      const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): TDecodeOutcome;
   public
+    class constructor Create;
 
-    /// <summary>
-    /// Encode a byte array into a Base85 string
-    /// </summary>
-    /// <param name="bytes">Buffer to be encoded</param>
-    /// <param name="padding">Append padding characters in the output</param>
-    /// <returns>Encoded string</returns>
-    function Encode(const bytes: TSimpleBaseLibByteArray): String;
-    /// <summary>
-    /// Decode a Base85 encoded string into a byte array.
-    /// </summary>
-    /// <param name="text">Encoded Base85 string</param>
-    /// <returns>Decoded byte array</returns>
-    function Decode(const text: String): TSimpleBaseLibByteArray; overload;
-    /// <summary>
-    /// ZeroMQ Z85 Alphabet
-    /// </summary>
+    constructor Create(const AAlphabet: IBase85Alphabet);
+
     class property Z85: IBase85 read GetZ85;
-    /// <summary>
-    /// Adobe Ascii85 Alphabet (each character is directly produced by raw
-    /// value + 33)
-    /// </summary>
     class property Ascii85: IBase85 read GetAscii85;
 
-    constructor Create(const alphabet: IBase85Alphabet);
-    destructor Destroy; override;
+    function GetSafeByteCountForDecoding(const AText: String): Int32;
+    function GetSafeCharCountForEncoding(const ABytes: TSimpleBaseLibByteArray): Int32;
 
+    function Encode(const ABytes: TSimpleBaseLibByteArray): String; overload;
+    function Decode(const AText: String): TSimpleBaseLibByteArray; overload;
+
+    function TryEncode(const ABytes: TSimpleBaseLibByteArray;
+      const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
+    function TryDecode(const AText: String;
+      const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): Boolean;
+
+    procedure Encode(const AInput: TStream; const AOutput: TStringBuilder); overload;
+    procedure Decode(const AInput: TStringBuilder; const AOutput: TStream); overload;
+
+    property Alphabet: IBase85Alphabet read GetAlphabet;
   end;
 
 implementation
 
 { TBase85 }
 
-procedure TBase85.WriteOutput(var pOutput: PChar; const table: String;
-  input: Int64; stringLength: Int32; usesZeroShortcut, usesSpaceShortcut
-  : Boolean);
-var
-  i: Int32;
-  result: Int64;
+class constructor TBase85.Create;
 begin
-  // handle shortcuts
-  if (input = 0) and (usesZeroShortcut) then
-  begin
-    pOutput^ := Falphabet.AllZeroShortcut;
-    System.Inc(pOutput);
-    Exit;
-  end;
-
-  if (input = allSpace) and (usesSpaceShortcut) then
-  begin
-    pOutput^ := Falphabet.AllSpaceShortcut;
-    System.Inc(pOutput);
-    Exit;
-  end;
-
-  // map the 4-byte packet to to 5-byte octets
-  i := stringBlockSize - 1;
-  while i >= 0 do
-  begin
-    // DivMod(input, baseLength, input, result);
-    result := input mod baseLength;
-    input := input div baseLength;
-    pOutput[i] := table[Int32(result) + 1];
-    System.Dec(i);
-  end;
-  pOutput := pOutput + stringLength;
+  FZ85 := nil;
+  FAscii85 := nil;
 end;
 
-class procedure TBase85.WriteDecodedValue(var pOutput: PByte; value: Int64;
-  numBytesToWrite: Int32);
-var
-  i: Int32;
-  b: Byte;
+constructor TBase85.Create(const AAlphabet: IBase85Alphabet);
 begin
-  i := byteBlockSize - 1;
-  while ((i >= 0) and (numBytesToWrite > 0)) do
-  begin
-    b := Byte(TBits.Asr64(value, (i shl 3)) and $FF);
-    pOutput^ := b;
-    System.Inc(pOutput);
-    System.Dec(i);
-    System.Dec(numBytesToWrite);
-  end;
-end;
-
-class procedure TBase85.WriteShortcut(var pOutput: PByte; blockIndex: Int32;
-  value: Int64);
-begin
-  if (blockIndex <> 0) then
-  begin
-    raise EArgumentSimpleBaseLibException.CreateRes(@SUnExpectedCharacter);
-  end;
-  WriteDecodedValue(pOutput, value, byteBlockSize);
-end;
-
-class function TBase85.GetDecodeBufferLength(textLen: Int32;
-  usingShortcuts: Boolean): Int32;
-begin
-  if (usingShortcuts) then
-  begin
-    result := textLen * byteBlockSize; // max possible size using shortcuts
-    Exit;
-  end;
-  // max possible size without shortcuts
-  result := (((textLen - 1) div stringBlockSize) + 1) * byteBlockSize;
-end;
-
-class constructor TBase85.Base85;
-begin
-  FZ85 := TBase85.Create(TBase85Alphabet.Z85 as IBase85Alphabet);
-  FAscii85 := TBase85.Create(TBase85Alphabet.Ascii85 as IBase85Alphabet);
-end;
-
-constructor TBase85.Create(const alphabet: IBase85Alphabet);
-begin
-  Inherited Create();
-  if (alphabet = Nil) then
-  begin
-    raise EArgumentNilSimpleBaseLibException.CreateResFmt(@SAlphabetNil,
-      ['alphabet']);
-  end;
-  Falphabet := alphabet;
-end;
-
-function TBase85.Decode(const text: TSimpleBaseLibCharArray)
-  : TSimpleBaseLibByteArray;
-var
-  textLen, decodeBufferLen, blockIndex, x, i, actualOutputLength: Int32;
-  value: Int64;
-  allZeroChar, allSpaceChar, c: Char;
-  checkZero, checkSpace, usingShortcuts: Boolean;
-  decodeBuffer, table: TSimpleBaseLibByteArray;
-  inputPtr, pInput, pInputEnd: PChar;
-  decodeBufferPtr, pDecodeBuffer, resultPtr: PByte;
-begin
-  result := Nil;
-  textLen := System.Length(text);
-  if (textLen = 0) then
-  begin
-    Exit;
-  end;
-  allZeroChar := Falphabet.AllZeroShortcut;
-  allSpaceChar := Falphabet.AllSpaceShortcut;
-  checkZero := allZeroChar <> TBase85Alphabet.NullChar;
-  checkSpace := allSpaceChar <> TBase85Alphabet.NullChar;
-  usingShortcuts := checkZero or checkSpace;
-  // allocate a larger buffer if we're using shortcuts
-
-  decodeBufferLen := GetDecodeBufferLength(textLen, usingShortcuts);
-  System.SetLength(decodeBuffer, decodeBufferLen);
-  table := Falphabet.ReverseLookupTable;
-  inputPtr := PChar(text);
-  decodeBufferPtr := PByte(decodeBuffer);
-  pDecodeBuffer := decodeBufferPtr;
-  pInput := inputPtr;
-  pInputEnd := pInput + textLen;
-
-  blockIndex := 0;
-  value := 0;
-  while (pInput <> pInputEnd) do
-  begin
-
-    c := pInput^;
-    System.Inc(pInput);
-
-    if (TUtilities.IsWhiteSpace(c)) then
-    begin
-      continue;
-    end;
-
-    // handle shortcut characters
-    if ((checkZero) and (c = allZeroChar)) then
-    begin
-      WriteShortcut(pDecodeBuffer, blockIndex, 0);
-      continue;
-    end;
-    if ((checkSpace) and (c = allSpaceChar)) then
-    begin
-      WriteShortcut(pDecodeBuffer, blockIndex, allSpace);
-      continue;
-    end;
-
-    // handle regular blocks
-    x := table[Ord(c)] - 1; // map character to byte value
-    if (x < 0) then
-    begin
-      Falphabet.InvalidCharacter(c);
-    end;
-    value := (value * baseLength) + x;
-    blockIndex := blockIndex + 1;
-    if (blockIndex = stringBlockSize) then
-    begin
-      WriteDecodedValue(pDecodeBuffer, value, byteBlockSize);
-      blockIndex := 0;
-      value := 0;
-    end;
-  end;
-
-  if (blockIndex > 0) then
-  begin
-    // handle padding by treating the rest of the characters
-    // as "u"s. so both big endianness and bit weirdness work out okay.
-
-    i := 0;
-    while i < (stringBlockSize - blockIndex) do
-    begin
-      value := (value * baseLength) + (baseLength - 1);
-      System.Inc(i);
-    end;
-
-    WriteDecodedValue(pDecodeBuffer, value, blockIndex - 1);
-  end;
-  actualOutputLength := Int32(pDecodeBuffer - decodeBufferPtr);
-  System.SetLength(result, actualOutputLength);
-  resultPtr := PByte(result);
-  // we are bound to allocate a new buffer since we don't know
-  // the correct output size at the beginning. that incurs an overhead of
-  // System.Length(text) x 4 bytes during processing. this API isn't designed to decode
-  // megabytes of data anyways.
-  System.Move(decodeBufferPtr^, resultPtr^, actualOutputLength);
-end;
-
-function TBase85.Decode(const text: String): TSimpleBaseLibByteArray;
-begin
-  result := Decode(TUtilities.StringToCharArray(text));
-end;
-
-destructor TBase85.Destroy;
-begin
-  inherited Destroy;
-end;
-
-function TBase85.Encode(const bytes: TSimpleBaseLibByteArray): String;
-var
-  bytesLen, maxOutputLen, fullLen, remainingBytes, n, outputLen: Int32;
-  input: Int64;
-  t1, t2, t3, t4: UInt32;
-  usesZeroShortcut, usesSpaceShortcut: Boolean;
-  output: TSimpleBaseLibCharArray;
-  table: string;
-  inputPtr, pInput, pInputEnd: PByte;
-  outputPtr, pOutput: PChar;
-begin
-  result := '';
-  bytesLen := System.Length(bytes);
-  if (bytesLen = 0) then
-  begin
-    Exit;
-  end;
-  usesZeroShortcut := Falphabet.AllZeroShortcut <> TBase85Alphabet.NullChar;
-  usesSpaceShortcut := Falphabet.AllSpaceShortcut <> TBase85Alphabet.NullChar;
-
-  // adjust output length based on prefix and suffix settings
-  // we know output length is too large but we will handle it later.
-  maxOutputLen := (bytesLen * stringBlockSize);
-
-  System.SetLength(output, maxOutputLen);
-
-  fullLen := TBits.Asr32(bytesLen, 2) shl 2; // rounded
-
-  table := Falphabet.value;
-  inputPtr := PByte(bytes);
-  outputPtr := PChar(output);
-  pOutput := outputPtr;
-  pInput := inputPtr;
-  pInputEnd := pInput + fullLen;
-
-  while (pInput <> pInputEnd) do
-  begin
-    // build a 32-bit representation of input
-    t1 := (UInt32(pInput^) shl 24);
-    System.Inc(pInput);
-    t2 := (UInt32(pInput^) shl 16);
-    System.Inc(pInput);
-    t3 := (UInt32(pInput^) shl 8);
-    System.Inc(pInput);
-    t4 := (UInt32(pInput^));
-    System.Inc(pInput);
-    input := t1 or t2 or t3 or t4;
-    WriteOutput(pOutput, table, input, stringBlockSize, usesZeroShortcut,
-      usesSpaceShortcut);
-  end;
-
-  // check if a part is remaining
-  remainingBytes := bytesLen - fullLen;
-  if (remainingBytes > 0) then
-  begin
-    input := 0;
-    n := 0;
-    while n < remainingBytes do
-    begin
-      input := input or (UInt32(pInput^) shl ((3 - n) shl 3));
-      System.Inc(pInput);
-      System.Inc(n);
-    end;
-
-    WriteOutput(pOutput, table, input, remainingBytes + 1, usesZeroShortcut,
-      usesSpaceShortcut);
-  end;
-
-  outputLen := Int32(pOutput - outputPtr);
-  System.SetString(result, outputPtr, outputLen);
-end;
-
-class function TBase85.GetAscii85: IBase85;
-begin
-  result := FAscii85;
+  inherited Create;
+  FAlphabet := AAlphabet;
 end;
 
 class function TBase85.GetZ85: IBase85;
 begin
-  result := FZ85;
+  if FZ85 = nil then
+  begin
+    FZ85 := TBase85.Create(TBase85Alphabet.Z85);
+  end;
+  Result := FZ85;
+end;
+
+class function TBase85.GetAscii85: IBase85;
+begin
+  if FAscii85 = nil then
+  begin
+    FAscii85 := TBase85.Create(TBase85Alphabet.Ascii85);
+  end;
+  Result := FAscii85;
+end;
+
+function TBase85.GetAlphabet: IBase85Alphabet;
+begin
+  Result := FAlphabet;
+end;
+
+function TBase85.GetSafeByteCountForDecoding(const AText: String): Int32;
+begin
+  Result := GetSafeByteCountForDecodingInternal(System.Length(AText), FAlphabet.HasShortcut);
+end;
+
+function TBase85.GetSafeCharCountForEncoding(
+  const ABytes: TSimpleBaseLibByteArray): Int32;
+begin
+  Result := GetSafeCharCountForEncodingInternal(System.Length(ABytes));
+end;
+
+class function TBase85.GetSafeCharCountForEncodingInternal(ABytesLength: Int32): Int32;
+begin
+  if ABytesLength = 0 then
+  begin
+    Result := 0;
+    Exit;
+  end;
+  Result := (ABytesLength + EncodeBlockSize - 1) * DecodeBlockSize div EncodeBlockSize;
+end;
+
+class function TBase85.GetSafeByteCountForDecodingInternal(ATextLength: Int32;
+  AUsingShortcuts: Boolean): Int32;
+begin
+  if AUsingShortcuts then
+  begin
+    Result := ATextLength * EncodeBlockSize;
+    Exit;
+  end;
+  Result := (((ATextLength - 1) div DecodeBlockSize) + 1) * EncodeBlockSize;
+end;
+
+function TBase85.DecodeBuffer(AText: String): TSimpleBaseLibByteArray;
+begin
+  Result := Decode(AText);
+end;
+
+function TBase85.EncodeBuffer(ABytes: TSimpleBaseLibByteArray;
+  ALastBlock: Boolean): String;
+begin
+  Result := Encode(ABytes);
+end;
+
+procedure TBase85.Encode(const AInput: TStream; const AOutput: TStringBuilder);
+var
+  LBufferSize: Int32;
+begin
+  LBufferSize := TStreamUtilities.GetAlignedBufferSize(EncodeBlockSize);
+  TStreamUtilities.Encode(AInput, AOutput, EncodeBuffer, LBufferSize);
+end;
+
+procedure TBase85.Decode(const AInput: TStringBuilder; const AOutput: TStream);
+var
+  LBufferSize: Int32;
+begin
+  LBufferSize := TStreamUtilities.GetAlignedBufferSize(DecodeBlockSize);
+  TStreamUtilities.Decode(AInput, AOutput, DecodeBuffer, LBufferSize);
+end;
+
+function TBase85.Encode(const ABytes: TSimpleBaseLibByteArray): String;
+var
+  LOutputLen, LCharsWritten: Int32;
+  LOutput: TSimpleBaseLibCharArray;
+begin
+  if System.Length(ABytes) = 0 then
+  begin
+    Result := '';
+    Exit;
+  end;
+
+  LOutputLen := GetSafeCharCountForEncoding(ABytes);
+  SetLength(LOutput, LOutputLen);
+  if not InternalEncode(ABytes, LOutput, LCharsWritten) then
+  begin
+    raise EInvalidOperationSimpleBaseLibException.Create(
+      'Insufficient output buffer size while encoding Base85');
+  end;
+  SetString(Result, PChar(@LOutput[0]), LCharsWritten);
+end;
+
+function TBase85.TryEncode(const ABytes: TSimpleBaseLibByteArray;
+  const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
+begin
+  if System.Length(ABytes) = 0 then
+  begin
+    ACharsWritten := 0;
+    Result := True;
+    Exit;
+  end;
+  Result := InternalEncode(ABytes, AOutput, ACharsWritten);
+end;
+
+function TBase85.Decode(const AText: String): TSimpleBaseLibByteArray;
+var
+  LDecodeBufferLen, LBytesWritten: Int32;
+  LDecodeBuffer: TSimpleBaseLibByteArray;
+  LOutcome: TDecodeOutcome;
+begin
+  if System.Length(AText) = 0 then
+  begin
+    Result := nil;
+    Exit;
+  end;
+
+  LDecodeBufferLen := GetSafeByteCountForDecodingInternal(System.Length(AText), FAlphabet.HasShortcut);
+  SetLength(LDecodeBuffer, LDecodeBufferLen);
+  LOutcome := InternalDecode(AText, LDecodeBuffer, LBytesWritten);
+  case LOutcome.Status of
+    TDecodeResult.Success:
+      Result := System.Copy(LDecodeBuffer, 0, LBytesWritten);
+    TDecodeResult.InvalidCharacter:
+      raise EArgumentSimpleBaseLibException.CreateFmt('Invalid character: %s', [LOutcome.InvalidChar]);
+    TDecodeResult.InvalidShortcut:
+      raise EArgumentSimpleBaseLibException.CreateFmt(
+        'Invalid location for a shortcut character: %s', [LOutcome.InvalidChar]);
+    TDecodeResult.InsufficientOutputBuffer:
+      raise EInvalidOperationSimpleBaseLibException.Create(
+        'Internal error: pre-allocated insufficient output buffer size');
+  else
+    raise EInvalidOperationSimpleBaseLibException.Create(
+      'This should be never hit - probably a bug');
+  end;
+end;
+
+function TBase85.TryDecode(const AText: String;
+  const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): Boolean;
+var
+  LOutcome: TDecodeOutcome;
+begin
+  LOutcome := InternalDecode(AText, AOutput, ABytesWritten);
+  Result := LOutcome.Status = TDecodeResult.Success;
+end;
+
+class function TBase85.IsWhiteSpace(AChar: Char): Boolean;
+begin
+  Result := (AChar = TSimpleBaseLibConstants.WhiteSpaceChar) or
+    (AChar = TSimpleBaseLibConstants.WhiteSpaceNELChar) or
+    (AChar = TSimpleBaseLibConstants.WhiteSpaceNBSPChar) or
+    ((AChar >= TSimpleBaseLibConstants.WhiteSpaceControlMinChar) and
+    (AChar <= TSimpleBaseLibConstants.WhiteSpaceControlMaxChar));
+end;
+
+class function TBase85.WriteEncodedValue(ABlock: UInt32;
+  const AOutput: TSimpleBaseLibCharArray; AOutputOffset: Int32; const ATable: String;
+  ABlockLength: Int32; AHasZeroShortcut: Boolean; AZeroShortcut: Char;
+  AHasSpaceShortcut: Boolean; ASpaceShortcut: Char; out ACharsWritten: Int32): Boolean;
+var
+  LI: Int32;
+  LRemainder: UInt32;
+begin
+  if (System.Length(AOutput) - AOutputOffset) = 0 then
+  begin
+    ACharsWritten := 0;
+    Result := False;
+    Exit;
+  end;
+
+  if (ABlock = 0) and AHasZeroShortcut then
+  begin
+    AOutput[AOutputOffset] := AZeroShortcut;
+    ACharsWritten := 1;
+    Result := True;
+    Exit;
+  end;
+
+  if (ABlock = UInt32(FourSpaceChars)) and AHasSpaceShortcut then
+  begin
+    AOutput[AOutputOffset] := ASpaceShortcut;
+    ACharsWritten := 1;
+    Result := True;
+    Exit;
+  end;
+
+  if ABlockLength > (System.Length(AOutput) - AOutputOffset) then
+  begin
+    ACharsWritten := 0;
+    Result := False;
+    Exit;
+  end;
+
+  for LI := DecodeBlockSize - 1 downto 0 do
+  begin
+    LRemainder := ABlock mod UInt32(BaseLength);
+    ABlock := ABlock div UInt32(BaseLength);
+    if LI < ABlockLength then
+    begin
+      AOutput[AOutputOffset + LI] := ATable[Int32(LRemainder) + 1];
+    end;
+  end;
+
+  ACharsWritten := ABlockLength;
+  Result := True;
+end;
+
+class function TBase85.WriteDecodedValue(const AOutput: TSimpleBaseLibByteArray;
+  AOutputOffset: Int32; AValue: Int64; ANumBytesToWrite: Int32;
+  out ABytesWritten: Int32): TDecodeResult;
+var
+  LO, LI: Int32;
+begin
+  if ANumBytesToWrite > (System.Length(AOutput) - AOutputOffset) then
+  begin
+    ABytesWritten := 0;
+    Result := TDecodeResult.InsufficientOutputBuffer;
+    Exit;
+  end;
+
+  LO := 0;
+  for LI := EncodeBlockSize - 1 downto 0 do
+  begin
+    if ANumBytesToWrite < 1 then
+    begin
+      Break;
+    end;
+    AOutput[AOutputOffset + LO] := Byte((AValue shr (LI * 8)) and $FF);
+    Inc(LO);
+    Dec(ANumBytesToWrite);
+  end;
+
+  ABytesWritten := LO;
+  Result := TDecodeResult.Success;
+end;
+
+class function TBase85.WriteShortcut(const AOutput: TSimpleBaseLibByteArray;
+  AOutputOffset: Int32; var ABlockIndex: Int32; AValue: Int64;
+  out ABytesWritten: Int32): TDecodeResult;
+begin
+  if ABlockIndex <> 0 then
+  begin
+    ABytesWritten := 0;
+    Result := TDecodeResult.InvalidShortcut;
+    Exit;
+  end;
+
+  ABlockIndex := 0;
+  Result := WriteDecodedValue(AOutput, AOutputOffset, AValue, EncodeBlockSize, ABytesWritten);
+end;
+
+function TBase85.InternalEncode(const AInput: TSimpleBaseLibByteArray;
+  const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
+var
+  LUsesZeroShortcut, LUsesSpaceShortcut: Boolean;
+  LZeroShortcut, LSpaceShortcut: Char;
+  LTable: String;
+  LFullLen, LI, LNumWritten, LRemainingBytes, LN: Int32;
+  LBlock, LLastBlock: UInt32;
+begin
+  LUsesZeroShortcut := FAlphabet.HasAllZeroShortcut;
+  LUsesSpaceShortcut := FAlphabet.HasAllSpaceShortcut;
+  LZeroShortcut := FAlphabet.AllZeroShortcut;
+  LSpaceShortcut := FAlphabet.AllSpaceShortcut;
+  LTable := FAlphabet.Value;
+  LFullLen := System.Length(AInput) div EncodeBlockSize * EncodeBlockSize;
+
+  LI := 0;
+  ACharsWritten := 0;
+  while LI < LFullLen do
+  begin
+    LBlock := (UInt32(AInput[LI]) shl 24) or
+      (UInt32(AInput[LI + 1]) shl 16) or
+      (UInt32(AInput[LI + 2]) shl 8) or
+      UInt32(AInput[LI + 3]);
+    Inc(LI, 4);
+
+    if not WriteEncodedValue(LBlock, AOutput, ACharsWritten, LTable, DecodeBlockSize,
+      LUsesZeroShortcut, LZeroShortcut, LUsesSpaceShortcut, LSpaceShortcut, LNumWritten) then
+    begin
+      ACharsWritten := ACharsWritten + LNumWritten;
+      Result := False;
+      Exit;
+    end;
+    ACharsWritten := ACharsWritten + LNumWritten;
+  end;
+
+  LRemainingBytes := System.Length(AInput) - LFullLen;
+  if LRemainingBytes = 0 then
+  begin
+    Result := True;
+    Exit;
+  end;
+
+  LLastBlock := 0;
+  for LN := 0 to LRemainingBytes - 1 do
+  begin
+    LLastBlock := LLastBlock or (UInt32(AInput[LI + LN]) shl ((3 - LN) * 8));
+  end;
+
+  if not WriteEncodedValue(LLastBlock, AOutput, ACharsWritten, LTable, LRemainingBytes + 1,
+    LUsesZeroShortcut, LZeroShortcut, LUsesSpaceShortcut, LSpaceShortcut, LNumWritten) then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  ACharsWritten := ACharsWritten + LNumWritten;
+  Result := True;
+end;
+
+function TBase85.InternalDecode(const AInput: String;
+  const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): TDecodeOutcome;
+var
+  LAllZeroChar, LAllSpaceChar: Char;
+  LHasAllZeroChar, LHasAllSpaceChar: Boolean;
+  LTable: TSimpleBaseLibByteArray;
+  LBlockIndex, LI, LBytesWrittenNow, LX: Int32;
+  LValue: Int64;
+  LC: Char;
+  LDecodeResult: TDecodeResult;
+  LN: Int32;
+begin
+  LAllZeroChar := FAlphabet.AllZeroShortcut;
+  LAllSpaceChar := FAlphabet.AllSpaceShortcut;
+  LHasAllZeroChar := FAlphabet.HasAllZeroShortcut;
+  LHasAllSpaceChar := FAlphabet.HasAllSpaceShortcut;
+  LTable := FAlphabet.ReverseLookupTable;
+
+  LBlockIndex := 0;
+  LValue := 0;
+  LI := 1;
+  ABytesWritten := 0;
+  while LI <= System.Length(AInput) do
+  begin
+    LC := AInput[LI];
+    Inc(LI);
+    if IsWhiteSpace(LC) then
+    begin
+      Continue;
+    end;
+
+    if LHasAllZeroChar and (LC = LAllZeroChar) then
+    begin
+      LDecodeResult := WriteShortcut(AOutput, ABytesWritten, LBlockIndex, 0, LBytesWrittenNow);
+      if LDecodeResult <> TDecodeResult.Success then
+      begin
+        Result.Status := LDecodeResult;
+        Result.InvalidChar := LC;
+        Exit;
+      end;
+      ABytesWritten := ABytesWritten + LBytesWrittenNow;
+      Continue;
+    end
+    else if LHasAllSpaceChar and (LC = LAllSpaceChar) then
+    begin
+      LDecodeResult := WriteShortcut(AOutput, ABytesWritten, LBlockIndex, FourSpaceChars, LBytesWrittenNow);
+      if LDecodeResult <> TDecodeResult.Success then
+      begin
+        Result.Status := LDecodeResult;
+        Result.InvalidChar := LC;
+        Exit;
+      end;
+      ABytesWritten := ABytesWritten + LBytesWrittenNow;
+      Continue;
+    end;
+
+    LX := LTable[Ord(LC)] - 1;
+    if LX < 0 then
+    begin
+      Result.Status := TDecodeResult.InvalidCharacter;
+      Result.InvalidChar := LC;
+      Exit;
+    end;
+
+    LValue := (LValue * BaseLength) + LX;
+    LBlockIndex := LBlockIndex + 1;
+    if LBlockIndex = DecodeBlockSize then
+    begin
+      LDecodeResult := WriteDecodedValue(AOutput, ABytesWritten, LValue, EncodeBlockSize, LBytesWrittenNow);
+      if LDecodeResult <> TDecodeResult.Success then
+      begin
+        Result.Status := LDecodeResult;
+        Result.InvalidChar := TSimpleBaseLibConstants.NullChar;
+        Exit;
+      end;
+
+      ABytesWritten := ABytesWritten + LBytesWrittenNow;
+      LBlockIndex := 0;
+      LValue := 0;
+    end;
+  end;
+
+  if LBlockIndex > 0 then
+  begin
+    for LN := 0 to DecodeBlockSize - LBlockIndex - 1 do
+    begin
+      LValue := (LValue * BaseLength) + (BaseLength - 1);
+    end;
+
+    LDecodeResult := WriteDecodedValue(AOutput, ABytesWritten, LValue, LBlockIndex - 1, LBytesWrittenNow);
+    if LDecodeResult <> TDecodeResult.Success then
+    begin
+      Result.Status := LDecodeResult;
+      Result.InvalidChar := TSimpleBaseLibConstants.NullChar;
+      Exit;
+    end;
+    ABytesWritten := ABytesWritten + LBytesWrittenNow;
+  end;
+
+  Result.Status := TDecodeResult.Success;
+  Result.InvalidChar := TSimpleBaseLibConstants.NullChar;
 end;
 
 end.

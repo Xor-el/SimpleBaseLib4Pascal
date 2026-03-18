@@ -3,16 +3,15 @@ program SimpleBaseLib.Tests;
 {$mode objfpc}{$H+}
 
 uses
-  consoletestrunner,
-  Base16Tests,
-  CrockfordTests,
-  ExtendedHexTests,
-  Rfc4648Tests,
-  Base58AlphabetTests,
-  Base58Tests,
-  Base64Tests,
-  Ascii85Tests,
-  BaseZ85Tests;
+  consoletestrunner, SimpleBaseLibTestBase, Base36Tests, Base10Tests,
+  Base16StreamRegressionTests, Base16Tests, Base2StreamRegressionTests,
+  Base2Tests, Base32Tests, Base32StreamRegressionTests, Base32AlphabetTests,
+  Rfc4648Tests, ExtendedHexTests, CrockfordTests, Base45Tests,
+  Base45StreamRegressionTests, Base58Tests, Base58AlphabetTests, Base62Tests,
+  Base8Tests, Base8StreamRegressionTests, Base85Tests,
+  Base85StreamRegressionTests, BaseZ85Tests, Ascii85Tests,
+  EncodingAlphabetTests, CodingAlphabetTests, BitsTests, MultibaseTests,
+  Base64Tests, Base64StreamRegressionTests;
 
 type
 

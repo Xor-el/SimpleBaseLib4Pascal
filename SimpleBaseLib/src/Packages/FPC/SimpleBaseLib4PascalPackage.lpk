@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="4">
+  <Package Version="5">
     <PathDelim Value="\"/>
     <Name Value="SimpleBaseLib4PascalPackage"/>
     <Type Value="RunTimeOnly"/>
@@ -10,7 +10,7 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\..\Include"/>
-        <OtherUnitFiles Value="..\..\Bases;..\..\Interfaces;..\..\Utils"/>
+        <OtherUnitFiles Value="..\..\Bases;..\..\Interfaces;..\..\Coders;..\..\Interfaces\Bases;..\..\Utilities;..\..\Alphabets;..\..\Interfaces\Alphabets;..\..\Misc;..\..\Interfaces\Coders"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <CodeGeneration>
@@ -21,105 +21,278 @@
     </CompilerOptions>
     <Description Value="SimpleBaseLib4Pascal as the name implies is a simple to use Base Encoding Package for Delphi/FreePascal Compilers that provides at the moment support for encoding and decoding various bases such as Base16, Base32 (various variants), Base58 (various variants), Base64 (various variants) and Base85 (various variants)."/>
     <License Value="MIT License"/>
-    <Version Major="2" Minor="6"/>
-    <Files Count="24">
+    <Version Major="2" Minor="7"/>
+    <Files Count="67">
       <Item1>
-        <Filename Value="..\..\Bases\SbpBase16.pas"/>
-        <UnitName Value="SbpBase16"/>
+        <Filename Value="..\..\Coders\SbpDividingCoder.pas"/>
+        <UnitName Value="SbpDividingCoder"/>
       </Item1>
       <Item2>
-        <Filename Value="..\..\Bases\SbpBase32.pas"/>
-        <UnitName Value="SbpBase32"/>
+        <Filename Value="..\..\Interfaces\Bases\SbpIMoneroBase58.pas"/>
+        <UnitName Value="SbpIMoneroBase58"/>
       </Item2>
       <Item3>
-        <Filename Value="..\..\Bases\SbpBase32Alphabet.pas"/>
-        <UnitName Value="SbpBase32Alphabet"/>
+        <Filename Value="..\..\Bases\SbpBase85.pas"/>
+        <UnitName Value="SbpBase85"/>
       </Item3>
       <Item4>
-        <Filename Value="..\..\Bases\SbpBase58.pas"/>
-        <UnitName Value="SbpBase58"/>
-      </Item4>
-      <Item5>
-        <Filename Value="..\..\Bases\SbpBase58Alphabet.pas"/>
-        <UnitName Value="SbpBase58Alphabet"/>
-      </Item5>
-      <Item6>
         <Filename Value="..\..\Bases\SbpBase64.pas"/>
         <UnitName Value="SbpBase64"/>
+      </Item4>
+      <Item5>
+        <Filename Value="..\..\Bases\SbpBase45.pas"/>
+        <UnitName Value="SbpBase45"/>
+      </Item5>
+      <Item6>
+        <Filename Value="..\..\Bases\SbpBase32.pas"/>
+        <UnitName Value="SbpBase32"/>
       </Item6>
       <Item7>
-        <Filename Value="..\..\Bases\SbpBase64Alphabet.pas"/>
-        <UnitName Value="SbpBase64Alphabet"/>
+        <Filename Value="..\..\Bases\SbpBase8.pas"/>
+        <UnitName Value="SbpBase8"/>
       </Item7>
       <Item8>
-        <Filename Value="..\..\Include\SimpleBaseLibFPC.inc"/>
-        <Type Value="Include"/>
+        <Filename Value="..\..\Bases\SbpBase16.pas"/>
+        <UnitName Value="SbpBase16"/>
       </Item8>
       <Item9>
-        <Filename Value="..\..\Include\SimpleBaseLib.inc"/>
-        <Type Value="Include"/>
+        <Filename Value="..\..\Bases\SbpBase2.pas"/>
+        <UnitName Value="SbpBase2"/>
       </Item9>
       <Item10>
-        <Filename Value="..\..\Interfaces\SbpIBase32.pas"/>
-        <UnitName Value="SbpIBase32"/>
+        <Filename Value="..\..\Utilities\SbpStreamUtilities.pas"/>
+        <UnitName Value="SbpStreamUtilities"/>
       </Item10>
       <Item11>
-        <Filename Value="..\..\Interfaces\SbpIBase32Alphabet.pas"/>
-        <UnitName Value="SbpIBase32Alphabet"/>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase32.pas"/>
+        <UnitName Value="SbpIBase32"/>
       </Item11>
       <Item12>
-        <Filename Value="..\..\Interfaces\SbpIBase58.pas"/>
-        <UnitName Value="SbpIBase58"/>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase85.pas"/>
+        <UnitName Value="SbpIBase85"/>
       </Item12>
       <Item13>
-        <Filename Value="..\..\Interfaces\SbpIBase58Alphabet.pas"/>
-        <UnitName Value="SbpIBase58Alphabet"/>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase8.pas"/>
+        <UnitName Value="SbpIBase8"/>
       </Item13>
       <Item14>
-        <Filename Value="..\..\Interfaces\SbpIBase64.pas"/>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase64.pas"/>
         <UnitName Value="SbpIBase64"/>
       </Item14>
       <Item15>
-        <Filename Value="..\..\Interfaces\SbpIBase64Alphabet.pas"/>
-        <UnitName Value="SbpIBase64Alphabet"/>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase45.pas"/>
+        <UnitName Value="SbpIBase45"/>
       </Item15>
       <Item16>
-        <Filename Value="..\..\Utils\SbpBits.pas"/>
-        <UnitName Value="SbpBits"/>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase2.pas"/>
+        <UnitName Value="SbpIBase2"/>
       </Item16>
       <Item17>
-        <Filename Value="..\..\Utils\SbpSimpleBaseLibTypes.pas"/>
-        <UnitName Value="SbpSimpleBaseLibTypes"/>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase16.pas"/>
+        <UnitName Value="SbpIBase16"/>
       </Item17>
       <Item18>
-        <Filename Value="..\..\Utils\SbpUtilities.pas"/>
-        <UnitName Value="SbpUtilities"/>
+        <Filename Value="..\..\Bases\SbpMultibase.pas"/>
+        <UnitName Value="SbpMultibase"/>
       </Item18>
       <Item19>
-        <Filename Value="..\..\Bases\SbpBase85Alphabet.pas"/>
-        <UnitName Value="SbpBase85Alphabet"/>
+        <Filename Value="..\..\Alphabets\SbpBase64Alphabet.pas"/>
+        <UnitName Value="SbpBase64Alphabet"/>
       </Item19>
       <Item20>
-        <Filename Value="..\..\Interfaces\SbpIBase85Alphabet.pas"/>
-        <UnitName Value="SbpIBase85Alphabet"/>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIBase64Alphabet.pas"/>
+        <UnitName Value="SbpIBase64Alphabet"/>
       </Item20>
       <Item21>
-        <Filename Value="..\..\Bases\SbpEncodingAlphabet.pas"/>
-        <UnitName Value="SbpEncodingAlphabet"/>
+        <Filename Value="..\..\Misc\SbpMultibaseEncoding.pas"/>
+        <UnitName Value="SbpMultibaseEncoding"/>
       </Item21>
       <Item22>
-        <Filename Value="..\..\Interfaces\SbpIEncodingAlphabet.pas"/>
-        <UnitName Value="SbpIEncodingAlphabet"/>
+        <Filename Value="..\..\Misc\SbpSimpleBaseLibConstants.pas"/>
+        <UnitName Value="SbpSimpleBaseLibConstants"/>
       </Item22>
       <Item23>
-        <Filename Value="..\..\Bases\SbpBase85.pas"/>
-        <UnitName Value="SbpBase85"/>
+        <Filename Value="..\..\Alphabets\SbpBase85Alphabet.pas"/>
+        <UnitName Value="SbpBase85Alphabet"/>
       </Item23>
       <Item24>
-        <Filename Value="..\..\Interfaces\SbpIBase85.pas"/>
-        <UnitName Value="SbpIBase85"/>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIBase85Alphabet.pas"/>
+        <UnitName Value="SbpIBase85Alphabet"/>
       </Item24>
+      <Item25>
+        <Filename Value="..\..\Bases\SbpBase58.pas"/>
+        <UnitName Value="SbpBase58"/>
+      </Item25>
+      <Item26>
+        <Filename Value="..\..\Interfaces\Coders\SbpINumericBaseCoder.pas"/>
+        <UnitName Value="SbpINumericBaseCoder"/>
+      </Item26>
+      <Item27>
+        <Filename Value="..\..\Alphabets\SbpBase32Alphabet.pas"/>
+        <UnitName Value="SbpBase32Alphabet"/>
+      </Item27>
+      <Item28>
+        <Filename Value="..\..\Interfaces\Coders\SbpINonAllocatingBaseCoder.pas"/>
+        <UnitName Value="SbpINonAllocatingBaseCoder"/>
+      </Item28>
+      <Item29>
+        <Filename Value="..\..\Interfaces\Coders\SbpIBaseStreamCoder.pas"/>
+        <UnitName Value="SbpIBaseStreamCoder"/>
+      </Item29>
+      <Item30>
+        <Filename Value="..\..\Interfaces\Coders\SbpIBaseCoder.pas"/>
+        <UnitName Value="SbpIBaseCoder"/>
+      </Item30>
+      <Item31>
+        <Filename Value="..\..\Alphabets\SbpAliasedBase32Alphabet.pas"/>
+        <UnitName Value="SbpAliasedBase32Alphabet"/>
+      </Item31>
+      <Item32>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIAliasedBase32Alphabet.pas"/>
+        <UnitName Value="SbpIAliasedBase32Alphabet"/>
+      </Item32>
+      <Item33>
+        <Filename Value="..\..\Utilities\SbpPlatformUtilities.pas"/>
+        <UnitName Value="SbpPlatformUtilities"/>
+      </Item33>
+      <Item34>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIBase32Alphabet.pas"/>
+        <UnitName Value="SbpIBase32Alphabet"/>
+      </Item34>
+      <Item35>
+        <Filename Value="..\..\Misc\SbpCharMap.pas"/>
+        <UnitName Value="SbpCharMap"/>
+      </Item35>
+      <Item36>
+        <Filename Value="..\..\Misc\SbpPaddingPosition.pas"/>
+        <UnitName Value="SbpPaddingPosition"/>
+      </Item36>
+      <Item37>
+        <Filename Value="..\..\Alphabets\SbpCodingAlphabet.pas"/>
+        <UnitName Value="SbpCodingAlphabet"/>
+      </Item37>
+      <Item38>
+        <Filename Value="..\..\Alphabets\SbpBase45Alphabet.pas"/>
+        <UnitName Value="SbpBase45Alphabet"/>
+      </Item38>
+      <Item39>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIBase45Alphabet.pas"/>
+        <UnitName Value="SbpIBase45Alphabet"/>
+      </Item39>
+      <Item40>
+        <Filename Value="..\..\Interfaces\Coders\SbpIDividingCoder.pas"/>
+        <UnitName Value="SbpIDividingCoder"/>
+      </Item40>
+      <Item41>
+        <Filename Value="..\..\Alphabets\SbpBase62Alphabet.pas"/>
+        <UnitName Value="SbpBase62Alphabet"/>
+      </Item41>
+      <Item42>
+        <Filename Value="..\..\Alphabets\SbpBase58Alphabet.pas"/>
+        <UnitName Value="SbpBase58Alphabet"/>
+      </Item42>
+      <Item43>
+        <Filename Value="..\..\Alphabets\SbpBase36Alphabet.pas"/>
+        <UnitName Value="SbpBase36Alphabet"/>
+      </Item43>
+      <Item44>
+        <Filename Value="..\..\Alphabets\SbpBase10Alphabet.pas"/>
+        <UnitName Value="SbpBase10Alphabet"/>
+      </Item44>
+      <Item45>
+        <Filename Value="..\..\Bases\SbpMoneroBase58.pas"/>
+        <UnitName Value="SbpMoneroBase58"/>
+      </Item45>
+      <Item46>
+        <Filename Value="..\..\Bases\SbpBase62.pas"/>
+        <UnitName Value="SbpBase62"/>
+      </Item46>
+      <Item47>
+        <Filename Value="..\..\Bases\SbpBase36.pas"/>
+        <UnitName Value="SbpBase36"/>
+      </Item47>
+      <Item48>
+        <Filename Value="..\..\Bases\SbpBase10.pas"/>
+        <UnitName Value="SbpBase10"/>
+      </Item48>
+      <Item49>
+        <Filename Value="..\..\Alphabets\SbpBase16Alphabet.pas"/>
+        <UnitName Value="SbpBase16Alphabet"/>
+      </Item49>
+      <Item50>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase58.pas"/>
+        <UnitName Value="SbpIBase58"/>
+      </Item50>
+      <Item51>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIBase58Alphabet.pas"/>
+        <UnitName Value="SbpIBase58Alphabet"/>
+      </Item51>
+      <Item52>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIBase62Alphabet.pas"/>
+        <UnitName Value="SbpIBase62Alphabet"/>
+      </Item52>
+      <Item53>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIBase36Alphabet.pas"/>
+        <UnitName Value="SbpIBase36Alphabet"/>
+      </Item53>
+      <Item54>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIBase10Alphabet.pas"/>
+        <UnitName Value="SbpIBase10Alphabet"/>
+      </Item54>
+      <Item55>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase62.pas"/>
+        <UnitName Value="SbpIBase62"/>
+      </Item55>
+      <Item56>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase36.pas"/>
+        <UnitName Value="SbpIBase36"/>
+      </Item56>
+      <Item57>
+        <Filename Value="..\..\Interfaces\Bases\SbpIBase10.pas"/>
+        <UnitName Value="SbpIBase10"/>
+      </Item57>
+      <Item58>
+        <Filename Value="..\..\Misc\SbpSimpleBaseLibTypes.pas"/>
+        <UnitName Value="SbpSimpleBaseLibTypes"/>
+      </Item58>
+      <Item59>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpICodingAlphabet.pas"/>
+        <UnitName Value="SbpICodingAlphabet"/>
+      </Item59>
+      <Item60>
+        <Filename Value="..\..\Interfaces\Alphabets\SbpIBase16Alphabet.pas"/>
+        <UnitName Value="SbpIBase16Alphabet"/>
+      </Item60>
+      <Item61>
+        <Filename Value="..\..\Utilities\SbpArrayUtilities.pas"/>
+        <UnitName Value="SbpArrayUtilities"/>
+      </Item61>
+      <Item62>
+        <Filename Value="..\..\Utilities\SbpCharUtilities.pas"/>
+        <UnitName Value="SbpCharUtilities"/>
+      </Item62>
+      <Item63>
+        <Filename Value="..\..\Misc\SbpBits.pas"/>
+        <UnitName Value="SbpBits"/>
+      </Item63>
+      <Item64>
+        <Filename Value="..\..\Misc\SbpBinaryPrimitives.pas"/>
+        <UnitName Value="SbpBinaryPrimitives"/>
+      </Item64>
+      <Item65>
+        <Filename Value="..\..\Misc\SbpBitOperations.pas"/>
+        <UnitName Value="SbpBitOperations"/>
+      </Item65>
+      <Item66>
+        <Filename Value="..\..\Include\SimpleBaseLib.inc"/>
+        <Type Value="Include"/>
+      </Item66>
+      <Item67>
+        <Filename Value="..\..\Include\SimpleBaseLibFPC.inc"/>
+        <Type Value="Include"/>
+      </Item67>
     </Files>
+    <CompatibilityMode Value="True"/>
     <RequiredPkgs Count="1">
       <Item1>
         <PackageName Value="FCL"/>
