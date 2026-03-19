@@ -14,6 +14,8 @@ uses
   SbpINonAllocatingBaseCoder,
   SbpIBaseStreamCoder,
   SbpBase85Alphabet,
+  SbpCodingAlphabet,
+  SbpBitOperations,
   SbpStreamUtilities;
 
 type
@@ -161,6 +163,11 @@ end;
 class function TBase85.GetSafeByteCountForDecodingInternal(ATextLength: Int32;
   AUsingShortcuts: Boolean): Int32;
 begin
+  if ATextLength = 0 then
+  begin
+    Result := 0;
+    Exit;
+  end;
   if AUsingShortcuts then
   begin
     Result := ATextLength * EncodeBlockSize;
@@ -208,11 +215,11 @@ begin
   end;
 
   LOutputLen := GetSafeCharCountForEncoding(ABytes);
-  SetLength(LOutput, LOutputLen);
+  System.SetLength(LOutput, LOutputLen);
   if not InternalEncode(ABytes, LOutput, LCharsWritten) then
   begin
     raise EInvalidOperationSimpleBaseLibException.Create(
-      'Insufficient output buffer size while encoding Base85');
+      'Internal error: insufficient output buffer size');
   end;
   SetString(Result, PChar(@LOutput[0]), LCharsWritten);
 end;
@@ -224,6 +231,12 @@ begin
   begin
     ACharsWritten := 0;
     Result := True;
+    Exit;
+  end;
+  if System.Length(AOutput) < GetSafeCharCountForEncoding(ABytes) then
+  begin
+    ACharsWritten := 0;
+    Result := False;
     Exit;
   end;
   Result := InternalEncode(ABytes, AOutput, ACharsWritten);
@@ -242,7 +255,7 @@ begin
   end;
 
   LDecodeBufferLen := GetSafeByteCountForDecodingInternal(System.Length(AText), FAlphabet.HasShortcut);
-  SetLength(LDecodeBuffer, LDecodeBufferLen);
+  System.SetLength(LDecodeBuffer, LDecodeBufferLen);
   LOutcome := InternalDecode(AText, LDecodeBuffer, LBytesWritten);
   case LOutcome.Status of
     TDecodeResult.Success:
@@ -254,10 +267,10 @@ begin
         'Invalid location for a shortcut character: %s', [LOutcome.InvalidChar]);
     TDecodeResult.InsufficientOutputBuffer:
       raise EInvalidOperationSimpleBaseLibException.Create(
-        'Internal error: pre-allocated insufficient output buffer size');
+        'Internal error: insufficient output buffer size');
   else
     raise EInvalidOperationSimpleBaseLibException.Create(
-      'This should be never hit - probably a bug');
+      'Unexpected decode result');
   end;
 end;
 
@@ -266,6 +279,18 @@ function TBase85.TryDecode(const AText: String;
 var
   LOutcome: TDecodeOutcome;
 begin
+  if System.Length(AText) = 0 then
+  begin
+    ABytesWritten := 0;
+    Result := True;
+    Exit;
+  end;
+  if System.Length(AOutput) < GetSafeByteCountForDecoding(AText) then
+  begin
+    ABytesWritten := 0;
+    Result := False;
+    Exit;
+  end;
   LOutcome := InternalDecode(AText, AOutput, ABytesWritten);
   Result := LOutcome.Status = TDecodeResult.Success;
 end;
@@ -351,7 +376,7 @@ begin
     begin
       Break;
     end;
-    AOutput[AOutputOffset + LO] := Byte((AValue shr (LI * 8)) and $FF);
+    AOutput[AOutputOffset + LO] := Byte(TBitOperations.Asr64(AValue, LI * 8) and $FF);
     Inc(LO);
     Dec(ANumBytesToWrite);
   end;
@@ -371,7 +396,6 @@ begin
     Exit;
   end;
 
-  ABlockIndex := 0;
   Result := WriteDecodedValue(AOutput, AOutputOffset, AValue, EncodeBlockSize, ABytesWritten);
 end;
 
@@ -491,8 +515,7 @@ begin
       Continue;
     end;
 
-    LX := LTable[Ord(LC)] - 1;
-    if LX < 0 then
+    if not TCodingAlphabet.TryLookup(LTable, LC, LX) then
     begin
       Result.Status := TDecodeResult.InvalidCharacter;
       Result.InvalidChar := LC;

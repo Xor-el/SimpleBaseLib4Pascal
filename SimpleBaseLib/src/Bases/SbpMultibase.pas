@@ -20,9 +20,6 @@ uses
 
 type
   TMultibase = class sealed(TObject)
-  strict private
-    class function TryDecodeBase64Pad(const AText: String;
-      const ABytes: TSimpleBaseLibByteArray; out ABytesWritten: Int32): Boolean; static;
   public
     class function Decode(const AText: String): TSimpleBaseLibByteArray; static;
     class function TryDecode(const AText: String;
@@ -79,10 +76,10 @@ begin
       Result := TBase58.Bitcoin.Decode(LRest);
     TMultibaseEncoding.Base58Flickr:
       Result := TBase58.Flickr.Decode(LRest);
-    TMultibaseEncoding.Base64Pad:
-      Result := TBase64.Default.Decode(LRest);
     TMultibaseEncoding.Base64:
       Result := TBase64.DefaultNoPad.Decode(LRest);
+    TMultibaseEncoding.Base64Pad:
+      Result := TBase64.Default.Decode(LRest);
     TMultibaseEncoding.Base64Url:
       Result := TBase64.Url.Decode(LRest);
     TMultibaseEncoding.Base64UrlPad:
@@ -91,12 +88,6 @@ begin
     raise EInvalidOperationSimpleBaseLibException.CreateFmt(
       'Unsupported multibase prefix: %s', [LC]);
   end;
-end;
-
-class function TMultibase.TryDecodeBase64Pad(const AText: String;
-  const ABytes: TSimpleBaseLibByteArray; out ABytesWritten: Int32): Boolean;
-begin
-  Result := TBase64.Default.TryDecode(AText, ABytes, ABytesWritten);
 end;
 
 class function TMultibase.TryDecode(const AText: String;
@@ -151,7 +142,7 @@ begin
     TMultibaseEncoding.Base64:
       Result := TBase64.DefaultNoPad.TryDecode(LRest, ABytes, ABytesWritten);
     TMultibaseEncoding.Base64Pad:
-      Result := TryDecodeBase64Pad(LRest, ABytes, ABytesWritten);
+      Result := TBase64.Default.TryDecode(LRest, ABytes, ABytesWritten);
     TMultibaseEncoding.Base64Url:
       Result := TBase64.Url.TryDecode(LRest, ABytes, ABytesWritten);
     TMultibaseEncoding.Base64UrlPad:

@@ -121,7 +121,7 @@ type
 
 implementation
 
-{ TBitUtilities }
+{ TBitOperations }
 
 class function TBitOperations.ReverseBytesInt32(AValue: Int32): Int32;
 {$IFNDEF FPC}

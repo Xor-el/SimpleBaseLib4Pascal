@@ -119,7 +119,8 @@ begin
 
     SetString(LText, PChar(@LBuffer[0]), LCharsRead);
     LResult := ADecodeBufferFunc(LText);
-    AOutput.Write(LResult[0], System.Length(LResult));
+    if System.Length(LResult) > 0 then
+      AOutput.Write(LResult[0], System.Length(LResult));
   end;
 end;
 

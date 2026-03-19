@@ -23,7 +23,8 @@ type
     /// <summary>
     /// Converts a variable length byte array to a 64-bit unsigned integer.
     /// </summary>
-    class function PartialBigEndianBytesToUInt64(const ABytes: TSimpleBaseLibByteArray): UInt64; static;
+    class function PartialBigEndianBytesToUInt64(const ABytes: TSimpleBaseLibByteArray;
+      AOffset, ACount: Int32): UInt64; static;
 
     /// <summary>
     /// Count the number of consecutive zero bytes at the beginning of the given buffer.
@@ -35,19 +36,20 @@ implementation
 
 { TBits }
 
-class function TBits.PartialBigEndianBytesToUInt64(const ABytes: TSimpleBaseLibByteArray): UInt64;
+class function TBits.PartialBigEndianBytesToUInt64(const ABytes: TSimpleBaseLibByteArray;
+  AOffset, ACount: Int32): UInt64;
 var
   LI: Int32;
 begin
-  if System.Length(ABytes) > System.SizeOf(UInt64) then
+  if ACount > System.SizeOf(UInt64) then
   begin
-    raise EArgumentOutOfRangeSimpleBaseLibException.Create('ABytes too long to convert to UInt64');
+    raise EArgumentOutOfRangeSimpleBaseLibException.Create('ACount too large to convert to UInt64');
   end;
 
   Result := 0;
-  for LI := 0 to System.Length(ABytes) - 1 do
+  for LI := 0 to ACount - 1 do
   begin
-    Result := (Result shl 8) or ABytes[LI];
+    Result := (Result shl 8) or ABytes[AOffset + LI];
   end;
 end;
 

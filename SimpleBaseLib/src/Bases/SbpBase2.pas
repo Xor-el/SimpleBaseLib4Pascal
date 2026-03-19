@@ -82,9 +82,15 @@ function TBase2.Decode(const AText: String): TSimpleBaseLibByteArray;
 var
   LOutputLen: Int32;
 begin
+  if System.Length(AText) = 0 then
+  begin
+    Result := nil;
+    Exit;
+  end;
+
   if (System.Length(AText) mod 8) <> 0 then
   begin
-    raise EArgumentSimpleBaseLibException.Create('Input length must be multiply of 8');
+    raise EArgumentSimpleBaseLibException.Create('Input length must be a multiple of 8');
   end;
 
   LOutputLen := System.Length(AText) div 8;
@@ -170,6 +176,12 @@ var
   LTargetLen: Int32;
 begin
   ACharsWritten := 0;
+  if System.Length(ABytes) = 0 then
+  begin
+    Result := True;
+    Exit;
+  end;
+
   LTargetLen := System.Length(ABytes) * 8;
   if System.Length(AOutput) < LTargetLen then
   begin

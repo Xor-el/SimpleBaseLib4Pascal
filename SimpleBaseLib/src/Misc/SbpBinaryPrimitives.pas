@@ -84,7 +84,7 @@ implementation
 class procedure TBinaryPrimitives.CheckBounds(const AData: TSimpleBaseLibByteArray; AOffset, ANeeded: Integer);
 begin
   if (AOffset < 0) or (AOffset + ANeeded > Length(AData)) then
-    raise EArgumentOutOfRangeException.Create('AOffset');
+    raise EArgumentOutOfRangeSimpleBaseLibException.Create('AOffset');
 end;
 
 // ============================================================================

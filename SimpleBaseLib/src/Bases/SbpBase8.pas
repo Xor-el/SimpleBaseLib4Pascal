@@ -97,6 +97,12 @@ var
   LOutputLen, LBytesWritten: Int32;
   LDecodeResult: TDecodeResult;
 begin
+  if System.Length(AText) = 0 then
+  begin
+    Result := nil;
+    Exit;
+  end;
+
   LOutputLen := GetSafeByteCountForDecodingInternal(System.Length(AText));
   System.SetLength(Result, LOutputLen);
   LDecodeResult := InternalDecode(AText, Result, LBytesWritten);
@@ -172,15 +178,15 @@ function TBase8.TryDecode(const AText: String;
   const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): Boolean;
 begin
   ABytesWritten := 0;
-  if System.Length(AOutput) < GetSafeByteCountForDecodingInternal(System.Length(AText)) then
-  begin
-    Result := False;
-    Exit;
-  end;
-
   if System.Length(AText) = 0 then
   begin
     Result := True;
+    Exit;
+  end;
+
+  if System.Length(AOutput) < GetSafeByteCountForDecodingInternal(System.Length(AText)) then
+  begin
+    Result := False;
     Exit;
   end;
 
@@ -190,9 +196,15 @@ end;
 function TBase8.TryEncode(const ABytes: TSimpleBaseLibByteArray;
   const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
 begin
+  ACharsWritten := 0;
+  if System.Length(ABytes) = 0 then
+  begin
+    Result := True;
+    Exit;
+  end;
+
   if System.Length(AOutput) < GetSafeCharCountForEncodingInternal(System.Length(ABytes)) then
   begin
-    ACharsWritten := 0;
     Result := False;
     Exit;
   end;

@@ -37,6 +37,9 @@ type
     function ToString: String; override;
     function GetHashCode: {$IFDEF DELPHI}Int32;{$ELSE}PtrInt;{$ENDIF DELPHI}override;
 
+    class function TryLookup(const ATable: TSimpleBaseLibByteArray;
+      AChar: Char; out AValue: Int32): Boolean; static; inline;
+
     property Value: String read GetValue;
     property Length: Int32 read GetLength;
     property ReverseLookupTable: TSimpleBaseLibByteArray read GetReverseLookupTable;
@@ -135,6 +138,19 @@ begin
  Assert(Ord(AChar) < MaxAlphabetChar, Format('Alphabet contains character above %d', [MaxAlphabetChar]));
 {$ENDIF DEBUG}
  FReverseLookupTable[Ord(AChar)] := Byte(AValue + 1);
+end;
+
+class function TCodingAlphabet.TryLookup(const ATable: TSimpleBaseLibByteArray;
+  AChar: Char; out AValue: Int32): Boolean;
+begin
+  if Ord(AChar) >= System.Length(ATable) then
+  begin
+    AValue := -1;
+    Result := False;
+    Exit;
+  end;
+  AValue := ATable[Ord(AChar)] - 1;
+  Result := AValue >= 0;
 end;
 
 end.

@@ -180,7 +180,7 @@ var
 begin
   if FCrockfordAlphabet = nil then
   begin
-    SetLength(LMap, 3);
+    System.SetLength(LMap, 3);
     LMap[0] := CMap[0];
     LMap[1] := CMap[1];
     LMap[2] := CMap[2];
@@ -203,7 +203,7 @@ var
 begin
   if FBase32HAlphabet = nil then
   begin
-    SetLength(LMap, 4);
+    System.SetLength(LMap, 4);
     LMap[0] := CMap[0];
     LMap[1] := CMap[1];
     LMap[2] := CMap[2];

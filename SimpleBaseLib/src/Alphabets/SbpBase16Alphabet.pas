@@ -5,18 +5,14 @@ unit SbpBase16Alphabet;
 interface
 
 uses
-  SysUtils,
   SbpICodingAlphabet,
   SbpIBase16Alphabet,
-  SbpCharUtilities,
   SbpCodingAlphabet;
 
 type
   TBase16Alphabet = class(TCodingAlphabet, IBase16Alphabet)
   strict private
     FCaseSensitive: Boolean;
-
-    procedure MapCounterparts;
   public
     class var FUpperCaseAlphabet: ICodingAlphabet;
     class var FLowerCaseAlphabet: ICodingAlphabet;
@@ -58,36 +54,8 @@ end;
 constructor TBase16Alphabet.Create(const AAlphabet: String;
   const ACaseSensitive: Boolean);
 begin
-  inherited Create(16, AAlphabet, False);
+  inherited Create(16, AAlphabet, not ACaseSensitive);
   FCaseSensitive := ACaseSensitive;
-
-  if not FCaseSensitive then
-  begin
-    MapCounterparts;
-  end;
-end;
-
-procedure TBase16Alphabet.MapCounterparts;
-var
-  LI, LAlphaLen: Int32;
-  LChar: Char;
-begin
-  LAlphaLen := System.Length(Value);
-  for LI := 0 to LAlphaLen - 1 do
-  begin
-    LChar := Value[LI + 1];
-    if TCharUtilities.IsLetter(LChar) then
-    begin
-      if TCharUtilities.IsAsciiUpper(LChar) then
-      begin
-        Map(TCharUtilities.ToAsciiLower(LChar), LI);
-      end
-      else
-      begin
-        Map(TCharUtilities.ToAsciiUpper(LChar), LI);
-      end;
-    end;
-  end;
 end;
 
 class function TBase16Alphabet.GetUpperCase: ICodingAlphabet;
