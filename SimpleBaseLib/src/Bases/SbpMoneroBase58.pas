@@ -9,10 +9,12 @@ uses
   SbpSimpleBaseLibTypes,
   SbpSimpleBaseLibConstants,
   SbpICodingAlphabet,
+  SbpCodingAlphabet,
   SbpINonAllocatingBaseCoder,
   SbpIMoneroBase58,
   SbpBase58Alphabet,
-  SbpBinaryPrimitives;
+  SbpBinaryPrimitives,
+  SbpBits;
 
 type
   TMoneroBase58 = class(TInterfacedObject, IMoneroBase58, INonAllocatingBaseCoder)
@@ -44,8 +46,6 @@ type
     class function GetSafeCharCountForEncodingInternal(ALength: Int32): Int32; static; inline;
     class function GetSafeByteCountForDecodingInternal(ALength: Int32): Int32; static; inline;
     class function GetDecodedBlockSizeFromEncodedLength(AEncodedLen: Int32): Int32; static;
-    class function ReadPartialBigEndianUInt64(const AInput: TSimpleBaseLibByteArray;
-      AOffset, ACount: Int32): UInt64; static;
 
     class procedure EncodeBlock(const AInput: TSimpleBaseLibByteArray; AInputOffset, AInputLen: Int32;
       const AOutput: TSimpleBaseLibCharArray; AOutputOffset: Int32;
@@ -124,11 +124,21 @@ end;
 
 class function TMoneroBase58.GetSafeCharCountForEncodingInternal(ALength: Int32): Int32;
 begin
+  if ALength = 0 then
+  begin
+    Result := 0;
+    Exit;
+  end;
   Result := ((ALength div BlockSize) + 1) * MaxEncodedBlockSize;
 end;
 
 class function TMoneroBase58.GetSafeByteCountForDecodingInternal(ALength: Int32): Int32;
 begin
+  if ALength = 0 then
+  begin
+    Result := 0;
+    Exit;
+  end;
   Result := (ALength * BlockSize div MaxEncodedBlockSize) + 1;
 end;
 
@@ -159,18 +169,6 @@ begin
   Result := -1;
 end;
 
-class function TMoneroBase58.ReadPartialBigEndianUInt64(
-  const AInput: TSimpleBaseLibByteArray; AOffset, ACount: Int32): UInt64;
-var
-  LI: Int32;
-begin
-  Result := 0;
-  for LI := 0 to ACount - 1 do
-  begin
-    Result := (Result shl 8) or AInput[AOffset + LI];
-  end;
-end;
-
 class procedure TMoneroBase58.EncodeBlock(const AInput: TSimpleBaseLibByteArray;
   AInputOffset, AInputLen: Int32; const AOutput: TSimpleBaseLibCharArray;
   AOutputOffset: Int32; const AAlphabet: String; AZeroChar: Char);
@@ -178,7 +176,7 @@ var
   LPad, LRemainder: UInt64;
   LLastPos, LI: Int32;
 begin
-  LPad := ReadPartialBigEndianUInt64(AInput, AInputOffset, AInputLen);
+  LPad := TBits.PartialBigEndianBytesToUInt64(AInput, AInputOffset, AInputLen);
   LLastPos := EncodedBlockSizes[AInputLen];
 
   for LI := LLastPos - 1 downto 0 do
@@ -207,8 +205,7 @@ begin
   for LI := 0 to AInputLen - 1 do
   begin
     LC := AInput[AInputOffset + LI];
-    LValue := AReverseLookupTable[Ord(LC)] - 1;
-    if LValue < 0 then
+    if not TCodingAlphabet.TryLookup(AReverseLookupTable, LC, LValue) then
     begin
       Result.Status := TDecodeResult.InvalidCharacter;
       Result.InvalidChar := LC;
@@ -360,7 +357,7 @@ begin
   if not InternalEncode(ABytes, LOutput, LCharsWritten) then
   begin
     raise EInvalidOperationSimpleBaseLibException.Create(
-      'Output buffer with insufficient size generated');
+      'Internal error: insufficient output buffer size');
   end;
   SetString(Result, PChar(@LOutput[0]), LCharsWritten);
 end;
@@ -389,16 +386,28 @@ begin
         [LOutcome.InvalidChar]);
     TDecodeResult.InsufficientOutputBuffer:
       raise EInvalidOperationSimpleBaseLibException.Create(
-        'Output buffer with insufficient size generated - likely a bug');
+        'Internal error: insufficient output buffer size');
   else
     raise EInvalidOperationSimpleBaseLibException.Create(
-      'This should never be hit - likely a bug');
+      'Unexpected decode result');
   end;
 end;
 
 function TMoneroBase58.TryEncode(const ABytes: TSimpleBaseLibByteArray;
   const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
 begin
+  if System.Length(ABytes) = 0 then
+  begin
+    ACharsWritten := 0;
+    Result := True;
+    Exit;
+  end;
+  if System.Length(AOutput) < GetSafeCharCountForEncoding(ABytes) then
+  begin
+    ACharsWritten := 0;
+    Result := False;
+    Exit;
+  end;
   Result := InternalEncode(ABytes, AOutput, ACharsWritten);
 end;
 
@@ -413,7 +422,12 @@ begin
     Result := True;
     Exit;
   end;
-
+  if System.Length(AOutput) < GetSafeByteCountForDecoding(AText) then
+  begin
+    ABytesWritten := 0;
+    Result := False;
+    Exit;
+  end;
   LOutcome := InternalDecode(AText, AOutput, ABytesWritten);
   Result := LOutcome.Status = TDecodeResult.Success;
 end;

@@ -14,6 +14,8 @@ uses
   SbpIBaseStreamCoder,
   SbpIBase45,
   SbpBase45Alphabet,
+  SbpCodingAlphabet,
+  SbpBitOperations,
   SbpStreamUtilities;
 
 type
@@ -50,6 +52,8 @@ type
     class function GetDecodingBufferSize(ALen: Int32): Int32; static; inline;
     class function GetEncodingBufferSize(ALen: Int32): Int32; static; inline;
 
+    function InternalEncode(const AInput: TSimpleBaseLibByteArray;
+      const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
     function InternalDecode(const AInput: String;
       const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): TDecodeOutcome;
   public
@@ -145,6 +149,62 @@ begin
   Result := GetEncodingBufferSize(System.Length(ABytes));
 end;
 
+function TBase45.InternalEncode(const AInput: TSimpleBaseLibByteArray;
+  const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
+var
+  LWholeBlocks, LRemainder, LWholeLen, LOutputLength: Int32;
+  LI: Int32;
+  LA, LB, LValue, LQuotient, LC, LD, LE: UInt16;
+  LAlphabet: String;
+begin
+  LWholeBlocks := System.Length(AInput) div 2;
+  LRemainder := System.Length(AInput) mod 2;
+  LWholeLen := LWholeBlocks * 2;
+  ACharsWritten := 0;
+
+  LOutputLength := GetEncodingBufferSize(System.Length(AInput));
+  if System.Length(AOutput) < LOutputLength then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  LAlphabet := FAlphabet.Value;
+  LI := 0;
+  while LI < LWholeLen do
+  begin
+    LA := AInput[LI];
+    Inc(LI);
+    LB := AInput[LI];
+    Inc(LI);
+    LValue := UInt16((LA shl 8) or LB);
+
+    LC := LValue mod 45;
+    LQuotient := LValue div 45;
+    LD := LQuotient mod 45;
+    LE := LQuotient div 45;
+
+    AOutput[ACharsWritten] := LAlphabet[LC + 1];
+    Inc(ACharsWritten);
+    AOutput[ACharsWritten] := LAlphabet[LD + 1];
+    Inc(ACharsWritten);
+    AOutput[ACharsWritten] := LAlphabet[LE + 1];
+    Inc(ACharsWritten);
+  end;
+
+  if LRemainder = 1 then
+  begin
+    LD := AInput[LI] div 45;
+    LC := AInput[LI] mod 45;
+    AOutput[ACharsWritten] := LAlphabet[LC + 1];
+    Inc(ACharsWritten);
+    AOutput[ACharsWritten] := LAlphabet[LD + 1];
+    Inc(ACharsWritten);
+  end;
+
+  Result := True;
+end;
+
 function TBase45.InternalDecode(const AInput: String;
   const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): TDecodeOutcome;
 var
@@ -181,8 +241,7 @@ begin
   begin
     LChr := AInput[LI];
     Inc(LI);
-    LC := LTable[Ord(LChr)] - 1;
-    if LC < 0 then
+    if not TCodingAlphabet.TryLookup(LTable, LChr, LC) then
     begin
       Result.Status := TDecodeResult.InvalidCharacter;
       Result.InvalidChar := LChr;
@@ -191,8 +250,7 @@ begin
 
     LChr := AInput[LI];
     Inc(LI);
-    LD := LTable[Ord(LChr)] - 1;
-    if LD < 0 then
+    if not TCodingAlphabet.TryLookup(LTable, LChr, LD) then
     begin
       Result.Status := TDecodeResult.InvalidCharacter;
       Result.InvalidChar := LChr;
@@ -201,8 +259,7 @@ begin
 
     LChr := AInput[LI];
     Inc(LI);
-    LE := LTable[Ord(LChr)] - 1;
-    if LE < 0 then
+    if not TCodingAlphabet.TryLookup(LTable, LChr, LE) then
     begin
       Result.Status := TDecodeResult.InvalidCharacter;
       Result.InvalidChar := LChr;
@@ -217,7 +274,7 @@ begin
       Exit;
     end;
 
-    AOutput[ABytesWritten] := Byte((LValue shr 8) and $FF);
+    AOutput[ABytesWritten] := Byte(TBitOperations.Asr32(LValue, 8) and $FF);
     Inc(ABytesWritten);
     AOutput[ABytesWritten] := Byte(LValue and $FF);
     Inc(ABytesWritten);
@@ -227,8 +284,7 @@ begin
   begin
     LChr := AInput[LI];
     Inc(LI);
-    LC := LTable[Ord(LChr)] - 1;
-    if LC < 0 then
+    if not TCodingAlphabet.TryLookup(LTable, LChr, LC) then
     begin
       Result.Status := TDecodeResult.InvalidCharacter;
       Result.InvalidChar := LChr;
@@ -236,8 +292,7 @@ begin
     end;
 
     LChr := AInput[LI];
-    LD := LTable[Ord(LChr)] - 1;
-    if LD < 0 then
+    if not TCodingAlphabet.TryLookup(LTable, LChr, LD) then
     begin
       Result.Status := TDecodeResult.InvalidCharacter;
       Result.InvalidChar := LChr;
@@ -266,22 +321,21 @@ var
   LOutput: TSimpleBaseLibByteArray;
   LOutcome: TDecodeOutcome;
 begin
+  if System.Length(AText) = 0 then
+  begin
+    Result := nil;
+    Exit;
+  end;
+
   LOutputLen := GetDecodingBufferSize(System.Length(AText));
   System.SetLength(LOutput, LOutputLen);
   LOutcome := InternalDecode(AText, LOutput, LBytesWritten);
   case LOutcome.Status of
     TDecodeResult.Success:
-      begin
-        if LBytesWritten <> System.Length(LOutput) then
-        begin
-          raise EInvalidOperationSimpleBaseLibException.Create(
-            'Inconsistent buffer size returned -- probably a bug');
-        end;
-        Result := LOutput;
-      end;
+      Result := System.Copy(LOutput, 0, LBytesWritten);
     TDecodeResult.InvalidOutputLength:
       raise EInvalidOperationSimpleBaseLibException.Create(
-        'Failed to allocate sufficient buffer -- likely a bug');
+        'Internal error: insufficient output buffer size');
     TDecodeResult.InvalidCharacter:
       raise EArgumentSimpleBaseLibException.CreateFmt('Invalid character: %s',
         [LOutcome.InvalidChar]);
@@ -292,7 +346,7 @@ begin
       raise EArgumentSimpleBaseLibException.Create(
         'Input buffer is at incorrect size');
   else
-    raise ENotSupportedSimpleBaseLibException.Create('Unsupported decode result');
+    raise EInvalidOperationSimpleBaseLibException.Create('Unexpected decode result');
   end;
 end;
 
@@ -309,10 +363,10 @@ begin
   end;
 
   System.SetLength(LOutput, LOutputLen);
-  if not TryEncode(ABytes, LOutput, LCharsWritten) then
+  if not InternalEncode(ABytes, LOutput, LCharsWritten) then
   begin
     raise EInvalidOperationSimpleBaseLibException.Create(
-      'Failed to allocate large enough buffer -- likely a bug');
+      'Internal error: insufficient output buffer size');
   end;
   SetString(Result, PChar(@LOutput[0]), LCharsWritten);
 end;
@@ -322,64 +376,38 @@ function TBase45.TryDecode(const AText: String;
 var
   LOutcome: TDecodeOutcome;
 begin
+  if System.Length(AText) = 0 then
+  begin
+    ABytesWritten := 0;
+    Result := True;
+    Exit;
+  end;
+  if System.Length(AOutput) < GetSafeByteCountForDecoding(AText) then
+  begin
+    ABytesWritten := 0;
+    Result := False;
+    Exit;
+  end;
   LOutcome := InternalDecode(AText, AOutput, ABytesWritten);
   Result := LOutcome.Status = TDecodeResult.Success;
 end;
 
 function TBase45.TryEncode(const ABytes: TSimpleBaseLibByteArray;
   const AOutput: TSimpleBaseLibCharArray; out ACharsWritten: Int32): Boolean;
-var
-  LWholeBlocks, LRemainder, LWholeLen, LOutputLength: Int32;
-  LI: Int32;
-  LA, LB, LValue, LQuotient, LC, LD, LE: UInt16;
-  LAlphabet: String;
 begin
-  LWholeBlocks := System.Length(ABytes) div 2;
-  LRemainder := System.Length(ABytes) mod 2;
-  LWholeLen := LWholeBlocks * 2;
-  ACharsWritten := 0;
-
-  LOutputLength := GetEncodingBufferSize(System.Length(ABytes));
-  if System.Length(AOutput) < LOutputLength then
+  if System.Length(ABytes) = 0 then
   begin
+    ACharsWritten := 0;
+    Result := True;
+    Exit;
+  end;
+  if System.Length(AOutput) < GetSafeCharCountForEncoding(ABytes) then
+  begin
+    ACharsWritten := 0;
     Result := False;
     Exit;
   end;
-
-  LAlphabet := FAlphabet.Value;
-  LI := 0;
-  while LI < LWholeLen do
-  begin
-    LA := ABytes[LI];
-    Inc(LI);
-    LB := ABytes[LI];
-    Inc(LI);
-    LValue := UInt16((LA shl 8) or LB);
-
-    LC := LValue mod 45;
-    LQuotient := LValue div 45;
-    LD := LQuotient mod 45;
-    LE := LQuotient div 45;
-
-    AOutput[ACharsWritten] := LAlphabet[LC + 1];
-    Inc(ACharsWritten);
-    AOutput[ACharsWritten] := LAlphabet[LD + 1];
-    Inc(ACharsWritten);
-    AOutput[ACharsWritten] := LAlphabet[LE + 1];
-    Inc(ACharsWritten);
-  end;
-
-  if LRemainder = 1 then
-  begin
-    LD := ABytes[LI] div 45;
-    LC := ABytes[LI] mod 45;
-    AOutput[ACharsWritten] := LAlphabet[LC + 1];
-    Inc(ACharsWritten);
-    AOutput[ACharsWritten] := LAlphabet[LD + 1];
-    Inc(ACharsWritten);
-  end;
-
-  Result := True;
+  Result := InternalEncode(ABytes, AOutput, ACharsWritten);
 end;
 
 procedure TBase45.Decode(const AInput: TStringBuilder; const AOutput: TStream);

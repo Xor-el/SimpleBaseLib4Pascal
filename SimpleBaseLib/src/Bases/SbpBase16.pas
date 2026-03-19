@@ -13,6 +13,7 @@ uses
   SbpIBaseStreamCoder,
   SbpINonAllocatingBaseCoder,
   SbpStreamUtilities,
+  SbpCodingAlphabet,
   SbpBase16Alphabet;
 
 type
@@ -40,6 +41,9 @@ type
 
     class procedure InternalEncode(const AInput: TSimpleBaseLibByteArray;
       const AOutput: TSimpleBaseLibCharArray; const AAlphabet: String); static;
+
+    function InternalDecode(const AInput: String;
+      const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): Boolean;
 
   public
     class constructor Create;
@@ -141,23 +145,24 @@ end;
 
 function TBase16.Decode(const AText: String): TSimpleBaseLibByteArray;
 var
-  LTextLen: Int32;
-  LSafeCount: Int32;
-  LBytesWritten: Int32;
+  LSafeCount, LBytesWritten: Int32;
 begin
-  LTextLen := System.Length(AText);
-  if LTextLen = 0 then
+  if System.Length(AText) = 0 then
   begin
     Result := nil;
     Exit;
   end;
 
   LSafeCount := GetSafeByteCountForDecoding(AText);
-  System.SetLength(Result, LSafeCount);
-
-  if not TryDecode(AText, Result, LBytesWritten) then
+  if LSafeCount = 0 then
   begin
-    raise EArgumentSimpleBaseLibException.Create('Invalid text');
+    raise EArgumentSimpleBaseLibException.Create('Invalid text length');
+  end;
+
+  System.SetLength(Result, LSafeCount);
+  if not InternalDecode(AText, Result, LBytesWritten) then
+  begin
+    raise EArgumentSimpleBaseLibException.Create('Invalid character in input');
   end;
 end;
 
@@ -193,20 +198,18 @@ function TBase16.TryDecode(const AText: String;
   const AOutput: TSimpleBaseLibByteArray;
   out ABytesWritten: Int32): Boolean;
 var
-  LTextLen, LI, LO, LByte1, LByte2, LOutputLen: Int32;
-  LChar1, LChar2: Char;
+  LTextLen, LOutputLen: Int32;
 begin
+  ABytesWritten := 0;
   LTextLen := System.Length(AText);
   if LTextLen = 0 then
   begin
-    ABytesWritten := 0;
     Result := True;
     Exit;
   end;
 
   if (LTextLen and 1) <> 0 then
   begin
-    ABytesWritten := 0;
     Result := False;
     Exit;
   end;
@@ -214,35 +217,11 @@ begin
   LOutputLen := LTextLen div 2;
   if System.Length(AOutput) < LOutputLen then
   begin
-    ABytesWritten := 0;
     Result := False;
     Exit;
   end;
 
-  LO := 0;
-  LI := 1;
-  while LI <= LTextLen do
-  begin
-    LChar1 := AText[LI];
-    LChar2 := AText[LI + 1];
-
-    LByte1 := FAlphabet.ReverseLookupTable[Ord(LChar1)] - 1;
-    LByte2 := FAlphabet.ReverseLookupTable[Ord(LChar2)] - 1;
-
-    if (LByte1 < 0) or (LByte2 < 0) then
-    begin
-      ABytesWritten := LO;
-      Result := False;
-      Exit;
-    end;
-
-    AOutput[LO] := Byte((LByte1 * 16) or LByte2);
-    Inc(LO);
-    Inc(LI, 2);
-  end;
-
-  ABytesWritten := LO;
-  Result := True;
+  Result := InternalDecode(AText, AOutput, ABytesWritten);
 end;
 
 function TBase16.Encode(const ABytes: TSimpleBaseLibByteArray): String;
@@ -260,9 +239,9 @@ begin
 
   LAlphabet := FAlphabet.Value;
   LSafeCount := GetSafeCharCountForEncoding(ABytes);
-  SetLength(LOutput, LSafeCount);
+  System.SetLength(LOutput, LSafeCount);
   InternalEncode(ABytes, LOutput, LAlphabet);
-  SetString(Result, PChar(@LOutput[0]), Length(LOutput));
+  SetString(Result, PChar(@LOutput[0]), System.Length(LOutput));
 end;
 
 function TBase16.TryEncode(const ABytes: TSimpleBaseLibByteArray;
@@ -271,20 +250,18 @@ var
   LLen, LOutputLen: Int32;
   LAlphabet: String;
 begin
+  ACharsWritten := 0;
   LLen := System.Length(ABytes);
-  LOutputLen := LLen * 2;
-
-  if System.Length(AOutput) < LOutputLen then
+  if LLen = 0 then
   begin
-    ACharsWritten := 0;
-    Result := False;
+    Result := True;
     Exit;
   end;
 
-  if LOutputLen = 0 then
+  LOutputLen := LLen * 2;
+  if System.Length(AOutput) < LOutputLen then
   begin
-    ACharsWritten := 0;
-    Result := True;
+    Result := False;
     Exit;
   end;
 
@@ -292,6 +269,39 @@ begin
   InternalEncode(ABytes, AOutput, LAlphabet);
 
   ACharsWritten := LOutputLen;
+  Result := True;
+end;
+
+function TBase16.InternalDecode(const AInput: String;
+  const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): Boolean;
+var
+  LTextLen, LI, LO, LByte1, LByte2: Int32;
+  LChar1, LChar2: Char;
+  LTable: TSimpleBaseLibByteArray;
+begin
+  LTable := FAlphabet.ReverseLookupTable;
+  LTextLen := System.Length(AInput);
+  LO := 0;
+  LI := 1;
+  while LI <= LTextLen do
+  begin
+    LChar1 := AInput[LI];
+    LChar2 := AInput[LI + 1];
+
+    if (not TCodingAlphabet.TryLookup(LTable, LChar1, LByte1)) or
+      (not TCodingAlphabet.TryLookup(LTable, LChar2, LByte2)) then
+    begin
+      ABytesWritten := LO;
+      Result := False;
+      Exit;
+    end;
+
+    AOutput[LO] := Byte((LByte1 * 16) or LByte2);
+    Inc(LO);
+    Inc(LI, 2);
+  end;
+
+  ABytesWritten := LO;
   Result := True;
 end;
 

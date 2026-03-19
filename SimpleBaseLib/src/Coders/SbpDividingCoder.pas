@@ -11,6 +11,7 @@ uses
   SbpSimpleBaseLibConstants,
   SbpArrayUtilities,
   SbpICodingAlphabet,
+  SbpCodingAlphabet,
   SbpIBaseCoder,
   SbpIDividingCoder,
   SbpINonAllocatingBaseCoder,
@@ -242,8 +243,7 @@ begin
   for LI := AZeroPrefixLen + 1 to System.Length(AInput) do
   begin
     LCh := AInput[LI];
-    LCarry := LTable[Ord(LCh)] - 1;
-    if LCarry < 0 then
+    if not TCodingAlphabet.TryLookup(LTable, LCh, LCarry) then
     begin
       ARangeWritten.Start := 0;
       ARangeWritten.Finish := 0;
@@ -266,6 +266,14 @@ begin
 
   if AZeroPrefixLen > 0 then
   begin
+    if LMin < AZeroPrefixLen then
+    begin
+      ARangeWritten.Start := 0;
+      ARangeWritten.Finish := 0;
+      Result.Status := TDecodeResult.InsufficientOutputBuffer;
+      Result.InvalidChar := TSimpleBaseLibConstants.NullChar;
+      Exit;
+    end;
     for LI := (LMin - AZeroPrefixLen) to LMin - 1 do
     begin
       AOutput[LI] := 0;
@@ -302,7 +310,7 @@ begin
   else
   begin
     raise EInvalidOperationSimpleBaseLibException.Create(
-      'Output buffer with insufficient size generated');
+      'Internal error: insufficient output buffer size');
   end;
 end;
 
@@ -333,7 +341,7 @@ begin
         [LOutcome.InvalidChar]);
     TDecodeResult.InsufficientOutputBuffer:
       raise EInvalidOperationSimpleBaseLibException.Create(
-        'Output buffer was too small while decoding');
+        'Internal error: insufficient output buffer size');
     TDecodeResult.Success:
       begin
         LRangeLen := LRangeWritten.Finish - LRangeWritten.Start;
@@ -341,7 +349,7 @@ begin
       end;
   else
     raise EInvalidOperationSimpleBaseLibException.Create(
-      'This should be never hit - probably a bug');
+      'Unexpected decode result');
   end;
 end;
 
@@ -352,10 +360,22 @@ function TDividingCoder.TryEncode(
 var
   LOutput: TSimpleBaseLibCharArray;
 begin
+  if System.Length(ABytes) = 0 then
+  begin
+    ACharsWritten := 0;
+    Result := True;
+    Exit;
+  end;
+  if System.Length(AOutput) < GetSafeCharCountForEncoding(ABytes) then
+  begin
+    ACharsWritten := 0;
+    Result := False;
+    Exit;
+  end;
   LOutput := AOutput;
   if System.Length(LOutput) > 0 then
   begin
-    TArrayUtilities.Fill<Char>(LOutput, 0, System.Length(LOutput), #0);
+    TArrayUtilities.Fill<Char>(LOutput, 0, System.Length(LOutput), TSimpleBaseLibConstants.NullChar);
   end;
   Result := InternalEncode(ABytes, LOutput,
     TBits.CountPrefixingZeroes(ABytes), ACharsWritten);
@@ -378,6 +398,12 @@ begin
     Exit;
   end;
 
+  if System.Length(AOutput) < GetSafeByteCountForDecoding(AText) then
+  begin
+    ABytesWritten := 0;
+    Result := False;
+    Exit;
+  end;
   LZeroPrefixLen := CountPrefixChars(AText, FZeroChar);
   LOutput := AOutput;
   if System.Length(LOutput) > 0 then

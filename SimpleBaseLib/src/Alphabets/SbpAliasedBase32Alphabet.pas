@@ -9,6 +9,7 @@ uses
   SbpCharMap,
   SbpPaddingPosition,
   SbpCharUtilities,
+  SbpCodingAlphabet,
   SbpIAliasedBase32Alphabet,
   SbpBase32Alphabet;
 
@@ -53,7 +54,9 @@ procedure TAliasedBase32Alphabet.MapAlternate(ASource, ADestination: Char);
 var
   LResult: Int32;
 begin
-  LResult := ReverseLookupTable[Ord(ADestination)] - 1;
+  if not TCodingAlphabet.TryLookup(ReverseLookupTable, ADestination, LResult) then
+    raise EArgumentSimpleBaseLibException.CreateFmt(
+      'Character "%s" is not in the alphabet', [ADestination]);
   Map(ASource, LResult);
   Map(TCharUtilities.ToAsciiLower(ASource), LResult);
 end;

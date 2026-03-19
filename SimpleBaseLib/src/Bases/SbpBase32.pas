@@ -16,6 +16,8 @@ uses
   SbpPaddingPosition,
   SbpBase32Alphabet,
   SbpStreamUtilities,
+  SbpCodingAlphabet,
+  SbpBitOperations,
   SbpPlatformUtilities,
   SbpBinaryPrimitives;
 
@@ -69,7 +71,7 @@ type
     function GetPaddingCharCount(const AText: String): Int32;
     function InternalEncode(const AInput: TSimpleBaseLibByteArray;
       const AOutput: TSimpleBaseLibCharArray; APadding: Boolean; out ACharsWritten: Int32): Boolean;
-    function InternalDecode(const AInput: String;
+    function InternalDecode(const AInput: String; AInputLen: Int32;
       const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): TDecodeResult;
     function GetAlphabet: IBase32Alphabet;
   public
@@ -129,7 +131,7 @@ begin
   FGeohash := nil;
   FBech32 := nil;
   FFileCoin := nil;
-  SetLength(FZeroBuffer, 1);
+  System.SetLength(FZeroBuffer, 1);
   FZeroBuffer[0] := 0;
 end;
 
@@ -236,6 +238,11 @@ end;
 function TBase32.GetSafeCharCountForEncoding(
   const ABytes: TSimpleBaseLibByteArray): Int32;
 begin
+  if System.Length(ABytes) = 0 then
+  begin
+    Result := 0;
+    Exit;
+  end;
   Result := (((System.Length(ABytes) - 1) div BitsPerChar) + 1) * BitsPerByte;
 end;
 
@@ -264,11 +271,11 @@ begin
   end;
 
   LOutputLen := GetSafeCharCountForEncoding(ABytes);
-  SetLength(LOutput, LOutputLen);
+  System.SetLength(LOutput, LOutputLen);
   if not InternalEncode(ABytes, LOutput, APadding, LCharsWritten) then
   begin
     raise EInvalidOperationSimpleBaseLibException.Create(
-      'Internal error: couldn''t calculate proper output buffer size for input');
+      'Internal error: insufficient output buffer size');
   end;
   SetString(Result, PChar(@LOutput[0]), LCharsWritten);
 end;
@@ -288,24 +295,19 @@ begin
     Exit;
   end;
 
-  SetLength(LOutput, LOutputLen);
-  LDecodeResult := InternalDecode(System.Copy(AText, 1, LTextLen), LOutput, LBytesWritten);
+  System.SetLength(LOutput, LOutputLen);
+  LDecodeResult := InternalDecode(AText, LTextLen, LOutput, LBytesWritten);
   case LDecodeResult of
     TDecodeResult.InvalidInput:
       raise EArgumentSimpleBaseLibException.Create('Invalid character in input');
     TDecodeResult.OutputOverflow:
-      raise EInvalidOperationSimpleBaseLibException.Create('Output buffer is too small');
+      raise EInvalidOperationSimpleBaseLibException.Create(
+        'Internal error: insufficient output buffer size');
     TDecodeResult.Success:
-      begin
-        if LBytesWritten <> LOutputLen then
-        begin
-          raise EInvalidOperationSimpleBaseLibException.Create(
-            'Actual written bytes are different');
-        end;
-        Result := LOutput;
-      end;
+      Result := System.Copy(LOutput, 0, LBytesWritten);
   else
-    raise EInvalidOperationSimpleBaseLibException.Create('Unhandled decode result');
+    raise EInvalidOperationSimpleBaseLibException.Create(
+      'Unexpected decode result');
   end;
 end;
 
@@ -324,6 +326,7 @@ const
 var
   LBuffer, LSpan: TSimpleBaseLibByteArray;
   LI: Int32;
+  LTmp: Byte;
 begin
   if ANumber = 0 then
   begin
@@ -331,7 +334,7 @@ begin
     Exit;
   end;
 
-  SetLength(LBuffer, NumBytes);
+  System.SetLength(LBuffer, NumBytes);
   TBinaryPrimitives.WriteUInt64LittleEndian(LBuffer, 0, ANumber);
 
   if FIsBigEndian then
@@ -344,9 +347,9 @@ begin
     LSpan := System.Copy(LBuffer, LI, NumBytes - LI);
     for LI := 0 to (System.Length(LSpan) div 2) - 1 do
     begin
-      LBuffer[0] := LSpan[LI];
+      LTmp := LSpan[LI];
       LSpan[LI] := LSpan[System.Length(LSpan) - 1 - LI];
-      LSpan[System.Length(LSpan) - 1 - LI] := LBuffer[0];
+      LSpan[System.Length(LSpan) - 1 - LI] := LTmp;
     end;
     Result := Encode(LSpan);
     Exit;
@@ -364,15 +367,21 @@ function TBase32.DecodeUInt64(const AText: String): UInt64;
 var
   LBuffer, LNewSpan: TSimpleBaseLibByteArray;
   LI: Int32;
+  LTmp: Byte;
 begin
   LBuffer := Decode(AText);
+  if System.Length(LBuffer) = 0 then
+  begin
+    Result := 0;
+    Exit;
+  end;
   if System.Length(LBuffer) > 8 then
   begin
     raise EInvalidOperationSimpleBaseLibException.Create(
       'Decoded text is too long to fit in a buffer');
   end;
 
-  SetLength(LNewSpan, 8);
+  System.SetLength(LNewSpan, 8);
   for LI := 0 to 7 do
   begin
     LNewSpan[LI] := 0;
@@ -383,11 +392,9 @@ begin
   begin
     for LI := 0 to 3 do
     begin
-      LBuffer := nil;
-      SetLength(LBuffer, 1);
-      LBuffer[0] := LNewSpan[LI];
+      LTmp := LNewSpan[LI];
       LNewSpan[LI] := LNewSpan[7 - LI];
-      LNewSpan[7 - LI] := LBuffer[0];
+      LNewSpan[7 - LI] := LTmp;
     end;
   end;
 
@@ -400,7 +407,7 @@ var
   LBytesWritten, LI: Int32;
   LTmp: Byte;
 begin
-  SetLength(LOutput, 8);
+  System.SetLength(LOutput, 8);
   for LI := 0 to 7 do
   begin
     LOutput[LI] := 0;
@@ -455,6 +462,12 @@ begin
     Result := True;
     Exit;
   end;
+  if System.Length(AOutput) < GetSafeCharCountForEncoding(ABytes) then
+  begin
+    ACharsWritten := 0;
+    Result := False;
+    Exit;
+  end;
   Result := InternalEncode(ABytes, AOutput, APadding, ACharsWritten);
 end;
 
@@ -471,14 +484,14 @@ begin
     Exit;
   end;
 
-  if System.Length(AOutput) = 0 then
+  if System.Length(AOutput) < GetSafeByteCountForDecoding(AText) then
   begin
     ABytesWritten := 0;
     Result := False;
     Exit;
   end;
 
-  Result := InternalDecode(System.Copy(AText, 1, LInputLen), AOutput, ABytesWritten) =
+  Result := InternalDecode(AText, LInputLen, AOutput, ABytesWritten) =
     TDecodeResult.Success;
 end;
 
@@ -489,6 +502,13 @@ var
   LBitsLeft, LOutputPad, LO, LValue, LI, LNextBits: Int32;
   LPaddingChar: Char;
 begin
+  if System.Length(AInput) = 0 then
+  begin
+    ACharsWritten := 0;
+    Result := True;
+    Exit;
+  end;
+
   LTable := FAlphabet.Value;
   LBitsLeft := BitsPerByte;
   LO := 0;
@@ -576,7 +596,7 @@ begin
   end;
 end;
 
-function TBase32.InternalDecode(const AInput: String;
+function TBase32.InternalDecode(const AInput: String; AInputLen: Int32;
   const AOutput: TSimpleBaseLibByteArray; out ABytesWritten: Int32): TDecodeResult;
 var
   LTable: TSimpleBaseLibByteArray;
@@ -589,11 +609,10 @@ begin
   ABytesWritten := 0;
   LO := 0;
 
-  for LI := 1 to System.Length(AInput) do
+  for LI := 1 to AInputLen do
   begin
     LC := AInput[LI];
-    LB := LTable[Ord(LC)] - 1;
-    if LB < 0 then
+    if not TCodingAlphabet.TryLookup(LTable, LC, LB) then
     begin
       ABytesWritten := LO;
       Result := TDecodeResult.InvalidInput;
@@ -608,7 +627,7 @@ begin
     end;
 
     LShiftBits := BitsPerChar - LBitsLeft;
-    LOutputPad := LOutputPad or (LB shr LShiftBits);
+    LOutputPad := LOutputPad or TBitOperations.Asr32(LB, LShiftBits);
     if LO >= System.Length(AOutput) then
     begin
       Result := TDecodeResult.OutputOverflow;
