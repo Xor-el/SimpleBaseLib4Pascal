@@ -286,6 +286,7 @@ var
   LI, LBytesWritten: Int32;
   LBytes: TSimpleBaseLibByteArray;
 begin
+  LBytes := nil;
   SetLength(LBytes, 1024);
   for LI := Low(Encoded) to High(Encoded) do
   begin
