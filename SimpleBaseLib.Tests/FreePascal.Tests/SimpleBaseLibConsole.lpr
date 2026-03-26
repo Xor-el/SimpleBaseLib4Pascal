@@ -3,6 +3,7 @@ program SimpleBaseLib.Tests;
 {$mode objfpc}{$H+}
 
 uses
+  {$IFDEF UNIX}cwstring,{$ENDIF}
   consoletestrunner, SimpleBaseLibTestBase, Base36Tests, Base10Tests,
   Base16StreamRegressionTests, Base16Tests, Base2StreamRegressionTests,
   Base2Tests, Base32Tests, Base32StreamRegressionTests, Base32AlphabetTests,
