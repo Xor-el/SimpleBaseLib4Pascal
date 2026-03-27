@@ -5,7 +5,6 @@ uses
   Classes,
   SysUtils,
   StrUtils,
-  FileUtil,
   Zipper,
   fphttpclient,
   RegExpr,
@@ -39,6 +38,76 @@ const
 
 var
   ErrorCount: Integer = 0;
+
+// ---------------------------------------------------------------------------
+// FCL/RTL-only helpers (replace FileUtil usage)
+// ---------------------------------------------------------------------------
+
+function ReadFileToString(const AFileName: string): string;
+var
+  Stream: TFileStream;
+  Size: Int64;
+begin
+  Result := '';
+  Stream := TFileStream.Create(AFileName, fmOpenRead or fmShareDenyNone);
+  try
+    Size := Stream.Size;
+    if Size <= 0 then
+      Exit;
+    SetLength(Result, Size);
+    Stream.Position := 0;
+    Stream.ReadBuffer(Pointer(Result)^, Size);
+  finally
+    Stream.Free;
+  end;
+end;
+
+function MatchesMaskSimple(const AFileName, AMask: string): Boolean;
+var
+  LExt: string;
+begin
+  LExt := LowerCase(ExtractFileExt(AFileName));
+
+  if AMask = '*.lpk' then
+    Exit(LExt = '.lpk');
+
+  if AMask = '*.lpi' then
+    Exit(LExt = '.lpi');
+
+  Result := False;
+end;
+
+procedure FindAllFilesRecursive(const ADir, AMask: string; AList: TStrings);
+var
+  Search: TSearchRec;
+  DirPath: string;
+  EntryPath: string;
+begin
+  DirPath := IncludeTrailingPathDelimiter(ExpandFileName(ADir));
+
+  if FindFirst(DirPath + '*', faAnyFile, Search) = 0 then
+  try
+    repeat
+      if (Search.Name = '.') or (Search.Name = '..') then
+        Continue;
+
+      EntryPath := DirPath + Search.Name;
+
+      if (Search.Attr and faDirectory) <> 0 then
+        FindAllFilesRecursive(EntryPath, AMask, AList)
+      else if MatchesMaskSimple(Search.Name, AMask) then
+        AList.Add(EntryPath);
+    until FindNext(Search) <> 0;
+  finally
+    FindClose(Search);
+  end;
+end;
+
+function FindAllFilesList(const ASearchDir, AMask: string): TStringList;
+begin
+  Result := TStringList.Create;
+  FindAllFilesRecursive(ASearchDir, AMask, Result);
+end;
 
 // ---------------------------------------------------------------------------
 // Logging helpers
@@ -281,7 +350,7 @@ var
   List: TStringList;
   Each: string;
 begin
-  List := FindAllFiles(ASearchDir, '*.lpk', True);
+  List := FindAllFilesList(ASearchDir, '*.lpk');
   try
     for Each in List do
       RegisterPackage(Each);
@@ -299,7 +368,7 @@ var
   List: TStringList;
   Each: string;
 begin
-  List := FindAllFiles(Target, '*.lpi', True);
+  List := FindAllFilesList(Target, '*.lpi');
   try
     for Each in List do
       if IsTestProject(Each) then
