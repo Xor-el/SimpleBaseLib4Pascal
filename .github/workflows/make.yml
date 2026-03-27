@@ -39,7 +39,7 @@ jobs:
         run: |
           set -xeuo pipefail
           sudo bash -c 'apt-get update; apt-get install -y lazarus' >/dev/null
-          instantfpc -Fu/usr/lib/lazarus/*/components/lazutils .github/workflows/make.pas
+          instantfpc .github/workflows/make.pas
 
       - name: Build on Linux (AArch64)
         if: runner.os == 'Linux' && runner.arch == 'ARM64'
@@ -47,7 +47,7 @@ jobs:
         run: |
           set -xeuo pipefail
           sudo bash -c 'apt-get update; apt-get install -y lazarus' >/dev/null
-          instantfpc -Fu/usr/lib/lazarus/*/components/lazutils .github/workflows/make.pas
+          instantfpc .github/workflows/make.pas
 
       - name: Install Lazarus on macOS
         if: runner.os == 'macOS'
@@ -87,4 +87,4 @@ jobs:
           Get-Command instantfpc
 
           Write-Host "Building make.pas..."
-          instantfpc '-FuC:\Lazarus\components\lazutils' .github/workflows/make.pas
+          instantfpc .github/workflows/make.pas
