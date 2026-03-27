@@ -26,12 +26,14 @@ const
 
   // Package path filter — skip platform-incompatible and template packages
   PackageExcludePattern =
-    {$IFDEF MSWINDOWS}
+  {$IFDEF MSWINDOWS}
     '(cocoa|x11|_template)'
-    {$ELSE}
+  {$ELSEIF DEFINED(DARWIN)}
+    '(gdi|x11|_template)'
+  {$ELSE}
     '(cocoa|gdi|_template)'
-    {$ENDIF}
-    ;
+  {$ENDIF}
+  ;
 
   OPMBaseUrl = 'https://packages.lazarus-ide.org/';
 
