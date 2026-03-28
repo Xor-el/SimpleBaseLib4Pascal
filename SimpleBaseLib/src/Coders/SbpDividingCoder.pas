@@ -190,10 +190,7 @@ begin
 
   if AZeroPrefixLen > 0 then
   begin
-    for LI := 0 to AZeroPrefixLen - 1 do
-    begin
-      AOutput[LI] := FZeroChar;
-    end;
+    TArrayUtilities.Fill<Char>(AOutput, 0, AZeroPrefixLen, FZeroChar);
   end;
 
   LNumDigits := 0;
@@ -274,10 +271,7 @@ begin
       Result.InvalidChar := TSimpleBaseLibConstants.NullChar;
       Exit;
     end;
-    for LI := (LMin - AZeroPrefixLen) to LMin - 1 do
-    begin
-      AOutput[LI] := 0;
-    end;
+    TArrayUtilities.Fill<Byte>(AOutput, LMin - AZeroPrefixLen, LMin, Byte(0));
     LMin := LMin - AZeroPrefixLen;
   end;
 

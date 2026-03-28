@@ -39,9 +39,6 @@ type
     class property Flickr: IBase58 read GetFlickr;
     class property Monero: IMoneroBase58 read GetMonero;
 
-    class function GetSafeByteCountForDecoding(ATextLen: Int32;
-      ANumZeroes: Int32): Int32; overload; static;
-
     property ZeroChar: Char read GetZeroChar;
   end;
 
@@ -102,12 +99,6 @@ begin
     FMonero := TMoneroBase58.Default;
   end;
   Result := FMonero;
-end;
-
-class function TBase58.GetSafeByteCountForDecoding(ATextLen: Int32;
-  ANumZeroes: Int32): Int32;
-begin
-  Result := ANumZeroes + ((ATextLen - ANumZeroes + 1) * ReductionFactor div 1000) + 1;
 end;
 
 end.

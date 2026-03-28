@@ -119,6 +119,9 @@ type
 
 implementation
 
+uses
+  SbpArrayUtilities;
+
 { TBase32 }
 
 class constructor TBase32.Create;
@@ -382,10 +385,7 @@ begin
   end;
 
   System.SetLength(LNewSpan, 8);
-  for LI := 0 to 7 do
-  begin
-    LNewSpan[LI] := 0;
-  end;
+  TArrayUtilities.Fill<Byte>(LNewSpan, 0, 8, Byte(0));
   Move(LBuffer[0], LNewSpan[0], System.Length(LBuffer));
 
   if FIsBigEndian then
@@ -408,10 +408,7 @@ var
   LTmp: Byte;
 begin
   System.SetLength(LOutput, 8);
-  for LI := 0 to 7 do
-  begin
-    LOutput[LI] := 0;
-  end;
+  TArrayUtilities.Fill<Byte>(LOutput, 0, 8, Byte(0));
   if not TryDecode(AText, LOutput, LBytesWritten) then
   begin
     ANumber := 0;

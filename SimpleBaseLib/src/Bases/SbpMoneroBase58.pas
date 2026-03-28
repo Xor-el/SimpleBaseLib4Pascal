@@ -84,6 +84,9 @@ type
 
 implementation
 
+uses
+  SbpArrayUtilities;
+
 { TMoneroBase58 }
 
 class constructor TMoneroBase58.Create;
@@ -186,10 +189,8 @@ begin
     AOutput[AOutputOffset + LI] := AAlphabet[Int32(LRemainder) + 1];
   end;
 
-  for LI := LLastPos to MaxEncodedBlockSize - 1 do
-  begin
-    AOutput[AOutputOffset + LI] := AZeroChar;
-  end;
+  TArrayUtilities.Fill<Char>(AOutput, AOutputOffset + LLastPos,
+    AOutputOffset + MaxEncodedBlockSize, AZeroChar);
 end;
 
 class function TMoneroBase58.DecodeBlock(const AInput: String; AInputOffset,
