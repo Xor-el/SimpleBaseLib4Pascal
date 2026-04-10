@@ -17,7 +17,7 @@
 
 Dark variant uses `#1e1b4b`–`#0c0a18`, byte bars `#ccfbf1`, chevron `#2dd4bf`, columns `#f5d0fe`.
 
-**Banner background** (flat fill behind the logo in wide [`export/`](export/) PNG social / OG assets): RGB **48, 41, 138** (`#30298a`), midpoint of the default badge gradient.
+**Banner background** (flat fill behind the logo for wide social and Open Graph PNGs [here](export/)): RGB **48, 41, 138** (`#30298a`), midpoint of the default badge gradient.
 
 ## Typography (pairing)
 

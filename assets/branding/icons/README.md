@@ -2,7 +2,7 @@
 
 | File | Contents |
 |------|-----------|
-| [`SimpleBaseLib4Pascal.ico`](SimpleBaseLib4Pascal.ico) | Multi-size Windows icon (16, 32, 48, 256), generated from [`../logo.svg`](../logo.svg). |
+| [`SimpleBaseLib4Pascal.ico`](SimpleBaseLib4Pascal.ico) | Multi-size Windows icon (16, 32, 48, 256), generated from [this logo](../logo.svg). |
 
 ## Using in Delphi (`.dproj`)
 
@@ -19,4 +19,4 @@ Alternatively, your `.dproj` may contain an `<Icon_MainIcon>` or similar propert
 
 ## Regeneration
 
-After changing [`../logo.svg`](../logo.svg), rebuild the ICO with **Inkscape** or **ImageMagick** following the workflow [described here](../README.md), then combine sizes into a multi-resolution `.ico` if your tool does not do that in one step.
+When [this logo](../logo.svg) changes, rebuild the ICO with **Inkscape** or **ImageMagick** following the workflow [described here](../README.md), then combine sizes into a multi-resolution `.ico` if your tool does not do that in one step.
