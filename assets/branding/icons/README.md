@@ -2,17 +2,21 @@
 
 | File | Contents |
 |------|-----------|
-| `SimpleBaseLib4Pascal.ico` | Multi-size Windows icon (16, 32, 48, 256), generated from `../logo.svg`. |
+| [`SimpleBaseLib4Pascal.ico`](SimpleBaseLib4Pascal.ico) | Multi-size Windows icon (16, 32, 48, 256), generated from [`../logo.svg`](../logo.svg). |
 
 ## Using in Delphi (`.dproj`)
 
-1. **Project → Options → Application** (or **Icons** depending on version).
-2. Set **Application icon** to `assets\branding\icons\SimpleBaseLib4Pascal.ico` (path relative to the `.dproj` as your IDE expects).
+1. Open the project in the IDE.
+2. **Project → Options → Application** (or **Icons** depending on version).
+3. Set **Application icon** to [`SimpleBaseLib4Pascal.ico`](SimpleBaseLib4Pascal.ico) (path relative to the `.dproj`; from the repo root that is `assets/branding/icons/SimpleBaseLib4Pascal.ico`).
+
+Alternatively, your `.dproj` may contain an `<Icon_MainIcon>` or similar property pointing at an `.ico` file; set it to a path **relative to the project file** (you may copy the icon next to the `.dproj` if the IDE resolves paths more reliably that way).
 
 ## Using in Lazarus (`.lpi`)
 
 1. **Project → Project Options → Application** — set **Icon** to this `.ico`.
+2. Or edit the `.lpi` XML: look for `IconPath` / `Icon` style keys and set the path (relative to `.lpi` is common).
 
 ## Regeneration
 
-After changing `../logo.svg`, rebuild the ICO using [tools/branding/README.md](../../../tools/branding/README.md).
+After changing [`../logo.svg`](../logo.svg), rebuild the ICO with **Inkscape** or **ImageMagick** following the workflow [described here](../README.md), then combine sizes into a multi-resolution `.ico` if your tool does not do that in one step.

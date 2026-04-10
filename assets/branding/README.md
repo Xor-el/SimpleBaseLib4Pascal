@@ -15,11 +15,11 @@ It is **not** derived from Embarcadero, Delphi, or other third-party artwork. Do
 
 | File | Use |
 |------|-----|
-| `logo.svg` | **Source of truth** (default README / light UI). |
-| `logo-dark.svg` | Dark backgrounds (docs sites, dark-themed pages). |
-| `BRAND.md` | Colors, clear space, minimum size, do / don't. |
-| `export/*.png` | Raster exports (GitHub social 2:1, Open Graph, social header, square avatar). |
-| `icons/SimpleBaseLib4Pascal.ico` | Multi-resolution Windows icon for `.dproj` / `.lpi`. |
+| [`logo.svg`](logo.svg) | **Source of truth** (default README / light UI). |
+| [`logo-dark.svg`](logo-dark.svg) | Dark backgrounds (docs sites, dark-themed pages). |
+| [`BRAND.md`](BRAND.md) | Colors, clear space, minimum size, do / don’t. |
+| [`export/`](export/) (`*.png`) | Raster exports (GitHub social 2:1, Open Graph, social header, square avatar). |
+| [`icons/SimpleBaseLib4Pascal.ico`](icons/SimpleBaseLib4Pascal.ico) | Multi-resolution Windows icon for `.dproj` / `.lpi`. |
 
 ## License
 
@@ -29,9 +29,5 @@ The **library source code** is under the project [MIT License](../../LICENSE). T
 
 If you change the SVG, regenerate rasters using one of:
 
-- **Inkscape** (CLI): export PNG at the sizes listed in `export/README.md`.
-- **ImageMagick** 7+: `magick logo.svg -resize 512x512 export/logo-512.png` (and similar).
-
-For a scripted pipeline, see [tools/branding/README.md](../../tools/branding/README.md).
-
-Exact filenames and pixel sizes are listed in `export/README.md`.
+- **Inkscape** (CLI): export PNG at the sizes [listed here](export/README.md).
+- **ImageMagick** 7+: `magick logo.svg -resize 512x512 export/logo-512.png`.

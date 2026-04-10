@@ -2,8 +2,8 @@
 
 ## Primary mark
 
-- **Default:** `logo.svg` — **encode pipeline**: three horizontal **byte bars**, a **chevron** (transform), four **symbol columns** (alphabet output). Evokes grouping bytes into encoded text (e.g. 3→4 style) without tying the brand to a single base.
-- **Dark UI:** `logo-dark.svg` — same layout with higher-contrast mint / teal / lilac on a deeper indigo badge.
+- **Default:** [`logo.svg`](logo.svg) — **encode pipeline**: three horizontal **byte bars**, a **chevron** (transform), four **symbol columns** (alphabet output). Evokes grouping bytes into encoded text (e.g. 3→4 style) without tying the brand to a single base.
+- **Dark UI:** [`logo-dark.svg`](logo-dark.svg) — same layout with higher-contrast mint / teal / lilac on a deeper indigo badge.
 
 ## Palette (default logo)
 
@@ -17,7 +17,7 @@
 
 Dark variant uses `#1e1b4b`–`#0c0a18`, byte bars `#ccfbf1`, chevron `#2dd4bf`, columns `#f5d0fe`.
 
-**Banner background** (social / OG composites from `tools/branding/export.mjs`): RGB **48, 41, 138** (`#30298a`), midpoint of the default badge gradient.
+**Banner background** (flat fill behind the logo in wide [`export/`](export/) PNG social / OG assets): RGB **48, 41, 138** (`#30298a`), midpoint of the default badge gradient.
 
 ## Typography (pairing)
 
@@ -43,7 +43,7 @@ Keep padding around the badge at least **1/4 of the mark width** on a square can
 
 ## Incorrect use
 
-- Do not **stretch**, **skew**, or **recolor** arbitrarily outside this palette without updating `BRAND.md`.
+- Do not **stretch**, **skew**, or **recolor** arbitrarily outside this palette without updating this doc (palette table above).
 - Do not **drop** the badge frame or use only the chevron / bars in isolation at small sizes (loses identity).
 - Do not place **third-party logos inside** the badge.
 
