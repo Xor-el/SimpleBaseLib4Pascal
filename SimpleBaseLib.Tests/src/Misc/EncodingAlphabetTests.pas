@@ -8,20 +8,17 @@ unit EncodingAlphabetTests;
 
 interface
 
-{$IFDEF FPC}
 uses
+  SysUtils,
+{$IFDEF FPC}
   fpcunit,
   testregistry,
-  SbpICodingAlphabet,
-  SbpBase16Alphabet,
-  SimpleBaseLibTestBase;
 {$ELSE}
-uses
   TestFramework,
+{$ENDIF FPC}
   SbpICodingAlphabet,
   SbpBase16Alphabet,
   SimpleBaseLibTestBase;
-{$ENDIF FPC}
 
 type
   TTestEncodingAlphabet = class(TSimpleBaseLibTestCase)
