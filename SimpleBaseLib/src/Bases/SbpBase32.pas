@@ -18,7 +18,6 @@ uses
   SbpStreamUtilities,
   SbpCodingAlphabet,
   SbpBitOperations,
-  SbpPlatformUtilities,
   SbpBinaryPrimitives;
 
 type
@@ -39,7 +38,6 @@ type
 
     var
     FAlphabet: IBase32Alphabet;
-    FIsBigEndian: Boolean;
 
     class var FCrockford: IBase32;
     class var FRfc4648: IBase32;
@@ -77,8 +75,7 @@ type
   public
     class constructor Create;
 
-    constructor Create(const AAlphabet: IBase32Alphabet); overload;
-    constructor Create(const AAlphabet: IBase32Alphabet; AIsBigEndian: Boolean); overload;
+    constructor Create(const AAlphabet: IBase32Alphabet);
 
     class property Crockford: IBase32 read GetCrockford;
     class property Rfc4648: IBase32 read GetRfc4648;
@@ -140,11 +137,6 @@ end;
 
 constructor TBase32.Create(const AAlphabet: IBase32Alphabet);
 begin
-  Create(AAlphabet, not TPlatformUtilities.IsLittleEndian);
-end;
-
-constructor TBase32.Create(const AAlphabet: IBase32Alphabet; AIsBigEndian: Boolean);
-begin
   inherited Create;
   if AAlphabet.PaddingPosition <> TPaddingPosition.&End then
   begin
@@ -153,7 +145,6 @@ begin
   end;
 
   FAlphabet := AAlphabet;
-  FIsBigEndian := AIsBigEndian;
 end;
 
 function TBase32.GetAlphabet: IBase32Alphabet;
@@ -327,9 +318,8 @@ function TBase32.EncodeUInt64(const ANumber: UInt64): String;
 const
   NumBytes = 8;
 var
-  LBuffer, LSpan: TSimpleBaseLibByteArray;
+  LBuffer: TSimpleBaseLibByteArray;
   LI: Int32;
-  LTmp: Byte;
 begin
   if ANumber = 0 then
   begin
@@ -339,24 +329,6 @@ begin
 
   System.SetLength(LBuffer, NumBytes);
   TBinaryPrimitives.WriteUInt64LittleEndian(LBuffer, 0, ANumber);
-
-  if FIsBigEndian then
-  begin
-    LI := 0;
-    while (LI < NumBytes) and (LBuffer[LI] = 0) do
-    begin
-      Inc(LI);
-    end;
-    LSpan := System.Copy(LBuffer, LI, NumBytes - LI);
-    for LI := 0 to (System.Length(LSpan) div 2) - 1 do
-    begin
-      LTmp := LSpan[LI];
-      LSpan[LI] := LSpan[System.Length(LSpan) - 1 - LI];
-      LSpan[System.Length(LSpan) - 1 - LI] := LTmp;
-    end;
-    Result := Encode(LSpan);
-    Exit;
-  end;
 
   LI := NumBytes - 1;
   while (LI > 0) and (LBuffer[LI] = 0) do
@@ -369,8 +341,6 @@ end;
 function TBase32.DecodeUInt64(const AText: String): UInt64;
 var
   LBuffer, LNewSpan: TSimpleBaseLibByteArray;
-  LI: Int32;
-  LTmp: Byte;
 begin
   LBuffer := Decode(AText);
   if System.Length(LBuffer) = 0 then
@@ -388,24 +358,13 @@ begin
   TArrayUtilities.Fill<Byte>(LNewSpan, 0, 8, Byte(0));
   Move(LBuffer[0], LNewSpan[0], System.Length(LBuffer));
 
-  if FIsBigEndian then
-  begin
-    for LI := 0 to 3 do
-    begin
-      LTmp := LNewSpan[LI];
-      LNewSpan[LI] := LNewSpan[7 - LI];
-      LNewSpan[7 - LI] := LTmp;
-    end;
-  end;
-
   Result := TBinaryPrimitives.ReadUInt64LittleEndian(LNewSpan, 0);
 end;
 
 function TBase32.TryDecodeUInt64(const AText: String; out ANumber: UInt64): Boolean;
 var
   LOutput: TSimpleBaseLibByteArray;
-  LBytesWritten, LI: Int32;
-  LTmp: Byte;
+  LBytesWritten: Int32;
 begin
   System.SetLength(LOutput, 8);
   TArrayUtilities.Fill<Byte>(LOutput, 0, 8, Byte(0));
@@ -414,16 +373,6 @@ begin
     ANumber := 0;
     Result := False;
     Exit;
-  end;
-
-  if FIsBigEndian then
-  begin
-    for LI := 0 to 3 do
-    begin
-      LTmp := LOutput[LI];
-      LOutput[LI] := LOutput[7 - LI];
-      LOutput[7 - LI] := LTmp;
-    end;
   end;
 
   ANumber := TBinaryPrimitives.ReadUInt64LittleEndian(LOutput, 0);

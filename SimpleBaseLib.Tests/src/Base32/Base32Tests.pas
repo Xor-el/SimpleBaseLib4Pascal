@@ -21,7 +21,6 @@ uses
   SbpIBase32,
   SbpBase32,
   SbpBase32Alphabet,
-  SbpBitOperations,
   SimpleBaseLibTestBase;
 
 type
@@ -52,8 +51,6 @@ type
     procedure Test_Rfc4648_DecodeUInt64_ReturnsExpectedValues;
     procedure Test_Rfc4648_TryDecodeUInt64_ReturnsExpectedValues;
     procedure Test_Rfc4648_TryDecodeUInt64_InvalidInput_ReturnsFalse;
-    procedure Test_Rfc4648_Encode_BigEndianUInt64_ReturnsExpectedValues;
-    procedure Test_Rfc4648_DecodeUInt64_BigEndian_ReturnsExpectedValues;
     procedure Test_Rfc4648_EncodeInt64_Negative_Throws;
     procedure Test_Rfc4648_DecodeInt64_ReturnsExpectedValues;
     procedure Test_Rfc4648_DecodeInt64_OutOfRange_Throws;
@@ -237,26 +234,6 @@ begin
   CheckFalse(TBase32.Rfc4648.TryDecodeUInt64(
     'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ', LValue));
   CheckFalse(TBase32.Rfc4648.TryDecodeUInt64('!@#!@#invalid alphabet!@#!@#', LValue));
-end;
-
-procedure TTestBase32.Test_Rfc4648_Encode_BigEndianUInt64_ReturnsExpectedValues;
-var
-  LBigEndian: IBase32;
-  LValue: UInt64;
-begin
-  LBigEndian := TBase32.Create(TBase32Alphabet.Rfc4648, True);
-  LValue := TBitOperations.ReverseBytesUInt64($1122334455667788);
-  CheckEquals('RB3WMVKEGMRBC', LBigEndian.EncodeUInt64(LValue));
-end;
-
-procedure TTestBase32.Test_Rfc4648_DecodeUInt64_BigEndian_ReturnsExpectedValues;
-var
-  LBigEndian: IBase32;
-  LExpected: UInt64;
-begin
-  LBigEndian := TBase32.Create(TBase32Alphabet.Rfc4648, True);
-  LExpected := TBitOperations.ReverseBytesUInt64($1122334455667788);
-  CheckEquals(LExpected, LBigEndian.DecodeUInt64('RB3WMVKEGMRBC'));
 end;
 
 procedure TTestBase32.Test_Rfc4648_EncodeInt64_Negative_Throws;

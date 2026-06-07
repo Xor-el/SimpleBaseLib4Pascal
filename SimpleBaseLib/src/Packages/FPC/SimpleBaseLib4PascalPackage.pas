@@ -15,7 +15,7 @@ uses
   SbpSimpleBaseLibConstants, SbpBase85Alphabet, SbpIBase85Alphabet, SbpBase58, 
   SbpINumericBaseCoder, SbpBase32Alphabet, SbpINonAllocatingBaseCoder, 
   SbpIBaseStreamCoder, SbpIBaseCoder, SbpAliasedBase32Alphabet, 
-  SbpIAliasedBase32Alphabet, SbpPlatformUtilities, SbpIBase32Alphabet, 
+  SbpIAliasedBase32Alphabet, SbpIBase32Alphabet, 
   SbpCharMap, SbpPaddingPosition, SbpCodingAlphabet, SbpBase45Alphabet, 
   SbpIBase45Alphabet, SbpIDividingCoder, SbpBase62Alphabet, SbpBase58Alphabet, 
   SbpBase36Alphabet, SbpBase10Alphabet, SbpMoneroBase58, SbpBase62, SbpBase36, 
