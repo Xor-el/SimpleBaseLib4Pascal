@@ -72,7 +72,6 @@ uses
   SbpBase45 in '..\..\SimpleBaseLib\src\Bases\SbpBase45.pas',
   SbpIBase45Alphabet in '..\..\SimpleBaseLib\src\Interfaces\Alphabets\SbpIBase45Alphabet.pas',
   SbpIBase45 in '..\..\SimpleBaseLib\src\Interfaces\Bases\SbpIBase45.pas',
-  SbpPlatformUtilities in '..\..\SimpleBaseLib\src\Utilities\SbpPlatformUtilities.pas',
   SbpAliasedBase32Alphabet in '..\..\SimpleBaseLib\src\Alphabets\SbpAliasedBase32Alphabet.pas',
   SbpBase32Alphabet in '..\..\SimpleBaseLib\src\Alphabets\SbpBase32Alphabet.pas',
   SbpBase32 in '..\..\SimpleBaseLib\src\Bases\SbpBase32.pas',

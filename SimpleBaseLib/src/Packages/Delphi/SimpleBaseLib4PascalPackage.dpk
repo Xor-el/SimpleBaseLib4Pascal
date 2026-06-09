@@ -79,7 +79,6 @@ contains
   SbpBase45 in '..\..\Bases\SbpBase45.pas',
   SbpIBase45Alphabet in '..\..\Interfaces\Alphabets\SbpIBase45Alphabet.pas',
   SbpIBase45 in '..\..\Interfaces\Bases\SbpIBase45.pas',
-  SbpPlatformUtilities in '..\..\Utilities\SbpPlatformUtilities.pas',
   SbpAliasedBase32Alphabet in '..\..\Alphabets\SbpAliasedBase32Alphabet.pas',
   SbpBase32Alphabet in '..\..\Alphabets\SbpBase32Alphabet.pas',
   SbpBase32 in '..\..\Bases\SbpBase32.pas',
