@@ -11,11 +11,11 @@
 # in a subshell and could not export PATH back anyway).
 set -euo pipefail
 
-# Bitness matters: FPC 3.2.2 (and OpenSSL 3) use different DLL names per arch,
-# matching make.pas's old {$IFDEF WIN64} split. 64-bit looks for
-# libssl-1_1-x64.dll (OpenSSL 3 ships libssl-3-x64.dll); 32-bit looks for
-# libssl-1_1.dll (OpenSSL 3 ships libssl-3.dll). Derive from the FPC target the
-# make binary is compiled for; default to 64-bit (the only Windows CI target).
+# Bitness matters: FPC 3.2.2 (and OpenSSL 3) use different DLL names per arch.
+# 64-bit looks for libssl-1_1-x64.dll (OpenSSL 3 ships libssl-3-x64.dll);
+# 32-bit looks for libssl-1_1.dll (OpenSSL 3 ships libssl-3.dll).
+# Derive from the FPC target the make binary is compiled for; 
+# default to 64-bit (the only Windows CI target).
 case "${FPC_TARGET:-}" in
   i386-win32|*-win32|*win32*) SRC_SUFFIX="-3";     DST_SUFFIX="-1_1"     ;;
   *)                          SRC_SUFFIX="-3-x64"; DST_SUFFIX="-1_1-x64" ;;
