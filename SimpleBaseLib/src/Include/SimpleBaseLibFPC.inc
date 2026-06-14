@@ -15,6 +15,16 @@
    {$MESSAGE ERROR 'This Library requires FreePascal 3.2.2 or higher.'}
 {$IFEND}
 
+{============================== CPU Architecture ==============================}
+
+{$IFDEF FPC_LITTLE_ENDIAN}
+  {$DEFINE SIMPLEBASELIB_LITTLE_ENDIAN}
+{$ENDIF}
+
+{$IFDEF FPC_REQUIRES_PROPER_ALIGNMENT}
+  {$DEFINE SIMPLEBASELIB_REQUIRES_PROPER_ALIGNMENT}
+{$ENDIF}
+
 {========================= Compiler Mode & Optimizations ======================}
 
 {$MODE DELPHI}

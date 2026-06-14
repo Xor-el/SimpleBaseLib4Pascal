@@ -27,6 +27,14 @@
   {$STRINGCHECKS OFF}
   {$WARN DUPLICATE_CTOR_DTOR OFF}
 
+{============================== CPU Architecture ==============================}
+
+{$DEFINE SIMPLEBASELIB_LITTLE_ENDIAN}
+
+{$IFDEF CPUARM}
+  {$DEFINE SIMPLEBASELIB_REQUIRES_PROPER_ALIGNMENT}
+{$ENDIF}
+
 {$ENDIF}
 
 {========================== Common Compiler Settings ==========================}
