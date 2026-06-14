@@ -18,6 +18,11 @@ uses
   SbpBitOperations,
   SbpBits;
 
+resourcestring
+  SErrInsufficientOutputBuffer = 'Internal error: insufficient output buffer size';
+  SErrInvalidCharacter = 'Invalid character: %s';
+  SErrUnexpectedDecodeResult = 'Unexpected decode result';
+
 type
   /// <summary>
   /// Dividing Encoding/Decoding implementation to be used by other dividing encoders.
@@ -303,8 +308,7 @@ begin
   end
   else
   begin
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Internal error: insufficient output buffer size');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
   end;
 end;
 
@@ -331,19 +335,17 @@ begin
 
   case LOutcome.Status of
     TDecodeResult.InvalidCharacter:
-      raise EArgumentSimpleBaseLibException.CreateFmt('Invalid character: %s',
+      raise EArgumentSimpleBaseLibException.CreateResFmt(@SErrInvalidCharacter,
         [LOutcome.InvalidChar]);
     TDecodeResult.InsufficientOutputBuffer:
-      raise EInvalidOperationSimpleBaseLibException.Create(
-        'Internal error: insufficient output buffer size');
+      raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
     TDecodeResult.Success:
       begin
         LRangeLen := LRangeWritten.Finish - LRangeWritten.Start;
         Result := System.Copy(LOutput, LRangeWritten.Start, LRangeLen);
       end;
   else
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Unexpected decode result');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrUnexpectedDecodeResult);
   end;
 end;
 

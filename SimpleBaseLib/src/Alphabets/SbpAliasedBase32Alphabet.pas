@@ -13,6 +13,9 @@ uses
   SbpIAliasedBase32Alphabet,
   SbpBase32Alphabet;
 
+resourcestring
+  SErrCharacterNotInAlphabet = 'Character "%s" is not in the alphabet';
+
 type
   TAliasedBase32Alphabet = class(TBase32Alphabet, IAliasedBase32Alphabet)
   strict private
@@ -55,8 +58,8 @@ var
   LResult: Int32;
 begin
   if not TCodingAlphabet.TryLookup(ReverseLookupTable, ADestination, LResult) then
-    raise EArgumentSimpleBaseLibException.CreateFmt(
-      'Character "%s" is not in the alphabet', [ADestination]);
+    raise EArgumentSimpleBaseLibException.CreateResFmt(
+      @SErrCharacterNotInAlphabet, [ADestination]);
   Map(ASource, LResult);
   Map(TCharUtilities.ToAsciiLower(ASource), LResult);
 end;

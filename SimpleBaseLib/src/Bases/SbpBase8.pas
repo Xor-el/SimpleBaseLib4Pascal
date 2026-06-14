@@ -13,6 +13,11 @@ uses
   SbpIBaseStreamCoder,
   SbpStreamUtilities;
 
+resourcestring
+  SErrInvalidBase8Character = 'Invalid Base8 character encountered';
+  SErrInvalidEncodedTextLength = 'Invalid encoded text length';
+  SErrUnknownDecodingError = 'Unknown error during decoding - this is a bug';
+
 type
   TBase8 = class(TInterfacedObject, IBase8, INonAllocatingBaseCoder, IBaseStreamCoder)
   strict private
@@ -112,12 +117,11 @@ begin
         Result := System.Copy(Result, 0, LBytesWritten);
       end;
     TDecodeResult.InvalidCharacter:
-      raise EArgumentSimpleBaseLibException.Create('Invalid Base8 character encountered');
+      raise EArgumentSimpleBaseLibException.CreateRes(@SErrInvalidBase8Character);
     TDecodeResult.InvalidInputLength:
-      raise EArgumentSimpleBaseLibException.Create('Invalid encoded text length');
+      raise EArgumentSimpleBaseLibException.CreateRes(@SErrInvalidEncodedTextLength);
   else
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Unknown error during decoding -- this is a bug');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrUnknownDecodingError);
   end;
 end;
 

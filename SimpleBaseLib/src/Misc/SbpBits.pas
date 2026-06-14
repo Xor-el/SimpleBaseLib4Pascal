@@ -7,6 +7,9 @@ interface
 uses
   SbpSimpleBaseLibTypes;
 
+resourcestring
+  SErrCountTooLarge = 'ACount too large to convert to UInt64';
+
 type
 
   /// <summary>
@@ -43,7 +46,7 @@ var
 begin
   if ACount > System.SizeOf(UInt64) then
   begin
-    raise EArgumentOutOfRangeSimpleBaseLibException.Create('ACount too large to convert to UInt64');
+    raise EArgumentOutOfRangeSimpleBaseLibException.CreateRes(@SErrCountTooLarge);
   end;
 
   Result := 0;
