@@ -20,6 +20,15 @@ uses
   SbpBitOperations,
   SbpBinaryPrimitives;
 
+resourcestring
+  SErrOnlyEndPaddingSupported = 'Only encoding alphabets with paddings at the end are supported by this implementation';
+  SErrInsufficientOutputBuffer = 'Internal error: insufficient output buffer size';
+  SErrInvalidCharacterInInput = 'Invalid character in input';
+  SErrUnexpectedDecodeResult = 'Unexpected decode result';
+  SErrNumberIsNegative = 'Number is negative';
+  SErrDecodedTextTooLong = 'Decoded text is too long to fit in a buffer';
+  SErrDecodedOutOfInt64Range = 'Decoded buffer is out of Int64 range';
+
 type
   TBase32 = class(TInterfacedObject, IBase32, IBaseStreamCoder, INonAllocatingBaseCoder, INumericBaseCoder)
   strict private
@@ -140,8 +149,7 @@ begin
   inherited Create;
   if AAlphabet.PaddingPosition <> TPaddingPosition.&End then
   begin
-    raise EArgumentSimpleBaseLibException.Create(
-      'Only encoding alphabets with paddings at the end are supported by this implementation');
+    raise EArgumentSimpleBaseLibException.CreateRes(@SErrOnlyEndPaddingSupported);
   end;
 
   FAlphabet := AAlphabet;
@@ -268,8 +276,7 @@ begin
   System.SetLength(LOutput, LOutputLen);
   if not InternalEncode(ABytes, LOutput, APadding, LCharsWritten) then
   begin
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Internal error: insufficient output buffer size');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
   end;
   SetString(Result, PChar(@LOutput[0]), LCharsWritten);
 end;
@@ -293,15 +300,13 @@ begin
   LDecodeResult := InternalDecode(AText, LTextLen, LOutput, LBytesWritten);
   case LDecodeResult of
     TDecodeResult.InvalidInput:
-      raise EArgumentSimpleBaseLibException.Create('Invalid character in input');
+      raise EArgumentSimpleBaseLibException.CreateRes(@SErrInvalidCharacterInInput);
     TDecodeResult.OutputOverflow:
-      raise EInvalidOperationSimpleBaseLibException.Create(
-        'Internal error: insufficient output buffer size');
+      raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
     TDecodeResult.Success:
       Result := System.Copy(LOutput, 0, LBytesWritten);
   else
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Unexpected decode result');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrUnexpectedDecodeResult);
   end;
 end;
 
@@ -309,7 +314,7 @@ function TBase32.EncodeInt64(const ANumber: Int64): String;
 begin
   if ANumber < 0 then
   begin
-    raise EArgumentOutOfRangeSimpleBaseLibException.Create('Number is negative');
+    raise EArgumentOutOfRangeSimpleBaseLibException.CreateRes(@SErrNumberIsNegative);
   end;
   Result := EncodeUInt64(UInt64(ANumber));
 end;
@@ -350,8 +355,7 @@ begin
   end;
   if System.Length(LBuffer) > 8 then
   begin
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Decoded text is too long to fit in a buffer');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrDecodedTextTooLong);
   end;
 
   System.SetLength(LNewSpan, 8);
@@ -386,8 +390,7 @@ begin
   LResult := DecodeUInt64(AText);
   if LResult > UInt64(High(Int64)) then
   begin
-    raise EArgumentOutOfRangeSimpleBaseLibException.Create(
-      'Decoded buffer is out of Int64 range');
+    raise EArgumentOutOfRangeSimpleBaseLibException.CreateRes(@SErrDecodedOutOfInt64Range);
   end;
   Result := Int64(LResult);
 end;

@@ -13,6 +13,10 @@ uses
   SbpIBaseStreamCoder,
   SbpStreamUtilities;
 
+resourcestring
+  SErrInputLengthNotMultipleOf8 = 'Input length must be a multiple of 8';
+  SErrInvalidBase2Character = 'Invalid Base2 character encountered';
+
 type
   TBase2 = class(TInterfacedObject, IBase2, INonAllocatingBaseCoder, IBaseStreamCoder)
   strict private
@@ -90,7 +94,7 @@ begin
 
   if (System.Length(AText) mod 8) <> 0 then
   begin
-    raise EArgumentSimpleBaseLibException.Create('Input length must be a multiple of 8');
+    raise EArgumentSimpleBaseLibException.CreateRes(@SErrInputLengthNotMultipleOf8);
   end;
 
   LOutputLen := System.Length(AText) div 8;
@@ -98,7 +102,7 @@ begin
 
   if not InternalDecode(AText, Result, LOutputLen) then
   begin
-    raise EArgumentSimpleBaseLibException.Create('Invalid Base2 character encountered');
+    raise EArgumentSimpleBaseLibException.CreateRes(@SErrInvalidBase2Character);
   end;
 end;
 

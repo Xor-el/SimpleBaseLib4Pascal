@@ -18,6 +18,13 @@ uses
   SbpBitOperations,
   SbpStreamUtilities;
 
+resourcestring
+  SErrInsufficientOutputBuffer = 'Internal error: insufficient output buffer size';
+  SErrInvalidBase64Character = 'Invalid Base64 character "%s"';
+  SErrInvalidBase64Length = 'Invalid Base64 string length';
+  SErrInvalidBase64Padding = 'Invalid Base64 padding placement';
+  SErrUnexpectedDecodeResult = 'Unexpected decode result';
+
 type
   TBase64 = class(TInterfacedObject, IBase64, INonAllocatingBaseCoder,
     IBaseStreamCoder)
@@ -474,8 +481,7 @@ begin
   System.SetLength(LOutput, LOutputLen);
   if not InternalEncode(ABytes, LOutput, AAlphabetValue, APadding, LCharsWritten) then
   begin
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Internal error: insufficient output buffer size');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
   end;
   SetString(Result, PChar(@LOutput[0]), LCharsWritten);
 end;
@@ -502,18 +508,16 @@ begin
     TDecodeResult.Success:
       Result := System.Copy(LDecodeBuffer, 0, LBytesWritten);
     TDecodeResult.InvalidCharacter:
-      raise EArgumentSimpleBaseLibException.CreateFmt(
-        'Invalid Base64 character "%s"', [LOutcome.InvalidChar]);
+      raise EArgumentSimpleBaseLibException.CreateResFmt(
+        @SErrInvalidBase64Character, [LOutcome.InvalidChar]);
     TDecodeResult.InvalidLength:
-      raise EArgumentSimpleBaseLibException.Create('Invalid Base64 string length');
+      raise EArgumentSimpleBaseLibException.CreateRes(@SErrInvalidBase64Length);
     TDecodeResult.InvalidPadding:
-      raise EArgumentSimpleBaseLibException.Create('Invalid Base64 padding placement');
+      raise EArgumentSimpleBaseLibException.CreateRes(@SErrInvalidBase64Padding);
     TDecodeResult.InsufficientOutputBuffer:
-      raise EInvalidOperationSimpleBaseLibException.Create(
-        'Internal error: insufficient output buffer size');
+      raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
   else
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Unexpected decode result');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrUnexpectedDecodeResult);
   end;
 end;
 

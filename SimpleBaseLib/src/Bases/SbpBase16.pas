@@ -16,6 +16,10 @@ uses
   SbpCodingAlphabet,
   SbpBase16Alphabet;
 
+resourcestring
+  SErrInvalidTextLength = 'Invalid text length';
+  SErrInvalidCharacterInInput = 'Invalid character in input';
+
 type
   TBase16 = class(TInterfacedObject, IBase16, IBaseStreamCoder, INonAllocatingBaseCoder)
   strict private
@@ -156,13 +160,13 @@ begin
   LSafeCount := GetSafeByteCountForDecoding(AText);
   if LSafeCount = 0 then
   begin
-    raise EArgumentSimpleBaseLibException.Create('Invalid text length');
+    raise EArgumentSimpleBaseLibException.CreateRes(@SErrInvalidTextLength);
   end;
 
   System.SetLength(Result, LSafeCount);
   if not InternalDecode(AText, Result, LBytesWritten) then
   begin
-    raise EArgumentSimpleBaseLibException.Create('Invalid character in input');
+    raise EArgumentSimpleBaseLibException.CreateRes(@SErrInvalidCharacterInInput);
   end;
 end;
 

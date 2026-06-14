@@ -18,6 +18,11 @@ uses
   SbpBase58,
   SbpBase64;
 
+resourcestring
+  SErrTextCannotBeEmpty = 'Text cannot be empty';
+  SErrUnsupportedMultibasePrefix = 'Unsupported multibase prefix: %s';
+  SErrUnsupportedEncodingType = 'Unsupported encoding type: %d';
+
 type
   TMultibase = class sealed(TObject)
   public
@@ -38,7 +43,7 @@ var
 begin
   if System.Length(AText) = 0 then
   begin
-    raise EArgumentSimpleBaseLibException.Create('Text cannot be empty');
+    raise EArgumentSimpleBaseLibException.CreateRes(@SErrTextCannotBeEmpty);
   end;
 
   LC := AText[1];
@@ -85,8 +90,8 @@ begin
     TMultibaseEncoding.Base64UrlPad:
       Result := TBase64.UrlPadded.Decode(LRest);
   else
-    raise EInvalidOperationSimpleBaseLibException.CreateFmt(
-      'Unsupported multibase prefix: %s', [LC]);
+    raise EInvalidOperationSimpleBaseLibException.CreateResFmt(
+      @SErrUnsupportedMultibasePrefix, [LC]);
   end;
 end;
 
@@ -196,7 +201,7 @@ begin
     TMultibaseEncoding.Base64UrlPad:
       Result := Result + TBase64.UrlPadded.Encode(ABytes);
   else
-    raise EArgumentSimpleBaseLibException.CreateFmt('Unsupported encoding type: %d',
+    raise EArgumentSimpleBaseLibException.CreateResFmt(@SErrUnsupportedEncodingType,
       [Ord(AEncoding)]);
   end;
 end;

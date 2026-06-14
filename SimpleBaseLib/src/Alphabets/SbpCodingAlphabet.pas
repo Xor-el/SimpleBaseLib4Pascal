@@ -10,6 +10,10 @@ uses
   SbpICodingAlphabet,
   SbpCharUtilities;
 
+resourcestring
+  SErrAlphabetLengthMismatch = 'Required alphabet length is %d but provided alphabet is %d characters long';
+  SErrCaseSensitivityConflict = 'Case-sensitivity cannot be selected with an alphabet that contains both cases of the same letter';
+
 type
   /// <summary>
   /// Base class for ASCII-only coding alphabets with reverse lookup support
@@ -59,8 +63,8 @@ begin
 
   if System.Length(AAlphabet) <> ALength then
   begin
-    raise EArgumentSimpleBaseLibException.CreateFmt
-      ('Required alphabet length is %d but provided alphabet is %d characters long',
+    raise EArgumentSimpleBaseLibException.CreateResFmt
+      (@SErrAlphabetLengthMismatch,
       [ALength, System.Length(AAlphabet)]);
   end;
 
@@ -86,8 +90,8 @@ begin
 
       if System.Pos(LCounterpart, FValue) <> 0 then
       begin
-        raise EArgumentSimpleBaseLibException.Create
-          ('Case-sensitivity cannot be selected with an alphabet that contains both cases of the same letter');
+        raise EArgumentSimpleBaseLibException.CreateRes
+          (@SErrCaseSensitivityConflict);
       end;
 
       Map(LCounterpart, LI);

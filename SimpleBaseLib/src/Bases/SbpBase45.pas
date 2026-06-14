@@ -18,6 +18,13 @@ uses
   SbpBitOperations,
   SbpStreamUtilities;
 
+resourcestring
+  SErrInsufficientOutputBuffer = 'Internal error: insufficient output buffer size';
+  SErrInvalidCharacter = 'Invalid character: %s';
+  SErrInputCorrupt = 'Input buffer is incorrectly encoded or corrupt';
+  SErrInputIncorrectSize = 'Input buffer is at incorrect size';
+  SErrUnexpectedDecodeResult = 'Unexpected decode result';
+
 type
   TBase45 = class(TInterfacedObject, IBase45, INonAllocatingBaseCoder, IBaseStreamCoder)
   strict private
@@ -334,19 +341,16 @@ begin
     TDecodeResult.Success:
       Result := System.Copy(LOutput, 0, LBytesWritten);
     TDecodeResult.InvalidOutputLength:
-      raise EInvalidOperationSimpleBaseLibException.Create(
-        'Internal error: insufficient output buffer size');
+      raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
     TDecodeResult.InvalidCharacter:
-      raise EArgumentSimpleBaseLibException.CreateFmt('Invalid character: %s',
+      raise EArgumentSimpleBaseLibException.CreateResFmt(@SErrInvalidCharacter,
         [LOutcome.InvalidChar]);
     TDecodeResult.InvalidInput:
-      raise EArgumentSimpleBaseLibException.Create(
-        'Input buffer is incorrectly encoded or corrupt');
+      raise EArgumentSimpleBaseLibException.CreateRes(@SErrInputCorrupt);
     TDecodeResult.InvalidInputLength:
-      raise EArgumentSimpleBaseLibException.Create(
-        'Input buffer is at incorrect size');
+      raise EArgumentSimpleBaseLibException.CreateRes(@SErrInputIncorrectSize);
   else
-    raise EInvalidOperationSimpleBaseLibException.Create('Unexpected decode result');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrUnexpectedDecodeResult);
   end;
 end;
 
@@ -365,8 +369,7 @@ begin
   System.SetLength(LOutput, LOutputLen);
   if not InternalEncode(ABytes, LOutput, LCharsWritten) then
   begin
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Internal error: insufficient output buffer size');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
   end;
   SetString(Result, PChar(@LOutput[0]), LCharsWritten);
 end;

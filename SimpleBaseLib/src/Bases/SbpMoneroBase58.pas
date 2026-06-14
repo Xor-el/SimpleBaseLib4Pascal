@@ -16,6 +16,11 @@ uses
   SbpBinaryPrimitives,
   SbpBits;
 
+resourcestring
+  SErrInsufficientOutputBuffer = 'Internal error: insufficient output buffer size';
+  SErrInvalidCharacter = 'Invalid character: %s';
+  SErrUnexpectedDecodeResult = 'Unexpected decode result';
+
 type
   TMoneroBase58 = class(TInterfacedObject, IMoneroBase58, INonAllocatingBaseCoder)
   strict private
@@ -357,8 +362,7 @@ begin
   System.SetLength(LOutput, LOutputLen);
   if not InternalEncode(ABytes, LOutput, LCharsWritten) then
   begin
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Internal error: insufficient output buffer size');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
   end;
   SetString(Result, PChar(@LOutput[0]), LCharsWritten);
 end;
@@ -383,14 +387,12 @@ begin
     TDecodeResult.Success:
       Result := System.Copy(LOutput, 0, LBytesWritten);
     TDecodeResult.InvalidCharacter:
-      raise EArgumentSimpleBaseLibException.CreateFmt('Invalid character: %s',
+      raise EArgumentSimpleBaseLibException.CreateResFmt(@SErrInvalidCharacter,
         [LOutcome.InvalidChar]);
     TDecodeResult.InsufficientOutputBuffer:
-      raise EInvalidOperationSimpleBaseLibException.Create(
-        'Internal error: insufficient output buffer size');
+      raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrInsufficientOutputBuffer);
   else
-    raise EInvalidOperationSimpleBaseLibException.Create(
-      'Unexpected decode result');
+    raise EInvalidOperationSimpleBaseLibException.CreateRes(@SErrUnexpectedDecodeResult);
   end;
 end;
 

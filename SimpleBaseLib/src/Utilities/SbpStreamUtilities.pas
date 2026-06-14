@@ -9,6 +9,10 @@ uses
   SysUtils,
   SbpSimpleBaseLibTypes;
 
+resourcestring
+  SErrBlockSizeMustBePositive = 'Block size must be positive';
+  SErrDefaultBufferSizeMustBePositive = 'Default buffer size must be positive';
+
 type
 
   /// <summary>
@@ -40,13 +44,11 @@ class function TStreamUtilities.GetAlignedBufferSize(ABlockSize: Int32;
 begin
   if ABlockSize < 1 then
   begin
-    raise EArgumentOutOfRangeSimpleBaseLibException.Create(
-      'Block size must be positive');
+    raise EArgumentOutOfRangeSimpleBaseLibException.CreateRes(@SErrBlockSizeMustBePositive);
   end;
   if ADefaultBufferSize < 1 then
   begin
-    raise EArgumentOutOfRangeSimpleBaseLibException.Create(
-      'Default buffer size must be positive');
+    raise EArgumentOutOfRangeSimpleBaseLibException.CreateRes(@SErrDefaultBufferSizeMustBePositive);
   end;
 
   Result := ADefaultBufferSize - (ADefaultBufferSize mod ABlockSize);
