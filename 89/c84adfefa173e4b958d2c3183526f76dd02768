@@ -1,0 +1,21 @@
+.github/workflows/mirror-to-gitlab.yml
+  s_30504face5640e::t_d5f2e11f977029 1-31,33-38,40-42,45-47,49-59
+  s_30504face5640e::t_2f7bb12df38dc2 39,43-44,48
+  s_30504face5640e::t_91115f6f9caadb 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "89c84adfefa173e4b958d2c3183526f76dd02768",
+  "prompts": {},
+  "sessions": {
+    "s_30504face5640e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aaa60cad-aa46-4948-9535-aa7f11b3b141",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Ugochukwu Mmaduekwe <ugo4brain@gmail.com>"
+    }
+  }
+}
