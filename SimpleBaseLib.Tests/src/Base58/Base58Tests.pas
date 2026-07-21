@@ -17,6 +17,7 @@ uses
   TestFramework,
 {$ENDIF FPC}
   SbpSimpleBaseLibTypes,
+  SbpSimpleBaseLibExceptions,
   SbpICodingAlphabet,
   SbpBase58Alphabet,
   SbpBase58,

@@ -30,6 +30,7 @@ uses
   SbpBitOperations in '..\..\SimpleBaseLib\src\Misc\SbpBitOperations.pas',
   SbpBinaryPrimitives in '..\..\SimpleBaseLib\src\Misc\SbpBinaryPrimitives.pas',
   SbpSimpleBaseLibTypes in '..\..\SimpleBaseLib\src\Misc\SbpSimpleBaseLibTypes.pas',
+  SbpSimpleBaseLibExceptions in '..\..\SimpleBaseLib\src\Misc\SbpSimpleBaseLibExceptions.pas',
   SbpBits in '..\..\SimpleBaseLib\src\Misc\SbpBits.pas',
   SbpCharUtilities in '..\..\SimpleBaseLib\src\Utilities\SbpCharUtilities.pas',
   SbpStreamUtilities in '..\..\SimpleBaseLib\src\Utilities\SbpStreamUtilities.pas',

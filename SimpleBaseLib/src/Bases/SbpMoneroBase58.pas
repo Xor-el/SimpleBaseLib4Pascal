@@ -7,6 +7,7 @@ interface
 uses
   SysUtils,
   SbpSimpleBaseLibTypes,
+  SbpSimpleBaseLibExceptions,
   SbpSimpleBaseLibConstants,
   SbpICodingAlphabet,
   SbpCodingAlphabet,

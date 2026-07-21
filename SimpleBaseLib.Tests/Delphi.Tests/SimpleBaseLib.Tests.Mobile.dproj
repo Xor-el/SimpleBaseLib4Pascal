@@ -353,6 +353,7 @@
         <DCCReference Include="..\..\SimpleBaseLib\src\Misc\SbpBitOperations.pas"/>
         <DCCReference Include="..\..\SimpleBaseLib\src\Misc\SbpBinaryPrimitives.pas"/>
         <DCCReference Include="..\..\SimpleBaseLib\src\Misc\SbpSimpleBaseLibTypes.pas"/>
+        <DCCReference Include="..\..\SimpleBaseLib\src\Misc\SbpSimpleBaseLibExceptions.pas"/>
         <DCCReference Include="..\..\SimpleBaseLib\src\Misc\SbpBits.pas"/>
         <DCCReference Include="..\..\SimpleBaseLib\src\Utilities\SbpCharUtilities.pas"/>
         <DCCReference Include="..\..\SimpleBaseLib\src\Utilities\SbpStreamUtilities.pas"/>

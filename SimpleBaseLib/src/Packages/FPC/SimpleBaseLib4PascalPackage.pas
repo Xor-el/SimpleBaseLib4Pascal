@@ -15,15 +15,15 @@ uses
   SbpSimpleBaseLibConstants, SbpBase85Alphabet, SbpIBase85Alphabet, SbpBase58, 
   SbpINumericBaseCoder, SbpBase32Alphabet, SbpINonAllocatingBaseCoder, 
   SbpIBaseStreamCoder, SbpIBaseCoder, SbpAliasedBase32Alphabet, 
-  SbpIAliasedBase32Alphabet, SbpIBase32Alphabet, 
-  SbpCharMap, SbpPaddingPosition, SbpCodingAlphabet, SbpBase45Alphabet, 
+  SbpIAliasedBase32Alphabet, SbpIBase32Alphabet, SbpCharMap, 
+  SbpPaddingPosition, SbpCodingAlphabet, SbpBase45Alphabet, 
   SbpIBase45Alphabet, SbpIDividingCoder, SbpBase62Alphabet, SbpBase58Alphabet, 
   SbpBase36Alphabet, SbpBase10Alphabet, SbpMoneroBase58, SbpBase62, SbpBase36, 
   SbpBase10, SbpBase16Alphabet, SbpIBase58, SbpIBase58Alphabet, 
   SbpIBase62Alphabet, SbpIBase36Alphabet, SbpIBase10Alphabet, SbpIBase62, 
   SbpIBase36, SbpIBase10, SbpSimpleBaseLibTypes, SbpICodingAlphabet, 
   SbpIBase16Alphabet, SbpArrayUtilities, SbpCharUtilities, SbpBits, 
-  SbpBinaryPrimitives, SbpBitOperations;
+  SbpBinaryPrimitives, SbpBitOperations, SbpSimpleBaseLibExceptions;
 
 implementation
 
