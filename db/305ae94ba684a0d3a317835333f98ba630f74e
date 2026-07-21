@@ -1,0 +1,79 @@
+SimpleBaseLib/src/Misc/SbpSimpleBaseLibExceptions.pas
+  s_cc24173621b510::t_647c4598152314 1-31
+SimpleBaseLib/src/Packages/FPC/SimpleBaseLib4PascalPackage.pas
+  s_cc24173621b510::t_1840e6c8e38bfe 18-19,26
+SimpleBaseLib.Tests/Delphi.Tests/SimpleBaseLib.Tests.Mobile.dpr
+  s_cc24173621b510::t_82009634323c55 16
+SimpleBaseLib.Tests/Delphi.Tests/SimpleBaseLib.Tests.Mobile.dproj
+  s_cc24173621b510::t_428bd558abc6e7 356
+SimpleBaseLib.Tests/Delphi.Tests/SimpleBaseLib.Tests.dpr
+  s_cc24173621b510::t_9b0310c4b33669 33
+SimpleBaseLib.Tests/src/Base16/Base16Tests.pas
+  s_cc24173621b510::t_49f8c4d2e237dd 21
+SimpleBaseLib.Tests/src/Base2/Base2Tests.pas
+  s_cc24173621b510::t_4bc6731c21a36f 21
+SimpleBaseLib.Tests/src/Base32/Base32Tests.pas
+  s_cc24173621b510::t_133d87fb2412b8 21
+SimpleBaseLib.Tests/src/Base45/Base45Tests.pas
+  s_cc24173621b510::t_1a7a1762a4aec5 21
+SimpleBaseLib.Tests/src/Base58/Base58Tests.pas
+  s_cc24173621b510::t_c28b4aac5135e0 20
+SimpleBaseLib.Tests/src/Base64/Base64Tests.pas
+  s_cc24173621b510::t_6ca6045771d2fb 21
+SimpleBaseLib.Tests/src/Base8/Base8Tests.pas
+  s_cc24173621b510::t_44a6a1ec98ea00 21
+SimpleBaseLib.Tests/src/Base85/Base85Tests.pas
+  s_cc24173621b510::t_f9329ff29e5966 21
+SimpleBaseLib.Tests/src/Misc/CodingAlphabetTests.pas
+  s_cc24173621b510::t_ee5d89a08a2e67 21
+SimpleBaseLib.Tests/src/Multibase/MultibaseTests.pas
+  s_cc24173621b510::t_fb05d483b6b820 20
+SimpleBaseLib/src/Alphabets/SbpAliasedBase32Alphabet.pas
+  s_cc24173621b510::t_1bf0f72220324f 8
+SimpleBaseLib/src/Alphabets/SbpCodingAlphabet.pas
+  s_cc24173621b510::t_a551352a564d78 10
+SimpleBaseLib/src/Bases/SbpBase16.pas
+  s_cc24173621b510::t_0be51b16cbf50d 11
+SimpleBaseLib/src/Bases/SbpBase2.pas
+  s_cc24173621b510::t_65be171056f91c 11
+SimpleBaseLib/src/Bases/SbpBase32.pas
+  s_cc24173621b510::t_22c6d491f8cd28 11
+SimpleBaseLib/src/Bases/SbpBase45.pas
+  s_cc24173621b510::t_974672b84756e6 11
+SimpleBaseLib/src/Bases/SbpBase64.pas
+  s_cc24173621b510::t_d08a993fcd85d0 11
+SimpleBaseLib/src/Bases/SbpBase8.pas
+  s_cc24173621b510::t_f27835241de8b0 11
+SimpleBaseLib/src/Bases/SbpBase85.pas
+  s_cc24173621b510::t_bcfb1bb1d6c4e8 11
+SimpleBaseLib/src/Bases/SbpMoneroBase58.pas
+  s_cc24173621b510::t_60abf1b7455a1e 10
+SimpleBaseLib/src/Bases/SbpMultibase.pas
+  s_cc24173621b510::t_b713da1a74c18d 10
+SimpleBaseLib/src/Coders/SbpDividingCoder.pas
+  s_cc24173621b510::t_7bd3e3e62289a2 11
+SimpleBaseLib/src/Misc/SbpBits.pas
+  s_cc24173621b510::t_a20e37469b6665 8-9
+SimpleBaseLib/src/Packages/Delphi/SimpleBaseLib4PascalPackage.dpk
+  s_cc24173621b510::t_437da49356ddf8 40
+SimpleBaseLib/src/Packages/FPC/SimpleBaseLib4PascalPackage.lpk
+  s_cc24173621b510::t_5f046813733a66 31,296-299
+SimpleBaseLib/src/Utilities/SbpStreamUtilities.pas
+  s_cc24173621b510::t_1de16becf10a48 10-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "db305ae94ba684a0d3a317835333f98ba630f74e",
+  "prompts": {},
+  "sessions": {
+    "s_cc24173621b510": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fc17925-066d-4599-a6ae-e880c5fcb127",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Ugochukwu Mmaduekwe <ugo4brain@gmail.com>"
+    }
+  }
+}
