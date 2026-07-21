@@ -5,7 +5,8 @@ unit SbpBits;
 interface
 
 uses
-  SbpSimpleBaseLibTypes;
+  SbpSimpleBaseLibTypes,
+  SbpSimpleBaseLibExceptions;
 
 resourcestring
   SErrCountTooLarge = 'ACount too large to convert to UInt64';

@@ -7,7 +7,8 @@ interface
 uses
   Classes,
   SysUtils,
-  SbpSimpleBaseLibTypes;
+  SbpSimpleBaseLibTypes,
+  SbpSimpleBaseLibExceptions;
 
 resourcestring
   SErrBlockSizeMustBePositive = 'Block size must be positive';

@@ -8,6 +8,7 @@ uses
   Classes,
   SysUtils,
   SbpSimpleBaseLibTypes,
+  SbpSimpleBaseLibExceptions,
   SbpIBase32,
   SbpIBaseStreamCoder,
   SbpINonAllocatingBaseCoder,

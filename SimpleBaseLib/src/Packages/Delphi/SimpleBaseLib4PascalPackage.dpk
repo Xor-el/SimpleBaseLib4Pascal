@@ -37,6 +37,7 @@ contains
   SbpBitOperations in '..\..\Misc\SbpBitOperations.pas',
   SbpBinaryPrimitives in '..\..\Misc\SbpBinaryPrimitives.pas',
   SbpSimpleBaseLibTypes in '..\..\Misc\SbpSimpleBaseLibTypes.pas',
+  SbpSimpleBaseLibExceptions in '..\..\Misc\SbpSimpleBaseLibExceptions.pas',
   SbpBits in '..\..\Misc\SbpBits.pas',
   SbpCharUtilities in '..\..\Utilities\SbpCharUtilities.pas',
   SbpStreamUtilities in '..\..\Utilities\SbpStreamUtilities.pas',

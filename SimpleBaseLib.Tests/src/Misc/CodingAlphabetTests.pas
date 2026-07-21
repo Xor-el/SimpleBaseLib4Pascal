@@ -18,6 +18,7 @@ uses
 {$ENDIF FPC}
   SbpCodingAlphabet,
   SbpSimpleBaseLibTypes,
+  SbpSimpleBaseLibExceptions,
   SimpleBaseLibTestBase;
 
 type

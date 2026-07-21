@@ -5,7 +5,7 @@ unit SbpAliasedBase32Alphabet;
 interface
 
 uses
-  SbpSimpleBaseLibTypes,
+  SbpSimpleBaseLibExceptions,
   SbpCharMap,
   SbpPaddingPosition,
   SbpCharUtilities,

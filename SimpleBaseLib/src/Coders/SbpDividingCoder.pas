@@ -8,6 +8,7 @@ uses
   SysUtils,
   Math,
   SbpSimpleBaseLibTypes,
+  SbpSimpleBaseLibExceptions,
   SbpSimpleBaseLibConstants,
   SbpArrayUtilities,
   SbpICodingAlphabet,

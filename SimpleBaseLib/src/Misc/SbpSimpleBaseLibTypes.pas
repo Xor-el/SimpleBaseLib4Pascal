@@ -40,24 +40,6 @@ type
 
   TSimpleBaseLibMethodPredicate<T> = function(Arg1: T): Boolean of object;
 
-  ESimpleBaseLibException = class(Exception);
-  EInvalidCastSimpleBaseLibException = class(EInvalidCast);
-  EArithmeticSimpleBaseLibException = class(ESimpleBaseLibException);
-  EInvalidOperationSimpleBaseLibException = class(ESimpleBaseLibException);
-  EInvalidParameterSimpleBaseLibException = class(ESimpleBaseLibException);
-  EIndexOutOfRangeSimpleBaseLibException = class(ESimpleBaseLibException);
-  EArgumentSimpleBaseLibException = class(ESimpleBaseLibException);
-  EInvalidArgumentSimpleBaseLibException = class(ESimpleBaseLibException);
-  EArgumentNilSimpleBaseLibException = class(ESimpleBaseLibException);
-  EArgumentOutOfRangeSimpleBaseLibException = class(ESimpleBaseLibException);
-  ENullReferenceSimpleBaseLibException = class(ESimpleBaseLibException);
-  EUnsupportedTypeSimpleBaseLibException = class(ESimpleBaseLibException);
-  EIOSimpleBaseLibException = class(ESimpleBaseLibException);
-  EFormatSimpleBaseLibException = class(ESimpleBaseLibException);
-  ENotImplementedSimpleBaseLibException = class(ESimpleBaseLibException);
-  ENotSupportedSimpleBaseLibException = class(ESimpleBaseLibException);
-  EEndOfStreamSimpleBaseLibException = class(EIOSimpleBaseLibException);
-
   /// <summary>
   /// Represents a dynamic array of Byte.
   /// </summary>
