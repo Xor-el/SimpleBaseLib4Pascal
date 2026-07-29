@@ -1,0 +1,22 @@
+.github/workflows/make.pas
+  s_0047c6412af983::t_eb9ce8db5f5c2d 1180
+  s_0047c6412af983::t_2b2ce72c08be84 1199-1217
+  s_0047c6412af983::t_5854254970efb6 1178-1179
+  s_0047c6412af983::t_02ae7b3be7a804 1181
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "1121d8a252854b7a7c828e4426a40d534c1f4a74",
+  "prompts": {},
+  "sessions": {
+    "s_0047c6412af983": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "26f8fce9-6634-4536-b046-ebae6e5a0142",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Ugochukwu Mmaduekwe <ugo4brain@gmail.com>"
+    }
+  }
+}
