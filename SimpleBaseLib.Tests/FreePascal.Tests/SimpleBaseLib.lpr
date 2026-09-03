@@ -11,7 +11,7 @@ uses
   EncodingAlphabetTests, CodingAlphabetTests, BitsTests, Base8Tests,
   Base8StreamRegressionTests, Base62Tests, Base45Tests,
   Base45StreamRegressionTests, Base2StreamRegressionTests, Base2Tests,
-  Base10Tests, Base36Tests;
+  Base10Tests, Base36Tests, DividingCoderTests;
 
 {$R *.res}
 

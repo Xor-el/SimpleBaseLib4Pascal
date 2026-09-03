@@ -12,7 +12,7 @@ uses
   Base8Tests, Base8StreamRegressionTests, Base85Tests,
   Base85StreamRegressionTests,
   EncodingAlphabetTests, CodingAlphabetTests, BitsTests, MultibaseTests,
-  Base64Tests, Base64StreamRegressionTests;
+  Base64Tests, Base64StreamRegressionTests, DividingCoderTests;
 
 type
 

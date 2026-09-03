@@ -98,7 +98,8 @@ uses
   Base8Tests in '..\src\Base8\Base8Tests.pas',
   Base8StreamRegressionTests in '..\src\Base8\Base8StreamRegressionTests.pas',
   Base64Tests in '..\src\Base64\Base64Tests.pas',
-  Base64StreamRegressionTests in '..\src\Base64\Base64StreamRegressionTests.pas';
+  Base64StreamRegressionTests in '..\src\Base64\Base64StreamRegressionTests.pas',
+  DividingCoderTests in '..\src\Coders\DividingCoderTests.pas';
 
 begin
   Application.Initialize;

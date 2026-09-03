@@ -439,6 +439,7 @@
         <DCCReference Include="..\src\Base8\Base8StreamRegressionTests.pas"/>
         <DCCReference Include="..\src\Base64\Base64Tests.pas"/>
         <DCCReference Include="..\src\Base64\Base64StreamRegressionTests.pas"/>
+        <DCCReference Include="..\src\Coders\DividingCoderTests.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
