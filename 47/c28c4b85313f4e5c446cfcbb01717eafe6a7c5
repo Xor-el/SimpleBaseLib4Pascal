@@ -1,0 +1,43 @@
+SimpleBaseLib.Tests/FreePascal.Tests/SimpleBaseLib.Tests.lpi
+  s_c74918a4087813::t_4a6757e98384bd 26,190
+  s_c74918a4087813::t_d2e20286280a60 74
+  s_c74918a4087813::t_38b38d3a9ebbf4 176-179
+SimpleBaseLib.Tests/Delphi.Tests/SimpleBaseLib.Tests.Mobile.dpr
+  s_c74918a4087813::t_2dc9aa2ef754c1 101-102
+SimpleBaseLib/src/Coders/SbpDividingCoder.pas
+  s_c74918a4087813::t_5576854263589a 55
+  s_c74918a4087813::t_e2024f56112d42 143
+  s_c74918a4087813::t_477ccd40eacd09 137
+  s_c74918a4087813::t_eb40990ba2204d 109
+SimpleBaseLib.Tests/FreePascal.Tests/SimpleBaseLibConsole.lpr
+  s_c74918a4087813::t_d38d181f3b33ed 15
+SimpleBaseLib.Tests/FreePascal.Tests/SimpleBaseLib.lpr
+  s_c74918a4087813::t_9a8ff51bf39660 14
+SimpleBaseLib.Tests/Delphi.Tests/SimpleBaseLib.Tests.dpr
+  s_c74918a4087813::t_cd09714a47bfc4 118-119
+SimpleBaseLib.Tests/FreePascal.Tests/SimpleBaseLibConsole.lpi
+  s_c74918a4087813::t_9e48bd763ddc11 148
+  s_c74918a4087813::t_b09e9023567b0d 134-137
+SimpleBaseLib.Tests/Delphi.Tests/SimpleBaseLib.Tests.Mobile.dproj
+  s_c74918a4087813::t_a05c91e33be10e 442
+SimpleBaseLib.Tests/src/Coders/DividingCoderTests.pas
+  s_c74918a4087813::t_96261bd5e18ff2 1-173
+SimpleBaseLib.Tests/src/Base58/Base58Tests.pas
+  s_c74918a4087813::t_3d6eb76fc6916d 536
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "47c28c4b85313f4e5c446cfcbb01717eafe6a7c5",
+  "prompts": {},
+  "sessions": {
+    "s_c74918a4087813": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b61b21ad-b30a-45e0-b326-5bd28df7217e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Ugochukwu Mmaduekwe <ugo4brain@gmail.com>"
+    }
+  }
+}
