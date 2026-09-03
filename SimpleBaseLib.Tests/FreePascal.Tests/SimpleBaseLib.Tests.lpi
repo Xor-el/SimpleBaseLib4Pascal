@@ -23,7 +23,7 @@
           <PathDelim Value="\"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64;..\src\Base85;..\src;..\src\Multibase;..\src\Misc;..\src\Base8;..\src\Base62;..\src\Base45;..\src\Base2;..\src\Base10;..\src\Base36"/>
+            <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64;..\src\Base85;..\src;..\src\Multibase;..\src\Misc;..\src\Base8;..\src\Base62;..\src\Base45;..\src\Base2;..\src\Base10;..\src\Base36;..\src\Coders"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -71,7 +71,7 @@
         <PackageName Value="FCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="25">
+    <Units Count="26">
       <Unit0>
         <Filename Value="SimpleBaseLib.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -173,6 +173,10 @@
         <Filename Value="..\src\Base36\Base36Tests.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit24>
+      <Unit25>
+        <Filename Value="..\src\Coders\DividingCoderTests.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit25>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -183,7 +187,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64;..\src\Base85;..\src;..\src\Multibase;..\src\Misc;..\src\Base8;..\src\Base62;..\src\Base45;..\src\Base2;..\src\Base10;..\src\Base36"/>
+      <OtherUnitFiles Value="..\src\Base16;..\src\Base32;..\src\Base58;..\src\Base64;..\src\Base85;..\src;..\src\Multibase;..\src\Misc;..\src\Base8;..\src\Base62;..\src\Base45;..\src\Base2;..\src\Base10;..\src\Base36;..\src\Coders"/>
     </SearchPaths>
     <Linking>
       <Debugging>

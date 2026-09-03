@@ -52,7 +52,7 @@ type
 
   var
     FAlphabet: ICodingAlphabet;
-    FReductionFactor: Int32;
+    FReductionFactor: Double;
     FZeroChar: Char;
 
     function GetSafeByteCountForDecodingInternal(ATextLen: Int32; AZeroPrefixLen: Int32): Int32; inline;
@@ -106,7 +106,7 @@ begin
   inherited Create;
   FAlphabet := AAlphabet;
   LAlphabetValue := FAlphabet.Value;
-  FReductionFactor := Trunc(1000 * Log2(System.Length(LAlphabetValue)) / 8);
+  FReductionFactor := Log2(System.Length(LAlphabetValue)) / 8;
   FZeroChar := LAlphabetValue[1];
 end;
 
@@ -134,13 +134,13 @@ end;
 function TDividingCoder.GetSafeByteCountForDecodingInternal(
   ATextLen: Int32; AZeroPrefixLen: Int32): Int32;
 begin
-  Result := AZeroPrefixLen + ((ATextLen - AZeroPrefixLen) * FReductionFactor div 1000) + 1;
+  Result := AZeroPrefixLen + Ceil((ATextLen - AZeroPrefixLen) * FReductionFactor) + 1;
 end;
 
 function TDividingCoder.GetSafeCharCountForEncodingInternal(
   ABytesLen: Int32; AZeroPrefixLen: Int32): Int32;
 begin
-  Result := AZeroPrefixLen + ((ABytesLen - AZeroPrefixLen) * 1000 div FReductionFactor) + 1;
+  Result := AZeroPrefixLen + Ceil((ABytesLen - AZeroPrefixLen) / FReductionFactor) + 1;
 end;
 
 function TDividingCoder.GetSafeByteCountForDecoding(

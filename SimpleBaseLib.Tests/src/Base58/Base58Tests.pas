@@ -533,7 +533,7 @@ var
   LInput: TSimpleBaseLibByteArray;
 begin
   LInput := TSimpleBaseLibByteArray.Create(0, 0, 0, 0, 1, 2, 3, 4);
-  CheckEquals(10, TBase58.Bitcoin.GetSafeCharCountForEncoding(LInput));
+  CheckEquals(11, TBase58.Bitcoin.GetSafeCharCountForEncoding(LInput));
 end;
 
 procedure TTestBase58.Test_Instances_AreIsolated;
