@@ -1,0 +1,19 @@
+SimpleBaseLib/src/Packages/FPC/SimpleBaseLib4PascalPackage.lpk
+  s_cc24173621b510::t_dcd1ed10c4d2f1 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "bcbb404f6de078d1d3df423bd9dd4c624eedd3df",
+  "prompts": {},
+  "sessions": {
+    "s_cc24173621b510": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fc17925-066d-4599-a6ae-e880c5fcb127",
+        "model": "unknown"
+      },
+      "human_author": "Ugochukwu Mmaduekwe <ugo4brain@gmail.com>"
+    }
+  }
+}
