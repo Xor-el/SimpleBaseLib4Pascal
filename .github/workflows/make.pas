@@ -241,6 +241,7 @@ type
     function ExtractBinaryFromBuildLog(const AOutput, AFallback: string): string;
     function IsGUIProject(const ALpiPath: string): Boolean;
     function IsTestProject(const ALpiPath: string): Boolean;
+    function IsLibraryProject(const ALpiPath: string): Boolean;
     procedure RunTestProject(const APath: string);
     procedure RunSampleProject(const APath: string);
     procedure InitSslForDownloads;
@@ -2024,7 +2025,7 @@ begin
   try
     for Each in List do
     begin
-      if IsGUIProject(Each) then
+      if IsGUIProject(Each) or IsLibraryProject(Each) then
         Continue;
       Proj := TLpiProject.CreateFromFile(Each, FTargetCpu, FTargetOs);
       try
@@ -2204,6 +2205,14 @@ begin
   Result := Pos('consoletestrunner', Content) > 0;
 end;
 
+function TMakeRunner.IsLibraryProject(const ALpiPath: string): Boolean;
+begin
+  Result := False;
+  if not FileExists(ALpiPath) then
+    Exit;
+  Result := Pos('<ExecutableType Value="Library"/>', TLazXml.ReadFile(ALpiPath)) > 0;
+end;
+
 procedure TMakeRunner.RunTestProject(const APath: string);
 var
   BinaryPath: string;
@@ -2272,6 +2281,12 @@ begin
         // lazbuild backend: the full LCL is present, so compile the GUI project
         // to verify it builds. It is not run because GUI apps need a display.
         BuildGuiProject(Each);
+        Continue;
+      end;
+
+      if IsLibraryProject(Each) then
+      begin
+        Log(CSI_Yellow, 'skip library project ' + Each);
         Continue;
       end;
 
