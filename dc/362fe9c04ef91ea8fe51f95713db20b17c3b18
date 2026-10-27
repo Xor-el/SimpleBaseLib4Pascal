@@ -1,0 +1,49 @@
+.github/workflows/make.pas
+  s_f2c9bd75607afc::t_2d2f524a1bf9cf 2211,2213
+  s_f2c9bd75607afc::t_81f5928777c36d 244,2290-2292
+  s_f2c9bd75607afc::t_16863476b650be 2028
+  s_f2c9bd75607afc::t_5232e543b0eeec 2287-2289
+  s_f2c9bd75607afc::t_598a9953bdb23a 2208-2210,2212,2214-2215
+SimpleBaseLib.Tests/FreePascal.Tests/SimpleBaseLib.Tests.Android.lpi
+  s_f2c9bd75607afc::t_238fcbc743913e 1-66,68-71
+  s_f2c9bd75607afc::t_87879c92c8eeb9 67
+SimpleBaseLib.Tests/FreePascal.Tests/SimpleBaseLib.Tests.Android.lpr
+  s_f2c9bd75607afc::t_d255a425c1ded1 19
+  s_f2c9bd75607afc::t_d0fe8e9eaa4fe5 16-18
+  s_f2c9bd75607afc::t_dd597d80d824c7 20-22
+  s_4df3ed1e8f8003::t_3b0eff3266f252 1-15,23-26
+.gitignore
+  s_f2c9bd75607afc::t_06e02117f94035 41
+SimpleBaseLib.Tests/FreePascal.Tests/Mobile/Android/AndroidManifest.xml
+  s_f2c9bd75607afc::t_35aacc10d4f248 1-22
+SimpleBaseLib.Tests/FreePascal.Tests/Mobile/Android/AndroidTestHost.pas
+  s_f2c9bd75607afc::t_0153252802163e 1-414
+SimpleBaseLib.Tests/FreePascal.Tests/Mobile/Android/BuildApk.java
+  s_f2c9bd75607afc::t_4f151d3f56e087 1-360
+SimpleBaseLib.Tests/FreePascal.Tests/Mobile/Android/src/org/fpctests/host/MainActivity.java
+  s_f2c9bd75607afc::t_a7637f0b53d014 1-273
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc362fe9c04ef91ea8fe51f95713db20b17c3b18",
+  "prompts": {},
+  "sessions": {
+    "s_4df3ed1e8f8003": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-aabb475f05e081e37",
+        "model": "unknown"
+      },
+      "human_author": "Ugochukwu Mmaduekwe <ugo4brain@gmail.com>"
+    },
+    "s_f2c9bd75607afc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "93bd4649-2a9e-4694-931c-623400c4649b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Ugochukwu Mmaduekwe <ugo4brain@gmail.com>"
+    }
+  }
+}
