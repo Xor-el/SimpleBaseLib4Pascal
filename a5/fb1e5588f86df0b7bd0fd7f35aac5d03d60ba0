@@ -1,0 +1,24 @@
+SimpleBaseLib.Tests/Delphi.Tests/Mobile/MobileTestHostFormUnit.fmx
+  s_f2c9bd75607afc::t_97ce1cf2b37b5f 11,13-16,19-128
+SimpleBaseLib.Tests/Delphi.Tests/Mobile/MobileTestHostFormUnit.pas
+  s_f2c9bd75607afc::t_0e5a872ecb1bf8 42-46
+  s_f2c9bd75607afc::t_5373ac8fde6b4e 13-14,17
+  s_f2c9bd75607afc::t_d8111f182b2a43 7
+  s_f2c9bd75607afc::t_4b3034b6fd6531 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a5fb1e5588f86df0b7bd0fd7f35aac5d03d60ba0",
+  "prompts": {},
+  "sessions": {
+    "s_f2c9bd75607afc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "93bd4649-2a9e-4694-931c-623400c4649b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Ugochukwu Mmaduekwe <ugo4brain@gmail.com>"
+    }
+  }
+}
